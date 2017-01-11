@@ -42,7 +42,7 @@ MXN: <span id="mxn"></span>
 <br>
 
 Ask: <span id="ask"></span><br>
-Bid: <span id="bid"></span><br>
+<b>Bid: <span id="bid"></span></b><br>
 High: <span id="high"></span><br>
 Last: <span id="last"></span><br>
 Low: <span id="low"></span><br>
