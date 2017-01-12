@@ -12,11 +12,14 @@ include "keys.php";
 <script>
     $(function () {
         getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>", "<?=$objective?>");
+        setInterval(function () {
+            location.reload();
+        }, 3600000);
     });
 </script>
 Balance: <span id="bitcoin"></span><br>
 MXN: (<span id="mxn"></span>)<br>
-Objective: [<?=$objective?>]
+Objective: [<?= $objective ?>]
 
 <hr>
 <br>
