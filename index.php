@@ -11,17 +11,18 @@ include "keys.php";
 <script src="assets/js/scripts.js"></script>
 <script>
     $(function () {
-        getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>");
+        getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>", "<?=$objective?>");
     });
 </script>
 Balance: <span id="bitcoin"></span><br>
-MXN: <span id="mxn"></span>
+MXN: (<span id="mxn"></span>)<br>
+Objective: [<?=$objective?>]
 
 <hr>
 <br>
 
 Ask: <span id="ask"></span><br>
-<b>Bid: <span id="bid"></span></b><br>
+<b>Bid: <span id="bid"></span>[<span id="objective"></span>]</b><br>
 High: <span id="high"></span><br>
 Last: <span id="last"></span><br>
 Low: <span id="low"></span><br>

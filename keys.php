@@ -12,3 +12,4 @@ $bitsoClientId = "131376";
 $message = $nonce . $bitsoClientId . $key;
 $secret = "48792544eec665a1f3f5cd84ec2c7fcb";
 $signature = hash_hmac('sha256', $message, $secret);
+$objective = 1100;
