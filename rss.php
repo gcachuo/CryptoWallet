@@ -7,13 +7,14 @@
  */
 
 $fh = fopen('historial.txt', 'r');
+$date = date('d-m-Y');
 while ($line = fgets($fh)) {
     $items .= <<<XML
 <item>
     <title>$line</title>
     <link>$line</link>
-    <pubDate>$line</pubDate>
-    <category>$line</category>
+    <pubDate>$date</pubDate>
+    <category>Money</category>
     <description>$line</description>
 </item>
 XML;
@@ -27,7 +28,7 @@ echo <<<XML
 <rss version="2.0">
     <channel>
         <title>Bitcoin Balance</title>
-        <link>bitso.com/wallet</link>
+        <link>http://bitso.com/wallet</link>
         <language>es-MX</language>
         <description>Bitcoin Balance in Bitso (MXN)</description>
         <generator>Guillermo Cachu Osorio</generator>
