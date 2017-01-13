@@ -19,7 +19,7 @@ request("https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz
 
 date_default_timezone_set('America/Mexico_City');
 $date = date("d-m-Y h:i:sa");
-$file_data = "$mxn - $date\n";
+$file_data = "$mxn | $local - $date\n";
 $file_data .= file_get_contents('historial.txt');
 file_put_contents('historial.txt', $file_data);
 
