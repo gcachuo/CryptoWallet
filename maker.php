@@ -14,6 +14,10 @@ $mxn = round($balance->btc_available * $bid, 2);
 
 request("https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz", array("value1" => "$mxn"));
 
+$file_data = "$mxn\n";
+$file_data .= file_get_contents('historial.txt');
+file_put_contents('historial.txt', $file_data);
+
 echo $mxn;
 
 function request($url, $data = array())
