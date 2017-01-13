@@ -19,6 +19,7 @@ function getData(key, nonce, signature, objective) {
             $("#bitcoin").html(post.btc_available);
             $("#mxn").html(mxn);
             $("#objective").html(Math.round((objective / post.btc_available) * 100) / 100);
+            $("#localbitcoin").html(Math.round((post.btc_available * $("#bidlocalbitcoin").html()) * 100) / 100);
             $.post("insertarHistorial.php", {cash: mxn});
         }, 'json');
     }, 'json');
