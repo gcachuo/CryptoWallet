@@ -6,6 +6,7 @@
  * Time: 04:25 PM
  */
 
-$file_data = "$_REQUEST[cash]\n";
+$date = date("d-m-Y H:i:s");
+$file_data = "$_REQUEST[cash] - $date\n";
 $file_data .= file_get_contents('historial.txt');
 file_put_contents('historial.txt', $file_data);
