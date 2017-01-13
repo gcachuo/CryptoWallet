@@ -28,7 +28,7 @@ echo <<<XML
 <rss version="2.0">
     <channel>
         <title>Bitcoin Balance</title>
-        <link>http://bitso.com/wallet</link>
+        <link>http://gcachuo.pe.hu/BitcoinWallet/historial.txt</link>
         <language>es-MX</language>
         <description>Bitcoin Balance in Bitso (MXN)</description>
         <generator>Guillermo Cachu Osorio</generator>
