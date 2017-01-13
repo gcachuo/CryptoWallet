@@ -17,7 +17,8 @@ $local = round($localbitcoins * $balance->btc_available, 2);
 
 request("https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz", array("value1" => "$mxn | $local"));
 
-$date = date("d-m-Y H:i:s");
+date_default_timezone_set('America/Mexico_City');
+$date = date("d-m-Y h:i:sa");
 $file_data = "$mxn - $date\n";
 $file_data .= file_get_contents('historial.txt');
 file_put_contents('historial.txt', $file_data);
