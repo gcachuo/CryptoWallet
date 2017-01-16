@@ -8,7 +8,8 @@
 
 $ticker = request("http://localbitcoins.com/bitcoincharts/mxn/orderbook.json");
 
-$localbitcoins = $ticker->bids[0][0];
+$localbid = $ticker->bids[0][0];
+$localask = $ticker->asks[0][0];
 
 function request($url, $data = array())
 {
