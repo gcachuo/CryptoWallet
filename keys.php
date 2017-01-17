@@ -12,4 +12,4 @@ $bitsoClientId = "131376";
 $message = $nonce . $bitsoClientId . $key;
 $secret = "48792544eec665a1f3f5cd84ec2c7fcb";
 $signature = hash_hmac('sha256', $message, $secret);
-$objective = isset($_GET['o']) ? $_GET['o'] : 2111.20;
+$objective = isset($_GET['o']) ? $_GET['o'] : 1100;

@@ -22,7 +22,8 @@ Balance: <span id="bitcoin"></span><br>
 MXN: (<span id="mxn"></span>)<br>
 Localbitcoins: (<span id="localbitcoin"></span>)<br>
 Objective: [<?= $objective ?>]<br>
-Objective Bid: [<span id="objective"></span>]
+Objective Bid: [<span id="objective"></span>]<br>
+Total: <span id="total"></span>
 <hr>
 <br>
 
