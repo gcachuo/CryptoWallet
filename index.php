@@ -12,7 +12,7 @@ include "localbitcoins.php";
 <script src="assets/js/scripts.js"></script>
 <script>
     $(function () {
-        getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>", "<?=$objective?>");
+        getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>", "<?=$objective?>", "<?=$objectiveBitcoin?>");
         setInterval(function () {
             location.reload();
         }, 3600000);
@@ -21,8 +21,8 @@ include "localbitcoins.php";
 Balance: <span id="bitcoin"></span><br>
 MXN: (<span id="mxn"></span>)<br>
 Localbitcoins: (<span id="localbitcoin"></span>)<br>
-Objective: [<?= $objective ?>]<br>
-Objective Bid: [<span id="objective"></span>]<br>
+Objective: [<?= $objective ?>][<?=$objectiveBitcoin?>]<br>
+Objective [Bid][Ask]: [<span id="objective"></span>][<span id="objectiveBitcoin"></span>]<br>
 Total: <span id="total"></span>
 <hr>
 <br>
