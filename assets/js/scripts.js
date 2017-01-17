@@ -16,7 +16,7 @@ function getData(key, nonce, signature, objective) {
             signature: signature
         }, function (balance) {
             console.log(balance);
-            var mxn = Math.round((balance.btc_balance * (ticker.bid * 0.99)) * 100) / 100;
+            var mxn = Math.round((balance.btc_balance * (ticker.ask * 0.99)) * 100) / 100;
             var local = Math.round((balance.btc_balance * $("#bidlocalbitcoin").html()) * 100) / 100;
             $("#bitcoin").html(balance.btc_balance + " (" + balance.mxn_balance + ")");
             $("#mxn").html(mxn);
