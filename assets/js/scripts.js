@@ -22,7 +22,7 @@ function getData(key, nonce, signature, objective) {
             $("#mxn").html(mxn);
             $("#objective").html((Math.round((objective / balance.btc_balance) * 100) / 100) * 1.01);
             $("#localbitcoin").html(local);
-            $("#total").html((mxn * 1 + balance.mxn_balance * 1) + " | " + (local * 1 + balance.mxn_balance * 1));
+            $("#total").html((Math.round((mxn * 1 + balance.mxn_balance * 1)*100)/100) + " | " + (local * 1 + balance.mxn_balance * 1));
             $.post("insertarHistorial.php", {cash: (mxn * 1 + balance.mxn_balance * 1) + " | " + (local * 1 + balance.mxn_balance * 1)});
         }, 'json');
     }, 'json');
