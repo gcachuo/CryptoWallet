@@ -29,10 +29,9 @@ Total: <span id="total"></span>
 <br>
 
 Bitso<br>
-<input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"><br>
-<input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"><br>
-<b>Bid: <span id="bid"></span></b> <span id="resBid"></span><br>
-Ask: <span id="ask"></span> <span id="resAsk"></span><br><!--
+<input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"> Ask: <span id="ask"></span> <span id="resAsk"></span><br>
+<input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"><b> Bid: <span id="bid"></span></b> <span id="resBid"></span><br>
+<!--
 High: <span id="high"></span><br>
 Last: <span id="last"></span><br>
 Low: <span id="low"></span><br>
