@@ -33,3 +33,20 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
         }, 'json');
     }, 'json');
 }
+
+function changeBits(val, currency) {
+    switch (currency) {
+        case 'btc':
+            var resBid = Math.round(val * $("#bid").html() * 100) / 100;
+            var resAsk = Math.round(val * $("#ask").html() * 100) / 100;
+            $("#resBid").html(resBid + " (Buy)");
+            $("#resAsk").html(resAsk + " (Sell)");
+            break;
+        case 'mxn':
+            var resBid = Math.round(val / $("#bid").html() * 100000000) / 100000000;
+            var resAsk = Math.round(val / $("#ask").html() * 100000000) / 100000000;
+            $("#resBid").html(resBid + " (Sell)");
+            $("#resAsk").html(resAsk + " (Buy)");
+            break;
+    }
+}
