@@ -32,19 +32,18 @@ Bitso<br>
 <table>
 <tbody>
 <tr>
-<td><input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"></td><td><span id="resAsk"></span></td><td>Ask: <span id="ask"></span></td>
+<td><input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"></td><td><span id="resAsk"></span></td>
+<td>Ask: <span id="ask"></span></td><td>High: <span id="high"></span></td>
 </tr>
 <tr>
-<td><input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"></td><td><span id="resBid"></span></td><td>Bid: <span id="bid"></span></td>
+<td><input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"></td><td><span id="resBid"></span></td>
+<td>Bid: <span id="bid"></span></td><td>Low: <span id="low"></span></td>
 </tr>
 </tbody>
 </table>
 <br>
-<!--
-High: <span id="high"></span><br>
 Last: <span id="last"></span><br>
-Low: <span id="low"></span><br>
-Vwap: <span id="vwap"></span><br>-->
+Vwap: <span id="vwap"></span><br>
 <hr>
 <br>
 

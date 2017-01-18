@@ -4,11 +4,11 @@
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
     $.get("https://api.bitso.com/v2/ticker", function (ticker) {
-        $("#ask").html((ticker.ask * 0.99));
-        $("#bid").html((ticker.bid * 1.01));
-        $("#high").html(ticker.high);
+        $("#ask").attr("title", ticker.ask).html((ticker.ask * 0.99));
+        $("#bid").attr("title", ticker.bid).html((ticker.bid * 1.01));
+        $("#high").attr("title", ticker.high).html(ticker.high * 0.99);
+        $("#low").attr("title", ticker.low).html(ticker.low * 1.01);
         $("#last").html(ticker.last);
-        $("#low").html(ticker.low);
         $("#vwap").html(ticker.vwap);
         $.post("https://api.bitso.com/v2/balance", {
             key: key,
