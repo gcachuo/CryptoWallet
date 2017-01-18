@@ -12,6 +12,7 @@ $ticker = request("https://api.bitso.com/v2/ticker");
 $balance = request("https://api.bitso.com/v2/balance", array("key" => $key, "nonce" => $nonce, "signature" => $signature));
 
 $ask = $ticker->ask * 0.99;
+$bid = $ticker->bid * 1.01;
 $mxn = round($balance->btc_balance * $ask, 2) + $balance->mxn_balance;
 $local = round($localask * $balance->btc_balance, 2) + $balance->mxn_balance;
 

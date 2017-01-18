@@ -6,7 +6,7 @@
  * Time: 04:25 PM
  */
 extract($_POST);
-$value1 = "$ask [$mxn | $local]";
+$value1 = "$bid | $ask [$mxn | $local]";
 request("https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz", array("value1" => $value1));
 
 date_default_timezone_set('America/Mexico_City');

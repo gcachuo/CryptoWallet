@@ -5,7 +5,7 @@
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
     $.get("https://api.bitso.com/v2/ticker", function (ticker) {
         $("#ask").html((ticker.ask * 0.99));
-        $("#bid").html((ticker.bid * 0.99));
+        $("#bid").html((ticker.bid * 1.01));
         $("#high").html(ticker.high);
         $("#last").html(ticker.last);
         $("#low").html(ticker.low);
@@ -27,7 +27,8 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
             $.post("insertarHistorial.php", {
                 mxn: (mxn * 1 + balance.mxn_balance * 1) + " | " + (local * 1 + balance.mxn_balance * 1),
                 local: local,
-                ask: ticker.ask * 0.99
+                ask: ticker.ask * 0.99,
+                bid: ticker.bid * 1.01
             });
         }, 'json');
     }, 'json');
