@@ -11,16 +11,10 @@ include "localbitcoins.php";
 $ticker = request("https://api.bitso.com/v2/ticker");
 $balance = request("https://api.bitso.com/v2/balance", array("key" => $key, "nonce" => $nonce, "signature" => $signature));
 
-$bid = $ticker->bid - ($ticker->bid * 0.01);
-$mxn = round($balance->btc_available * $bid, 2);
-$local = round($localbitcoins * $balance->btc_available, 2);
+$ask = $ticker->ask * 0.99;
+$mxn = round($balance->btc_balance * $ask, 2) + $balance->mxn_balance;
+$local = round($localask * $balance->btc_balance, 2) + $balance->mxn_balance;
 
-request("https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz", array("value1" => "$mxn | $local"));
-
-date_default_timezone_set('America/Mexico_City');
-$date = date("d-m-Y h:i:sa");
-$file_data = "$mxn | $local - $date\n";
-$file_data .= file_get_contents('historial.txt');
-file_put_contents('historial.txt', $file_data);
+include "insertarHistorial.php";
 
 echo $mxn . " | " . $local;
