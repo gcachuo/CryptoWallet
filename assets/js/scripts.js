@@ -20,15 +20,15 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
             var mxn = Math.round(balance.btc_balance * (ticker.ask * 0.99) * 000000100) / 000000100;
             var objMxn = Math.round((objective / balance.btc_balance * 1.01) * 100) / 100;
             var objBtc = Math.round((balance.mxn_balance / objectiveBitcoin * 1.01) * 100) / 100;
-            var sellBtc = btc-objBtc;
-            var sellMxn = mxn-objMxn;
+            var sellBtc = btc-objectiveBitcoin;
+            var sellMxn = mxn-objective;
             var local = Math.round((balance.btc_balance * $("#bidlocalbitcoin").html()) * 100) / 100;
             $("#bitcoin").html(balance.btc_balance + " (" + balance.mxn_balance + ")");
             $("#btc").html(btc);
             $("#mxn").html(mxn);
             $("#objective").html(objMxn);
             $("#objectiveBitcoin").html(objBtc);
-            $("#sell").html(sellBtc + "\n" + sellMxn);
+            $("#sell").html(sellBtc + "<br>" + sellMxn);
             $("#localbitcoin").html(local);
             $("#total").html((Math.round((mxn * 1 + balance.mxn_balance * 1) * 100) / 100) + " | " + (local * 1 + balance.mxn_balance * 1));
             $.post("insertarHistorial.php", {
