@@ -29,6 +29,9 @@ Total: <span id="total"></span>
 <hr>
 <br>
 
+Sell<br>
+<span id="sell"></span><br><br>
+
 Bitso<br>
 <table>
 <tbody>
