@@ -19,6 +19,7 @@ include "localbitcoins.php";
     });
 </script>
 Balance: <span id="bitcoin"></span><br>
+Bitcoin: <span id="btc"></span><br>
 MXN: (<span id="mxn"></span>)<br>
 Localbitcoins: (<span id="localbitcoin"></span>)<br>
 Objective: [<?= $objective ?>][<?= $objectiveBitcoin ?>]<br>
