@@ -4,10 +4,12 @@
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
     $.get("https://api.bitso.com/v2/ticker", function (ticker) {
-        $("#ask").attr("title", ticker.ask).html((ticker.ask * 0.99));
-        $("#bid").attr("title", ticker.bid).html((ticker.bid * 1.01));
-        $("#high").attr("title", ticker.high).html(ticker.high * 0.99);
-        $("#low").attr("title", ticker.low).html(ticker.low * 1.01);
+        var minusFee = 1 - (1 / 100),
+            plusFee = 1 + (1 / 100);
+        $("#ask").attr("title", ticker.ask).html((ticker.ask * plusFee));
+        $("#bid").attr("title", ticker.bid).html((ticker.bid * minusFee));
+        $("#high").attr("title", ticker.high).html(ticker.high * plusFee);
+        $("#low").attr("title", ticker.low).html(ticker.low * minusFee);
         $("#last").html(ticker.last);
         $("#vwap").html(ticker.vwap);
         $.post("https://api.bitso.com/v2/balance", {
@@ -15,11 +17,12 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
             nonce: nonce,
             signature: signature
         }, function (balance) {
-            console.log(balance);
-            var btc = Math.round(balance.mxn_balance / (ticker.bid * 1.01) * 100000000) / 100000000;
-            var mxn = Math.round(balance.btc_balance * (ticker.ask * 0.99) * 000000100) / 000000100;
-            var objMxn = Math.round((objective / balance.btc_balance * 1.01) * 100) / 100;
-            var objBtc = Math.round((balance.mxn_balance / objectiveBitcoin * 1.01) * 100) / 100;
+            var minusFee = 1 - (balance.fee / 100),
+                plusFee = 1 + (balance.fee / 100);
+            var btc = Math.round(balance.mxn_balance / (ticker.bid * minusFee) * 100000000) / 100000000;
+            var mxn = Math.round(balance.btc_balance * (ticker.ask * plusFee) * 000000100) / 000000100;
+            var objMxn = Math.round((objective / balance.btc_balance * plusFee) * 100) / 100;
+            var objBtc = Math.round((balance.mxn_balance / objectiveBitcoin * plusFee) * 100) / 100;
             var sellBtc = Math.round((btc - objectiveBitcoin) * 100000000) / 100000000;
             var sellMxn = mxn - objective;
             var local = Math.round((balance.btc_balance * $("#bidlocalbitcoin").html()) * 100) / 100;
@@ -28,14 +31,14 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
             $("#mxn").html(mxn);
             $("#objective").html(objMxn);
             $("#objectiveBitcoin").html(objBtc);
-            $("#sell").html(sellBtc + " (" + Math.round((sellBtc * (ticker.bid * 1.01)) * 100) / 100 + " - " + (ticker.ask * 0.99) + ")" + "<br>" + sellMxn + " (" + Math.round((sellMxn / (ticker.ask * 0.99)) * 100000000) / 100000000 + " - " + (ticker.bid * 1.01) + ")");
+            $("#sell").html(sellBtc + " (" + Math.round((sellBtc * (ticker.bid * minusFee)) * 100) / 100 + " - " + (ticker.bid * minusFee) + ")" + "<br>" + sellMxn + " (" + Math.round((sellMxn / (ticker.ask * plusFee)) * 100000000) / 100000000 + " - " + (ticker.ask * plusFee) + ")");
             $("#localbitcoin").html(local);
-            $("#total").html((Math.round((mxn * 1 + balance.mxn_balance * 1) * 100) / 100) + " | " + (local * 1 + balance.mxn_balance * 1));
+            $("#total").html((Math.round((mxn + balance.mxn_balance * 1) * 100) / 100) + " | " + (local + balance.mxn_balance * 1));
             $.post("insertarHistorial.php", {
-                mxn: (mxn * 1 + balance.mxn_balance * 1) + " | " + (local * 1 + balance.mxn_balance * 1),
+                mxn: (mxn + balance.mxn_balance * 1) + " | " + (local + balance.mxn_balance * 1),
                 local: local,
-                ask: ticker.ask * 0.99,
-                bid: ticker.bid * 1.01
+                ask: ticker.ask * plusFee,
+                bid: ticker.bid * minusFee
             });
         }, 'json');
     }, 'json');
