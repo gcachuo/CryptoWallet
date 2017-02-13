@@ -8,8 +8,17 @@
 include "keys.php";
 include "localbitcoins.php";
 
-$ticker = request("https://api.bitso.com/v2/ticker");
-$balance = request("https://api.bitso.com/v2/balance", array("key" => $key, "nonce" => $nonce, "signature" => $signature));
+$auth = array('Authorization: ' => $authHeader);
+
+$ticker = request("https://api.bitso.com/v2/ticker/?book=btc_mxn");
+
+generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+$keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
+$balance = request("https://api.bitso.com/v2/balance/", $keys);
+
+generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+$keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
+$trades = request("https://api.bitso.com/v2/user_transactions/", $keys);
 
 $plusFee = 1 + ($balance->fee / 100);
 $minusFee = 1 - ($balance->fee / 100);
