@@ -31,7 +31,8 @@ function getData(key, nonce, signature, objective, objectiveBitcoin) {
             $("#mxn").html(mxn);
             $("#objective").html(objMxn);
             $("#objectiveBitcoin").html(objBtc);
-            $("#sell").html(sellBtc + " (" + Math.round((sellBtc * (ticker.bid * minusFee)) * 100) / 100 + " - " + (ticker.bid * minusFee) + ")" + "<br>" + sellMxn + " (" + Math.round((sellMxn / (ticker.ask * plusFee)) * 100000000) / 100000000 + " - " + (ticker.ask * plusFee) + ")");
+            var sellMxnFee=Math.round((sellBtc * (ticker.bid * minusFee)) * 100) / 100;
+            $("#sell").html(sellBtc + " (" + sellMxnFee +" - " + (ticker.bid * minusFee) + ")" + "<br>" + sellMxn + " (" + Math.round((sellMxn / (ticker.ask * plusFee)) * 100000000) / 100000000 + " - " + (ticker.ask * plusFee) + ")");
             $("#localbitcoin").html(local);
             $("#total").html((Math.round((mxn + balance.mxn_balance * 1) * 100) / 100) + " | " + (local + balance.mxn_balance * 1));
             $.post("insertarHistorial.php", {
