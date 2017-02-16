@@ -32,14 +32,7 @@ $sellMxnFee = round(($sellBtc * ($ticker->bid * $minusFee)), 2);
 ?>
 <script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
 <script src="assets/js/scripts.js"></script>
-<script>/*
-     $(function () {
-     getData("<?=$key?>", "<?=$nonce?>", "<?=$signature?>", "<?=$objective?>", "<?=$objectiveBitcoin?>");
-     setInterval(function () {
-     location.reload();
-     }, 3600000);
-     });*/
-</script>
+
 Balance: <span id="bitcoin"><?= $balance->btc_balance ?> (<?= $balance->mxn_balance ?>)</span><br>
 Bitcoin: <span id="btc"><?= $btc ?></span><br>
 MXN: (<span id="mxn"><?= $mxn ?></span>)<br>
@@ -53,7 +46,7 @@ Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($l
 <br>
 
 Sell<br>
-<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->bid * $minusFee) . ")" . "<br>" . $sellMxn . " (" . round(($sellMxn / ($ticker->ask * $plusFee)), 8) . " - " . ($ticker->ask * $plusFee) . ")" ?></span>
+<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->bid * $minusFee) . ")" . "<br>" . round($sellMxn,2) . " (" . number_format(round(($sellMxn / ($ticker->ask * $plusFee)), 8),8) . " - " . round($ticker->ask * $plusFee,2) . ")" ?></span>
 <br><br>
 
 Bitso<br>
@@ -62,14 +55,14 @@ Bitso<br>
     <tr>
         <td><input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"></td>
         <td><span id="resAsk" title=""></span></td>
-        <td>Ask: <span id="ask" title="<?= $ticker->ask ?>"><?= $ticker->ask * $plusFee ?></span></td>
-        <td>High: <span id="high" title="<?= $ticker->high ?>"><?= $ticker->high * $plusFee ?></span></td>
+        <td>Ask: <span id="ask" title="<?= $ticker->ask ?>"><?= round($ticker->ask * $plusFee,2) ?></span></td>
+        <td>High: <span id="high" title="<?= $ticker->high ?>"><?= round($ticker->high * $plusFee,2) ?></span></td>
     </tr>
     <tr>
         <td><input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"></td>
         <td><span id="resBid"></span></td>
         <td>Bid: <span id="bid" title="<?= $ticker->bid ?>"><?= $ticker->bid * $minusFee ?></span></td>
-        <td>Low: <span id="low" title="<?= $ticker->low ?>"><?= $ticker->low * $minusFee ?></span></td>
+        <td>Low: <span id="low" title="<?= $ticker->low ?>"><?= round($ticker->low * $minusFee,2) ?></span></td>
     </tr>
     </tbody>
 </table>

@@ -31,3 +31,9 @@ function generateSignature($key, $bitsoKey, $bitsoSecret, &$nonce, &$signature)
     $message = $nonce . $bitsoKey . $key;
     $signature = hash_hmac('sha256', $message, $bitsoSecret);
 }
+
+function getTrades($arrayTrades)
+{
+    $stringTrades = "";
+    return $stringTrades;
+}
