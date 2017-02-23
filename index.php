@@ -5,6 +5,9 @@
  * Date: 11/ene/2017
  * Time: 03:58 PM
  */
+
+ini_set("display_errors", off);
+
 include "keys.php";
 include "localbitcoins.php";
 
@@ -23,12 +26,12 @@ $trades = request("https://api.bitso.com/v2/user_transactions/", $keys);
 $plusFee = 1 + ($balance->fee / 100);
 $minusFee = 1 - ($balance->fee / 100);
 
-$mxn = round($balance->btc_balance * ($ticker->ask * $plusFee), 2);
+$mxn = round($balance->btc_balance * ($ticker->last * $plusFee), 2);
 $local = round(($balance->btc_balance * $localbid), 2);
-$btc = round($balance->mxn_balance / ($ticker->bid * $minusFee), 8);
+$btc = round($balance->mxn_balance / ($ticker->last * $minusFee), 8);
 $sellBtc = number_format(round(($btc - $objectiveBitcoin), 8), 8);
 $sellMxn = $mxn - $objective;
-$sellMxnFee = round(($sellBtc * ($ticker->bid * $minusFee)), 2);
+$sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);
 ?>
 <script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
 <script src="assets/js/scripts.js"></script>
@@ -46,7 +49,9 @@ Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($l
 <br>
 
 Sell<br>
-<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->bid * $minusFee) . ")" . "<br>" . round($sellMxn,2) . " (" . number_format(round(($sellMxn / ($ticker->ask * $plusFee)), 8),8) . " - " . round($ticker->ask * $plusFee,2) . ")" ?></span>
+<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br>" . round($sellMxn,2) . " (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
+<br><br>
+Last: <span id="last"><?= $ticker->last ?> (<?= $ticker->last * $plusFee ?>) (<?= $ticker->last * $minusFee ?>)</span>
 <br><br>
 
 Bitso<br>
@@ -55,19 +60,18 @@ Bitso<br>
     <tr>
         <td><input type="text" placeholder="BTC" onkeyup="changeBits($(this).val(),'btc')"></td>
         <td><span id="resAsk" title=""></span></td>
-        <td>Ask: <span id="ask" title="<?= $ticker->ask ?>"><?= round($ticker->ask * $plusFee,2) ?></span></td>
-        <td>High: <span id="high" title="<?= $ticker->high ?>"><?= round($ticker->high * $plusFee,2) ?></span></td>
+        <td>Ask: <span id="ask" title="<?= $ticker->ask ?>"><?= round($ticker->ask * $plusFee, 2) ?></span></td>
+        <td>High: <span id="high" title="<?= $ticker->high ?>"><?= round($ticker->high * $plusFee, 2) ?></span></td>
     </tr>
     <tr>
         <td><input type="text" placeholder="MXN" onkeyup="changeBits($(this).val(),'mxn')"></td>
         <td><span id="resBid"></span></td>
         <td>Bid: <span id="bid" title="<?= $ticker->bid ?>"><?= $ticker->bid * $minusFee ?></span></td>
-        <td>Low: <span id="low" title="<?= $ticker->low ?>"><?= round($ticker->low * $minusFee,2) ?></span></td>
+        <td>Low: <span id="low" title="<?= $ticker->low ?>"><?= round($ticker->low * $minusFee, 2) ?></span></td>
     </tr>
     </tbody>
 </table>
 <br>
-Last: <span id="last"><?= $ticker->last ?></span><br>
 Vwap: <span id="vwap"><?= $ticker->vwap ?></span><br>
 <hr>
 <br>
