@@ -12,9 +12,9 @@ $JSONPayload = "";
 $key = "SUqaCnPIQu";
 $bitsoKey = "131376";
 $bitsoSecret = "48792544eec665a1f3f5cd84ec2c7fcb";
-$objective = isset($_GET['o']) ? $_GET['o'] : 2700 /*1650 /*2100*/
+$objective = isset($_GET['o']) ? $_GET['o'] : 3800 /*2700 /*1650 /*2100*/
 ;
-$objectiveBitcoin = isset($_GET['b']) ? $_GET['b'] : 0.00781269 /*0.00728521 /*0.00612658 /*0.00369227 /*0.10699031*/
+$objectiveBitcoin = isset($_GET['b']) ? $_GET['b'] : 0.01410063 /*0.01250791 /*0.01120565 /*0.00974639 /*0.00781269 /*0.00728521 /*0.00612658 /*0.00369227 /*0.10699031*/
 ;
 
 // Create signature
