@@ -33,8 +33,14 @@ $sellBtc = number_format(round(($btc - $objectiveBitcoin), 8), 8);
 $sellMxn = $mxn - $objective;
 $sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);
 ?>
+<head>
+<!-- x/60=t 900/60=15min -->
+<meta http-equiv="refresh" content="900">
+<link rel="icon" type="image/png" href="assets/img/icon.png" />
+<link rel="manifest" href="assets/manifest.json">
 <script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
 <script src="assets/js/scripts.js"></script>
+</head>
 
 Balance: <span id="bitcoin"><?= $balance->btc_balance ?> (<?= $balance->mxn_balance ?>)</span><br>
 Bitcoin: <span id="btc"><?= $btc ?></span><br>
