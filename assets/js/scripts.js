@@ -3,7 +3,8 @@
  */
 
 $(function(){
-    alert($("#alert").html);
+    if($("#alertbits").html()*1>10)
+    alert($("#last").html());
 });
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
