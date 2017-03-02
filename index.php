@@ -55,7 +55,7 @@ Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($l
 <br>
 
 Sell<br>
-<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br>" . round($sellMxn,2) . " (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
+<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br><span id='alert'>" . round($sellMxn,2) . "</span> (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
 <br><br>
 Last: <span id="last"><?= $ticker->last ?> (<?= $ticker->last * $plusFee ?>) (<?= $ticker->last * $minusFee ?>)</span>
 <br><br>

@@ -2,6 +2,10 @@
  * Created by Memo on 11/ene/2017.
  */
 
+$(function(){
+    alert($("#alert").html);
+});
+
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
     $.get("https://api.bitso.com/v2/ticker", function (ticker) {
         var minusFee = 1 - (1 / 100),
