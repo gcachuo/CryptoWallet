@@ -22,6 +22,25 @@ $balance = request("https://api.bitso.com/v2/balance/", $keys);
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
 $trades = request("https://api.bitso.com/v2/user_transactions/", $keys);
+foreach ($trades as $trade) {
+    $date = date('d/m/Y h:m:i', $trade->datetime);
+    $htmlTrades .= <<<HTML
+<tr>
+<td>$date</td>
+<td>$trade->btc</td>
+<td>{round($trade->mxn,2)}</td>
+<td>$trade->btc_mxn</td>
+</tr>
+HTML;
+
+}
+
+generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+$keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
+$orders = request("https://api.bitso.com/v2/open_orders?book=btc_mxn", $keys);
+if ($orders[0]->type == "1") {
+    $order = $orders[0]->amount . " - <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> - " . $orders[0]->price;
+}
 
 $plusFee = 1 + ($balance->fee / 100);
 $minusFee = 1 - ($balance->fee / 100);
@@ -34,12 +53,12 @@ $sellMxn = $mxn - $objective;
 $sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);
 ?>
 <head>
-<!-- x/60=t 900/60=15min -->
-<meta http-equiv="refresh" content="900">
-<link rel="icon" type="image/png" href="assets/img/icon.png" />
-<link rel="manifest" href="assets/manifest.json">
-<script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
-<script src="assets/js/scripts.js"></script>
+    <!-- x/60=t 900/60=15min -->
+    <meta http-equiv="refresh" content="900">
+    <link rel="icon" type="image/png" href="assets/img/icon.png"/>
+    <link rel="manifest" href="assets/manifest.json">
+    <script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
+    <script src="assets/js/scripts.js"></script>
 </head>
 
 Balance: <span id="bitcoin"><?= $balance->btc_balance ?> (<?= $balance->mxn_balance ?>)</span><br>
@@ -55,10 +74,15 @@ Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($l
 <br>
 
 Sell<br>
-<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br><span id='alertbits'>" . round($sellMxn,2) . "</span> (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
+<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br><span id='alertbits'>" . round($sellMxn, 2) . "</span> (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
 <br><br>
 Last: <span id="last"><?= $ticker->last ?> (<?= $ticker->last * $plusFee ?>) (<?= $ticker->last * $minusFee ?>)</span>
 <br><br>
+
+Orders<br>
+<div id="orders">
+    <?= $order ?>
+</div><br>
 
 Bitso<br>
 <table>
@@ -81,7 +105,15 @@ Bitso<br>
 Vwap: <span id="vwap"><?= $ticker->vwap ?></span><br>
 <hr>
 <br>
-
+<div id="trades">
+    <table>
+        <tbody>
+        <?= $htmlTrades ?>
+        </tbody>
+    </table>
+</div>
+<hr>
+<br>
 Localbitcoins<br>
 Bid: <span id="bidlocalbitcoin"><?= $localbid ?></span><br>
 Ask: <span id="localask"><?= $localask ?></span>

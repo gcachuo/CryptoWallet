@@ -3,7 +3,7 @@
  */
 
 $(function(){
-    if($("#alertbits").html()*1>10)
+    if($("#alertbits").html()*1>10 && $("#noalert").html()*1<10)
     alert($("#last").html());
 });
 
