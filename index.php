@@ -23,12 +23,14 @@ generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
 $trades = request("https://api.bitso.com/v2/user_transactions/", $keys);
 foreach ($trades as $trade) {
-    $date = date('d/m/Y h:m:i', $trade->datetime);
+    $date = date_create_from_format('Y-m-d H:i:s', $trade->datetime);
+    $date = $date->format('d/m/Y');
+    $roundmxn = round($trade->mxn, 2);
     $htmlTrades .= <<<HTML
 <tr>
 <td>$date</td>
 <td>$trade->btc</td>
-<td>{round($trade->mxn,2)}</td>
+<td>$roundmxn</td>
 <td>$trade->btc_mxn</td>
 </tr>
 HTML;
