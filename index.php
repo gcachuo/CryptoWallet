@@ -22,20 +22,28 @@ $balance = request("https://api.bitso.com/v2/balance/", $keys);
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
 $trades = request("https://api.bitso.com/v2/user_transactions/", $keys);
+$objectiveBitcoin = 0;
 foreach ($trades as $trade) {
+    $firstDate = date_create_from_format('Y-m-d', "2017-02-01");
     $date = date_create_from_format('Y-m-d H:i:s', $trade->datetime);
-    $date = $date->format('d/m/Y');
+
+    if ($date > $firstDate and abs($trade->mxn) < 50 and abs($trade->mxn) > 0) {
+        $objectiveBitcoin += $trade->btc * 0.99;
+    }
+
+    $printdate = $date->format('d/m/Y');
     $roundmxn = round($trade->mxn, 2);
     $htmlTrades .= <<<HTML
 <tr>
-<td>$date</td>
-<td>$trade->btc</td>
-<td>$roundmxn</td>
-<td>$trade->btc_mxn</td>
+    <td>$printdate</td>
+    <td>$trade->btc</td>
+    <td>$roundmxn</td>
+    <td>$trade->btc_mxn</td>
 </tr>
 HTML;
 
 }
+$objectiveBitcoin *= -1;
 
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
