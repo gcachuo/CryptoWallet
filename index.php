@@ -27,29 +27,38 @@ foreach ($trades as $trade) {
     $firstDate = date_create_from_format('Y-m-d', "2017-02-01");
     $date = date_create_from_format('Y-m-d H:i:s', $trade->datetime);
 
-    if ($date > $firstDate and abs($trade->mxn) < 50 and abs($trade->mxn) > 0) {
-        $objectiveBitcoin += $trade->btc * 0.99;
-    }
+    $btc_mxn = $trade->btc < 0 ? $trade->btc_mxn * 0.99 : $trade->btc_mxn * 1.01;
+    if ($btc_mxn == 0) continue;
+
+    if ($date > $firstDate and abs($trade->mxn) <= 1000) {
+        $objectiveBitcoin += $trade->btc;
+    } /*elseif ($trade->mxn < 0 and $trade->btc_mxn == 0)
+        $objectiveBitcoin += -($trade->mxn / 23487.5803);*/
 
     $printdate = $date->format('d/m/Y');
     $roundmxn = round($trade->mxn, 2);
+    $tradeBtc = number_format(round($trade->btc, 8), 8);
     $htmlTrades .= <<<HTML
 <tr>
     <td>$printdate</td>
-    <td>$trade->btc</td>
+    <td>$tradeBtc</td>
     <td>$roundmxn</td>
-    <td>$trade->btc_mxn</td>
+    <td>$btc_mxn</td>
 </tr>
 HTML;
-
 }
-$objectiveBitcoin *= -1;
+$objectiveBitcoin = abs($objectiveBitcoin);
+$objectiveBitcoin -= 0.01096820 /*0.01110164 /*0.01085961*/
+;
+$objectiveBitcoin = number_format(round($objectiveBitcoin * 1.01, 8), 8);
 
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
 $orders = request("https://api.bitso.com/v2/open_orders?book=btc_mxn", $keys);
 if ($orders[0]->type == "1") {
-    $order = $orders[0]->amount . " - <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> - " . $orders[0]->price;
+    $order = $orders[0]->amount * -1 . " <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> " . $orders[0]->price;
+} elseif ($orders[0]->type == "0") {
+    $order = $orders[0]->amount . " | -" . round($orders[0]->amount * $orders[0]->price, 2) . " | " . $orders[0]->price;
 }
 
 $plusFee = 1 + ($balance->fee / 100);
@@ -67,10 +76,16 @@ $sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);
     <meta http-equiv="refresh" content="900">
     <link rel="icon" type="image/png" href="assets/img/icon.png"/>
     <link rel="manifest" href="assets/manifest.json">
+    <title>Bitcoin Wallet</title>
     <script src="assets/plugins/jquery/jquery-3.1.1.min.js"></script>
     <script src="assets/js/scripts.js"></script>
 </head>
-
+<style>
+    table, th, td {
+        border: solid 1px black;
+        text-align: center;
+    }
+</style>
 Balance: <span id="bitcoin"><?= $balance->btc_balance ?> (<?= $balance->mxn_balance ?>)</span><br>
 Bitcoin: <span id="btc"><?= $btc ?></span><br>
 MXN: (<span id="mxn"><?= $mxn ?></span>)<br>
