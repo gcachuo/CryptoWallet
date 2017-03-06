@@ -69,10 +69,11 @@ if ($orders[0]->type == "1") {
 
 $plusFee = 1 + ($balance->fee / 100);
 $minusFee = 1 - ($balance->fee / 100);
+$plusWithdraw = 320;
 
 $mxn = round($balance->btc_balance * ($ticker->last * $plusFee), 2);
 $local = round(($balance->btc_balance * $localbid), 2);
-$btc = round(($balance->mxn_balance + 320) / ($ticker->last * $minusFee), 8);
+$btc = round(($balance->mxn_balance + $plusWithdraw) / ($ticker->last * $minusFee), 8);
 $sellBtc = number_format(round(($btc - $objectiveBitcoin), 8), 8);
 $sellMxn = $mxn - $objective;
 $sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);
@@ -98,7 +99,8 @@ MXN: (<span id="mxn"><?= $mxn ?></span>)<br>
 Localbitcoins: (<span id="localbitcoin"><?= $local ?></span>)<br>
 Objective: [<?= $objective ?>][<?= $objectiveBitcoin ?>]<br>
 Objective [Bid][Ask]: [<span id="objective"><?= round(($objective / $balance->btc_balance * $plusFee), 2) ?></span>]
-[<span id="objectiveBitcoin"><?= round(($balance->mxn_balance / $objectiveBitcoin * $plusFee), 2) ?></span>]<br>
+[<span id="objectiveBitcoin"><?= round((($balance->mxn_balance + $plusWithdraw) / ($objectiveBitcoin * $plusFee)), 2) ?></span>]
+<br>
 Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($local + $balance->mxn_balance) ?></span>
 
 <hr>
