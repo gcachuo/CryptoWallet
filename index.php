@@ -30,8 +30,14 @@ foreach ($trades as $trade) {
     $btc_mxn = $trade->btc < 0 ? $trade->btc_mxn * 0.99 : $trade->btc_mxn * 1.01;
     if ($btc_mxn == 0) continue;
 
-    if ($date > $firstDate and abs($trade->mxn) <= 1000) {
-        $objectiveBitcoin += $trade->btc;
+    if ($date > $firstDate and $trade->btc < 0) {
+        switch ($trade->id) {
+            case 300933:
+                continue;
+            default:
+                $objectiveBitcoin += $trade->btc;
+                break;
+        }
     } /*elseif ($trade->mxn < 0 and $trade->btc_mxn == 0)
         $objectiveBitcoin += -($trade->mxn / 23487.5803);*/
 
@@ -47,9 +53,9 @@ foreach ($trades as $trade) {
 </tr>
 HTML;
 }
-$objectiveBitcoin = abs($objectiveBitcoin);
-$objectiveBitcoin -= 0.01096820 /*0.01110164 /*0.01085961*/
-;
+$objectiveBitcoin = abs($objectiveBitcoin);/*
+$objectiveBitcoin -= 0.01096820 /*0.01110164 /*0.01085961
+;*/
 $objectiveBitcoin = number_format(round($objectiveBitcoin * 1.01, 8), 8);
 
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
@@ -66,7 +72,7 @@ $minusFee = 1 - ($balance->fee / 100);
 
 $mxn = round($balance->btc_balance * ($ticker->last * $plusFee), 2);
 $local = round(($balance->btc_balance * $localbid), 2);
-$btc = round($balance->mxn_balance / ($ticker->last * $minusFee), 8);
+$btc = round(($balance->mxn_balance + 320) / ($ticker->last * $minusFee), 8);
 $sellBtc = number_format(round(($btc - $objectiveBitcoin), 8), 8);
 $sellMxn = $mxn - $objective;
 $sellMxnFee = round(($sellBtc * ($ticker->last * $minusFee)), 2);

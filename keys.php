@@ -16,7 +16,7 @@ $objective = isset($_GET['o']) ? $_GET['o'] : 4150 /*4100 /*3950 /*3800 /*2700 /
 ;
 $objectiveBitcoin = isset($_GET['b']) ? $_GET['b'] : 0.01334352 /*0.0137819 /*0.01321236 /*0.01228607 /*0.01011314 /*0.00838254 /*0.01674457 /*0.01410063 /*0.01250791 /*0.01120565 /*0.00974639 /*0.00781269 /*0.00728521 /*0.00612658 /*0.00369227 /*0.10699031*/
 ;
-$objectiveBitcoin = $objectiveBitcoin * 1.01;
+$objectiveBitcoin = number_format(round($objectiveBitcoin * 1.01, 8), 8);
 
 // Create signature
 /*$message = $nonce . $HTTPMethod . $RequestPath . $JSONPayload;
