@@ -62,9 +62,11 @@ generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
 $orders = request("https://api.bitso.com/v2/open_orders?book=btc_mxn", $keys);
 if ($orders[0]->type == "1") {
-    $order = $orders[0]->amount * -1 . " <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> " . $orders[0]->price;
+    generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+    $order = $orders[0]->amount * -1 . " <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> " . $orders[0]->price . "<button onclick='cancel(\"{$orders[0]->id}\", \"$key\", \"$nonce\", \"$signature\")'>Cancel</button>";
 } elseif ($orders[0]->type == "0") {
-    $order = $orders[0]->amount . " | -" . round($orders[0]->amount * $orders[0]->price, 2) . " | " . $orders[0]->price;
+    generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+    $order = $orders[0]->amount . " | -" . round($orders[0]->amount * $orders[0]->price, 2) . " | " . $orders[0]->price . "<button onclick='cancel(\"{$orders[0]->id}\", \"$key\", \"$nonce\", \"$signature\")'>Cancel</button>";
 }
 
 $plusFee = 1 + ($balance->fee / 100);

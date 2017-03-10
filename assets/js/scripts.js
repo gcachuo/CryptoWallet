@@ -17,9 +17,22 @@ function buy(btc, price, key, nonce, signature) {
             price: price
         },
         function (result) {
-            console.log(result)
+            console.log(result);
+            location.reload();
         }, 'json'
     );
+}
+
+function cancel(id, key, nonce, signature) {
+    $.post("https://api.bitso.com/v2/cancel_order",
+        {
+            key: key,
+            nonce: nonce,
+            signature: signature,
+            id: id
+        }, function () {
+            location.reload();
+        });
 }
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
