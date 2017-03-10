@@ -56,7 +56,7 @@ HTML;
 $objectiveBitcoin = abs($objectiveBitcoin);/*
 $objectiveBitcoin -= 0.01096820 /*0.01110164 /*0.01085961
 ;*/
-$objectiveBitcoin = number_format(round($objectiveBitcoin * 1.01, 8), 8);
+$objectiveBitcoin = number_format(round($objectiveBitcoin * 1.02, 8), 8);
 
 generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
 $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
@@ -69,7 +69,7 @@ if ($orders[0]->type == "1") {
 
 $plusFee = 1 + ($balance->fee / 100);
 $minusFee = 1 - ($balance->fee / 100);
-$plusWithdraw = 320;
+$plusWithdraw = 0;
 
 $mxn = round($balance->btc_balance * ($ticker->last * $plusFee), 2);
 $local = round(($balance->btc_balance * $localbid), 2);
