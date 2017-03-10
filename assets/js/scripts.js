@@ -2,10 +2,25 @@
  * Created by Memo on 11/ene/2017.
  */
 
-$(function(){
-    if($("#alertbits").html()*1>10 && $("#noalert").html()*1<10)
-    alert($("#last").html());
+$(function () {
+    if ($("#alertbits").html() * 1 > 10 && $("#noalert").html() * 1 < 10)
+        alert($("#last").html());
 });
+
+function buy(btc, price, key, nonce, signature) {
+    $.post("https://api.bitso.com/v2/buy",
+        {
+            key: key,
+            nonce: nonce,
+            signature: signature,
+            amount: btc,
+            price: price
+        },
+        function (result) {
+            console.log(result)
+        }, 'json'
+    );
+}
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
     $.get("https://api.bitso.com/v2/ticker", function (ticker) {

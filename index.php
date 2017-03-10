@@ -99,7 +99,8 @@ MXN: (<span id="mxn"><?= $mxn ?></span>)<br>
 Localbitcoins: (<span id="localbitcoin"><?= $local ?></span>)<br>
 Objective: [<?= $objective ?>][<?= $objectiveBitcoin ?>]<br>
 Objective [Bid][Ask]: [<span id="objective"><?= round(($objective / $balance->btc_balance * $plusFee), 2) ?></span>]
-[<span id="objectiveBitcoin"><?= round((($balance->mxn_balance + $plusWithdraw) / ($objectiveBitcoin * $plusFee)), 2) ?></span>]
+[
+<span id="objectiveBitcoin"><?= round((($balance->mxn_balance + $plusWithdraw) / ($objectiveBitcoin * $plusFee)), 2) ?></span>]
 <br>
 Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($local + $balance->mxn_balance) ?></span>
 
@@ -107,9 +108,20 @@ Total: <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($l
 <br>
 
 Sell<br>
-<span id="sell"><?= $sellBtc . " (" . $sellMxnFee . " - " . ($ticker->last * $minusFee) . ")" . "<br><span id='alertbits'>" . round($sellMxn, 2) . "</span> (" . number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?></span>
+<span id="sell">
+    <?= $sellBtc . " (" . $sellMxnFee . " - " . round($ticker->last * $minusFee, 2) . ")" ?>
+    <?php generateSignature($key, $bitsoKey, $bitsoSecret, $nonce, $signature);
+    if ($sellMxnFee > 0):
+        ?>
+        <button onclick="buy(<?= $sellBtc ?>,<?= round($ticker->last * $minusFee, 2) ?>,'<?= $key ?>','<?= $nonce ?>','<?= $signature ?>')">Buy</button>
+    <?php endif; ?>
+    <br>
+    <span id='alertbits'><?= round($sellMxn, 2) ?></span>
+    (<?= number_format(round(($sellMxn / ($ticker->last * $plusFee)), 8), 8) . " - " . round($ticker->last * $plusFee, 2) . ")" ?>
+</span>
 <br><br>
-Last: <span id="last"><?= $ticker->last ?> (<?= $ticker->last * $plusFee ?>) (<?= $ticker->last * $minusFee ?>)</span>
+Last: <span id="last"><?= $ticker->last ?> (<?= round($ticker->last * $plusFee, 2) ?>) (<?= $ticker->last * $minusFee ?>
+    )</span>
 <br><br>
 
 Orders<br>
