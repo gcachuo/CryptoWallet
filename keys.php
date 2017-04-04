@@ -12,11 +12,11 @@ $JSONPayload = "";
 $key = "SUqaCnPIQu";
 $bitsoKey = "131376";
 $bitsoSecret = "48792544eec665a1f3f5cd84ec2c7fcb";
-$objective = isset($_GET['o']) ? $_GET['o'] : 5900 /*5150 /*4150 /*4100 /*3950 /*3800 /*2700 /*1650 /*2100*/
+$objective = isset($_GET['o']) ? $_GET['o'] : 6270 /*6070 /*5900 /*5150 /*4150 /*4100 /*3950 /*3800 /*2700 /*1650 /*2100*/
 ;
-$objectiveBitcoin = isset($_GET['b']) ? $_GET['b'] : 0.01334352 /*0.0137819 /*0.01321236 /*0.01228607 /*0.01011314 /*0.00838254 /*0.01674457 /*0.01410063 /*0.01250791 /*0.01120565 /*0.00974639 /*0.00781269 /*0.00728521 /*0.00612658 /*0.00369227 /*0.10699031*/
+$objectiveBitcoinFix = isset($_GET['b']) ? $_GET['b'] : 0.0307 /*0.01334352 /*0.0137819 /*0.01321236 /*0.01228607 /*0.01011314 /*0.00838254 /*0.01674457 /*0.01410063 /*0.01250791 /*0.01120565 /*0.00974639 /*0.00781269 /*0.00728521 /*0.00612658 /*0.00369227 /*0.10699031*/
 ;
-$objectiveBitcoin = number_format(round($objectiveBitcoin * 1.02, 8), 8);
+$objectiveBitcoinFix = number_format(round($objectiveBitcoinFix * 1.02, 8), 8);
 
 // Create signature
 /*$message = $nonce . $HTTPMethod . $RequestPath . $JSONPayload;
@@ -38,3 +38,25 @@ function getTrades($arrayTrades)
     $stringTrades = "";
     return $stringTrades;
 }
+?>
+<table>
+<thead>
+<tr>
+<th>Nombre</th>
+<th>Direccion</th>
+<th>QR</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Bitcoin</td>
+<td>3DPcat6LLv7E5JbNSzLWdYu2CZnrogXZWD</td>
+<td><img src="https://bitso.com/getqr/3DPcat6LLv7E5JbNSzLWdYu2CZnrogXZWD/0" alt="btc"></td>
+</tr>
+<tr>
+<td>Ethereum</td>
+<td>0x29899f97c80c9e48822e7107c3a7cbb95d259aa7</td>
+<td><img src="https://chart.googleapis.com/chart?chs=200x200&chld=M|1&cht=qr&chl=ethereum%3A0x29899f97c80c9e48822e7107c3a7cbb95d259aa7" alt="Eth"></td>
+</tr>
+</tbody>
+</table>
