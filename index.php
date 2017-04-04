@@ -164,3 +164,8 @@ Vwap: <span id="vwap"><?= $ticker->vwap ?></span><br>
 Localbitcoins<br>
 Bid: <span id="bidlocalbitcoin"><?= $localbid ?></span><br>
 Ask: <span id="localask"><?= $localask ?></span>
+<hr>
+<br>
+<?php
+include "address.php";
+?>
