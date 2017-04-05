@@ -7,34 +7,36 @@
  */
 ?>
 <div class="col-lg-4 col-xs-12">
-    <table class="table table-bordered">
-        <thead>
-        <tr>
-            <th>Type</th>
-            <th>Bitcoin</th>
-            <th>Peso</th>
-            <th>Price</th>
-            <th>Action</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <td>Buy</td>
-            <td><?= $controller->sellBtc ?></td>
-            <td><?= $controller->sellMxnFee ?></td>
-            <td><?= $controller->priceBtc ?></td>
-            <td>
-                <?= $controller->btnBuy ?>
-            </td>
-        </tr>
-        <tr>
-            <td>Sell</td>
-            <td><?= $controller->sellMxn ?></td>
-            <td><?= $controller->sellBtcFee ?></td>
-            <td><?= $controller->priceMxn ?></td>
-            <td>
-                <?= $controller->btnSell ?>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    <div class="table-responsive">
+        <table class="table table-bordered">
+            <thead>
+            <tr>
+                <th>Type</th>
+                <th>Bitcoin</th>
+                <th>Peso</th>
+                <th>Price</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Buy</td>
+                <td><?= $controller->sellBtc ?></td>
+                <td><?= $controller->sellMxnFee ?></td>
+                <td><?= $controller->priceBtc ?></td>
+                <td>
+                    <?= $controller->btnBuy ?>
+                </td>
+            </tr>
+            <tr>
+                <td>Sell</td>
+                <td><?= $controller->sellMxn ?></td>
+                <td><?= $controller->sellBtcFee ?></td>
+                <td><?= $controller->priceMxn ?></td>
+                <td>
+                    <?= $controller->btnSell ?>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>

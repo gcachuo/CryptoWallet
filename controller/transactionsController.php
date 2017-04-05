@@ -26,7 +26,7 @@ class transactionsController
             $firstDate = date_create_from_format('Y-m-d', "2017-02-01");
             $date = date_create_from_format('Y-m-d H:i:s', $trade->datetime);
 
-            $btc_mxn = $trade->btc < 0 ? $trade->btc_mxn * 0.99 : $trade->btc_mxn * 1.01;
+            $btc_mxn = round($trade->btc < 0 ? $trade->btc_mxn * 0.99 : $trade->btc_mxn * 1.01, 2);
             if ($btc_mxn == 0) continue;
 
             if ($date > $firstDate and $trade->btc < 0) {
