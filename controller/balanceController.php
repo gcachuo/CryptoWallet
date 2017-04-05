@@ -34,7 +34,7 @@ class balanceController extends tickerController
 
         $this->btc_mxn = round(($this->balance->mxn_balance + Config::$plusWithdraw) / ($this->ticker->btc_mxn->ask * Config::$minusFee), 8);
 
-        $this->btc_eth = ($this->balance->eth_balance * ($this->ticker->eth_mxn->ask * Config::$plusFee)) / ($this->ticker->btc_mxn->ask * Config::$plusFee);
+        $this->btc_eth = round($this->balance->eth_balance * ($this->ticker->eth_mxn->ask * Config::$plusFee) / ($this->ticker->btc_mxn->ask * Config::$plusFee),8);
 
         $this->mxn_btc = round($this->balance->btc_balance * ($this->ticker->btc_mxn->ask * Config::$plusFee), 2);
 
@@ -44,7 +44,7 @@ class balanceController extends tickerController
 
         $this->eth_btc = ($this->balance->btc_balance * ($this->ticker->btc_mxn->ask * Config::$plusFee)) / ($this->ticker->eth_mxn->ask * Config::$plusFee);
 
-        $this->objectiveBid = round((Config::$objective / $this->balance->btc_balance) * Config::$plusFee, 2);
+        $this->objectiveBid = round((Config::$objective / $this->balance->btc_balance) * Config::$minusFee, 2);
         $this->objectiveAsk = round((($this->balance->mxn_balance + Config::$plusWithdraw) / (Config::$objectiveBitcoinFix * Config::$plusFee)), 2);
 
         $this->totalBtc = round($this->mxn_btc + $this->balance->mxn_balance, 2);
