@@ -29,7 +29,7 @@ class operationsController extends balanceController
 HTML;
         }
         $this->sellMxn = $this->mxn_btc - Config::$objective;
-        $this->sellBtcFee = $this->sellMxn / ($this->ticker->btc_mxn->ask * Config::$plusFee);
+        $this->sellBtcFee = round($this->sellMxn / ($this->ticker->btc_mxn->ask * Config::$plusFee), 8);
         $this->priceMxn = $this->ticker->btc_mxn->ask * Config::$plusFee;
     }
 }
