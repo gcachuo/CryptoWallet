@@ -87,23 +87,47 @@
         </td>
     </tr>
     <tr>
-        <td>Localbitcoins</td>
-        <td>(<span id="localbitcoin"><?= $local ?></span>)</td>
+        <td>Objective</td>
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Pesos</th>
+                    <th>Bitcoin</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= Config::$objective ?></td>
+                    <td><?= Config::$objectiveBitcoinFix ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
     </tr>
     <tr>
         <td>Objective</td>
-        <td>[<?= $objective ?>][<?= $objectiveBitcoinFix ?>]</td>
-    </tr>
-    <tr>
-        <td>Objective [Bid][Ask]</td>
-        <td>[<span id="objective"><?= round(($objective / $balance->btc_balance * $plusFee), 2) ?></span>]
-            [<span id="objectiveBitcoin"><?= round((($balance->mxn_balance + $plusWithdraw) / ($objectiveBitcoinFix * $plusFee)), 2) ?></span>]
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Bid</th>
+                    <th>Ask</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= $controller->objectiveBid ?></td>
+                    <td><?= $controller->objectiveAsk ?></td>
+                </tr>
+                </tbody>
+            </table>
         </td>
     </tr>
     <tr>
         <td>Total</td>
         <td>
-            <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($local + $balance->mxn_balance) ?></span>
+            <span id="total"><?= $controller->total ?></span>
         </td>
     </tr>
     </tbody>

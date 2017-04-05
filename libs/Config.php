@@ -8,7 +8,10 @@
  */
 class Config
 {
-    static public $key = "SUqaCnPIQu",
+    static public
+        $objective,
+        $objectiveBitcoinFix,
+        $key = "SUqaCnPIQu",
         $plusFee,
         $minusFee,
         $plusWithdraw = 0;
