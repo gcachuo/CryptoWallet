@@ -1,0 +1,110 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 05/abr/2017
+ * Time: 12:43 PM
+ */
+?>
+<table>
+    <tbody>
+    <tr>
+        <td>Balance</td>
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Bitcoin</th>
+                    <th>Ethereum</th>
+                    <th>Pesos</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= $controller->balance->btc_balance ?>
+                    <td><?= $controller->balance->eth_balance ?>
+                    <td><?= $controller->balance->mxn_balance ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>Bitcoin</td>
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Ethereum</th>
+                    <th>Pesos</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= $controller->btc_mxn ?></td>
+                    <td><?= $controller->btc_eth ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>Pesos</td>
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Bitcoin</th>
+                    <th>Ethereum</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= $controller->mxn_btc ?></td>
+                    <td><?= $controller->mxn_eth ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>Ethereum</td>
+        <td>
+            <table>
+                <thead>
+                <tr>
+                    <th>Bitcoin</th>
+                    <th>Pesos</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td><?= $controller->eth_btc ?></td>
+                    <td><?= $controller->eth_mxn ?></td>
+                </tr>
+                </tbody>
+            </table>
+        </td>
+    </tr>
+    <tr>
+        <td>Localbitcoins</td>
+        <td>(<span id="localbitcoin"><?= $local ?></span>)</td>
+    </tr>
+    <tr>
+        <td>Objective</td>
+        <td>[<?= $objective ?>][<?= $objectiveBitcoinFix ?>]</td>
+    </tr>
+    <tr>
+        <td>Objective [Bid][Ask]</td>
+        <td>[<span id="objective"><?= round(($objective / $balance->btc_balance * $plusFee), 2) ?></span>]
+            [<span id="objectiveBitcoin"><?= round((($balance->mxn_balance + $plusWithdraw) / ($objectiveBitcoinFix * $plusFee)), 2) ?></span>]
+        </td>
+    </tr>
+    <tr>
+        <td>Total</td>
+        <td>
+            <span id="total"><?= round($mxn + $balance->mxn_balance, 2) . " | " . ($local + $balance->mxn_balance) ?></span>
+        </td>
+    </tr>
+    </tbody>
+</table>
