@@ -23,6 +23,20 @@
     <script src="assets/js/scripts.js"></script>
 </head>
 <body>
+<style>
+    .col-lg-4 {
+        overflow: auto;
+        height: 100vh;
+    }
+
+    @media (max-width: 767px) {
+        .col-xs-12 {
+            overflow-y: hidden;
+            overflow-x: auto;
+            height: 100%;
+        }
+    }
+</style>
 <?= $pagecontent ?>
 </body>
 </html>
