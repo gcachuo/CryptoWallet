@@ -45,6 +45,10 @@
                         <td><?= $controller->mxn_btc ?></td>
                         <td><?= $controller->mxn_eth ?></td>
                     </tr>
+                    <tr>
+                        <td><?= round($controller->ticker->btc_mxn->ask * Config::$plusFee, 2) ?></td>
+                        <td><?= round($controller->ticker->eth_mxn->ask * Config::$plusFee, 2) ?></td>
+                    </tr>
                     </tbody>
                 </table>
             </td>
