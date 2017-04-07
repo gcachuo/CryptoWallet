@@ -7,32 +7,39 @@ $(function () {
         alert($("#last").html());
 });
 
-function buy(btc, price, key, nonce, signature) {
-    $.post("https://api.bitso.com/v2/buy",
-        {
-            key: key,
-            nonce: nonce,
-            signature: signature,
-            amount: btc,
-            price: price
-        },
+function buy(btc, price) {
+    $.post("libs/ajax.php", {ajax: 'generateSignature'},
         function (result) {
-            console.log(result);
-            location.reload();
-        }, 'json'
-    );
+        console.log(result);
+            $.post("https://api.bitso.com/v2/buy",
+                {
+                    key: result.key,
+                    nonce: result.nonce,
+                    signature: result.signature,
+                    amount: btc,
+                    price: price
+                },
+                function (out) {
+                    console.log(out);
+                    location.reload(true);
+                }, 'json'
+            );
+        },'json');
 }
 
-function cancel(id, key, nonce, signature) {
-    $.post("https://api.bitso.com/v2/cancel_order",
-        {
-            key: key,
-            nonce: nonce,
-            signature: signature,
-            id: id
-        }, function () {
-            location.reload();
-        });
+function cancel(id) {
+    $.post("libs/ajax.php", {ajax: 'generateSignature'},
+        function (result) {
+            $.post("https://api.bitso.com/v2/cancel_order",
+                {
+                    key: result.key,
+                    nonce: result.nonce,
+                    signature: result.signature,
+                    id: id
+                }, function () {
+                    location.reload(true);
+                });
+        },'json');
 }
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {

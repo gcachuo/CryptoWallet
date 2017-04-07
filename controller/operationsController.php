@@ -21,11 +21,9 @@ class operationsController extends balanceController
 
         $this->priceBtc = round($this->ticker->btc_mxn->bid * Config::$minusFee, 2);
 
-        Config::generateSignature($nonce, $signature);
-        $key = Config::$key;
         if ($this->sellMxnFee > 0) {
             $this->btnBuy = <<<HTML
-<button class="btn btn-default" onclick="buy({$this->sellBtc},$this->priceBtc,'$key','$nonce','$signature')">Buy</button>
+<button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc)">Buy</button>
 HTML;
         }
         $this->sellMxn = $this->mxn_btc - Config::$objective;
