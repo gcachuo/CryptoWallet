@@ -18,7 +18,7 @@ class FrontController
             ->show('operations')
             ->show('orders')
             ->show('ticker')
-            ->show('transactions')
-            ->show('address');
+            ->show('address')
+            ->show('transactions');
     }
 }
