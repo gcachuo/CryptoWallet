@@ -26,7 +26,7 @@ class operationsController extends balanceController
 <button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc)">Buy</button>
 HTML;
         }
-        $this->sellMxn = $this->mxn_btc - Config::$objective;
+        $this->sellMxn = round($this->mxn_btc - Config::$objective, 2);
         $this->sellBtcFee = round($this->sellMxn / ($this->ticker->btc_mxn->ask * Config::$plusFee), 8);
         $this->priceMxn = $this->ticker->btc_mxn->ask * Config::$plusFee;
     }
