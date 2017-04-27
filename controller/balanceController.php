@@ -29,7 +29,7 @@ class balanceController extends tickerController
 
         $jsonObjective = json_decode(file_get_contents("config/objective.json"));
 
-        Config::$objective = round(isset($_GET['o']) ? $_GET['o'] : $jsonObjective->mxn*1.01, 2);
+        Config::$objective = round(isset($_GET['o']) ? $_GET['o'] : $jsonObjective->mxn * 1.02, 2);
         Config::$objectiveBitcoinFix = (isset($_GET['b']) ? $_GET['b'] : $jsonObjective->btc) * 1.02;
         Config::$plusFee = 1 + ($this->balance->fee / 100);
         Config::$minusFee = 1 - ($this->balance->fee / 100);
