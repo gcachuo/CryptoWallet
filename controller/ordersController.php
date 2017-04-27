@@ -23,9 +23,14 @@ class ordersController
 
         $orders = Config::request("https://api.bitso.com/v2/open_orders?book=btc_mxn", $keys);
         if ($orders[0]->type == "1") {
-            Config::generateSignature($nonce, $signature);
+            $orderMxn = round($orders[0]->amount * $orders[0]->price, 2);
+            $order = <<<HTML
+<td>-{$orders[0]->amount}</td>
+<td>$orderMxn</td>
+<td>{$orders[0]->price}</td>
+<td><button class="btn btn-default" onclick='cancel("{$orders[0]->id}")'>Cancel</button></td>
+HTML;
 
-            $order = $orders[0]->amount * -1 . " <span id='noalert'>" . round($orders[0]->amount * $orders[0]->price, 2) . "</span> " . $orders[0]->price . "<button onclick='cancel(\"{$orders[0]->id}\", \"$key\", \"$nonce\", \"$signature\")'>Cancel</button>";
         } elseif ($orders[0]->type == "0") {
             $orderMxn = -round($orders[0]->amount * $orders[0]->price, 2);
             $order = <<<HTML
