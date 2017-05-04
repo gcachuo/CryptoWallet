@@ -9,8 +9,9 @@
 class Config
 {
     static public
-        $objective,
+        $objective, $objectiveEth,
         $objectiveBitcoinFix,
+        $objectiveEthereumFix,
         $key = "SUqaCnPIQu",
         $plusFee,
         $minusFee,
@@ -38,7 +39,7 @@ class Config
 
     static function generateSignature(&$nonce, &$signature)
     {
-        $nonce = round(microtime(true) * 1000)*2;
+        $nonce = round(microtime(true) * 1000) * 2;
         $message = $nonce . Config::$bitsoKey . Config::$key;
         $signature = hash_hmac('sha256', $message, Config::$bitsoSecret);
     }
