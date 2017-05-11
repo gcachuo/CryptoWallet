@@ -25,7 +25,7 @@ class operationsController extends balanceController
 
         if ($this->sellMxnFee > 0) {
             $this->btnBuy = <<<HTML
-<button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc)">Buy</button>
+<button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc,'btc_mxn')">Buy</button>
 HTML;
         }
         $this->sellMxn = round($this->mxn_btc - Config::$objective, 2);
@@ -41,7 +41,7 @@ HTML;
 
         if ($this->sellEthMxnFee > 0) {
             $this->btnBuyEth = <<<HTML
-<button class="btn btn-default" onclick="buy($this->sellEth,$this->priceEth)">Buy</button>
+<button class="btn btn-default" onclick="buy($this->sellEth,$this->priceEth,'eth_mxn')">Buy</button>
 HTML;
         }
         $this->sellEthMxn = round($this->mxn_eth - Config::$objectiveEth, 2);

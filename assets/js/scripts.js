@@ -7,24 +7,25 @@ $(function () {
         alert($("#last").html());
 });
 
-function buy(btc, price) {
+function buy(btc, price, book) {
     $.post("libs/ajax.php", {ajax: 'generateSignature'},
         function (result) {
-        console.log(result);
+            console.log(result);
             $.post("https://api.bitso.com/v2/buy",
                 {
                     key: result.key,
                     nonce: result.nonce,
                     signature: result.signature,
                     amount: btc,
-                    price: price
+                    price: price,
+                    book: book
                 },
                 function (out) {
                     console.log(out);
                     location.reload(true);
                 }, 'json'
             );
-        },'json');
+        }, 'json');
 }
 
 function cancel(id) {
@@ -39,7 +40,7 @@ function cancel(id) {
                 }, function () {
                     location.reload(true);
                 });
-        },'json');
+        }, 'json');
 }
 
 function getData(key, nonce, signature, objective, objectiveBitcoin) {
