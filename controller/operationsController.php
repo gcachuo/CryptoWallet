@@ -39,7 +39,7 @@ HTML;
 
         $this->priceEth = round($this->ticker->eth_mxn->bid * Config::$minusFee, 2);
 
-        if ($this->sellEthMxnFee > 0) {
+        if ($this->sellEthMxnFee > 0 and $this->sellEth > 0.05) {
             $this->btnBuyEth = <<<HTML
 <button class="btn btn-default" onclick="buy($this->sellEth,$this->priceEth,'eth_mxn')">Buy</button>
 HTML;
