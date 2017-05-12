@@ -57,10 +57,12 @@ class balanceController extends tickerController
 
     function setBalance()
     {
+        $jsonWallet = json_decode(file_get_contents("config/wallet.json"));
         require_once "libs/Config.php";
         Config::generateSignature($nonce, $signature);
         $keys = array("key" => Config::$key, "nonce" => $nonce, "signature" => $signature);
         $balance = Config::request("https://api.bitso.com/v2/balance/", $keys);
+        $balance->btc_balance += $jsonWallet->bitcoin->bitpay;
         $this->balance = $balance;
     }
 }
