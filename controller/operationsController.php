@@ -23,7 +23,7 @@ class operationsController extends balanceController
 
         $this->priceBtc = round($this->ticker->btc_mxn->bid * Config::$minusFee, 2);
 
-        if ($this->sellMxnFee > 0) {
+        if ($this->sellMxnFee > 50) {
             $this->btnBuy = <<<HTML
 <button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc,'btc_mxn')">Buy</button>
 HTML;
