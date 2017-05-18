@@ -36,7 +36,7 @@ class View
     function __destruct()
     {
         $pagecontent = $this->pagecontent;
-        require "views/master.phtml";
+        include "views/master.phtml";
         unset($this->pagecontent);
     }
 }

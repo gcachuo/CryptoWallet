@@ -33,8 +33,13 @@ class Config
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         if ($result === FALSE) { /* Handle error */
-        }
-        return json_decode($result);
+            $data[error][message] = "Error al conectar";
+            $data = (object)$data;
+        } else
+            $data = json_decode($result);
+        if (isset($data->error))
+            exit($data->error->message);
+        return $data;
     }
 
     static function generateSignature(&$nonce, &$signature)
