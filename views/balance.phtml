@@ -13,22 +13,26 @@
         <tr>
             <td>Balance</td>
             <td>
-                <table class="table table-bordered">
-                    <thead>
-                    <tr>
-                        <th>Bitcoin</th>
-                        <th>Ethereum</th>
-                        <th>Pesos</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    <tr>
-                        <td><?= $controller->balance->btc_balance ?>
-                        <td><?= $controller->balance->eth_balance ?>
-                        <td><?= $controller->balance->mxn_balance ?></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <div class="table-responsive">
+                    <table class="table table-bordered">
+                        <thead>
+                        <tr>
+                            <th>Bitcoin</th>
+                            <th>Ethereum</th>
+                            <th>Ripple</th>
+                            <th>Pesos</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td><?= $controller->balance->btc_balance ?>
+                            <td><?= $controller->balance->eth_balance ?>
+                            <td><?= $controller->balance->xrp_balance ?>
+                            <td><?= $controller->balance->mxn_balance ?></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
             </td>
         </tr>
         <tr>

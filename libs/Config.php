@@ -22,6 +22,7 @@ class Config
 
     static function request($url, $data = array())
     {
+        $data = new stdClass();
 // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(
@@ -33,13 +34,13 @@ class Config
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         if ($result === FALSE) { /* Handle error */
-            $data[error][message] = "Error al conectar";
-            $data = (object)$data;
+            $result = new stdClass();
+            $result->error->message = "Error al conectar";
         } else
-            $data = json_decode($result);
-        if (isset($data->error))
-            exit($data->error->message);
-        return $data;
+            $result = json_decode($result);
+        if (isset($result->error))
+            exit($result->error->message);
+        return $result;
     }
 
     static function generateSignature(&$nonce, &$signature)
