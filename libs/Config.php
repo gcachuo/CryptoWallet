@@ -22,7 +22,6 @@ class Config
 
     static function request($url, $data = array())
     {
-        $data = new stdClass();
 // use key 'http' even if you send the request to https://...
         $options = array(
             'http' => array(
@@ -31,6 +30,7 @@ class Config
                 'content' => http_build_query($data)
             )
         );
+        $data = new stdClass();
         $context = stream_context_create($options);
         $result = file_get_contents($url, false, $context);
         if ($result === FALSE) { /* Handle error */

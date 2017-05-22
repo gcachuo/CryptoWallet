@@ -17,20 +17,7 @@ class operationsController extends balanceController
     function __construct()
     {
         parent::__construct();
-        $this->sellBtc = number_format(round(($this->btc_mxn - Config::$objectiveBitcoinFix), 8), 8);
-
-        $this->sellMxnFee = round(($this->sellBtc * ($this->ticker->btc_mxn->bid * Config::$minusFee)), 2);
-
-        $this->priceBtc = round($this->ticker->btc_mxn->bid * Config::$minusFee, 2);
-
-        if ($this->sellMxnFee > 50) {
-            $this->btnBuy = <<<HTML
-<button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc,'btc_mxn')">Buy</button>
-HTML;
-        }
-        $this->sellMxn = round($this->mxn_btc - Config::$objective, 2);
-        $this->sellBtcFee = round($this->sellMxn / ($this->ticker->btc_mxn->ask * Config::$plusFee), 8);
-        $this->priceMxn = $this->ticker->btc_mxn->ask * Config::$plusFee;
+        $this->setTableBtc();
 
 
         $this->sellEth = number_format(round(($this->eth_mxn - Config::$objectiveEthereumFix), 8), 8);
@@ -47,5 +34,22 @@ HTML;
         $this->sellEthMxn = round($this->mxn_eth - Config::$objectiveEth, 2);
         $this->sellEthFee = round($this->sellEthMxn / ($this->ticker->eth_mxn->ask * Config::$plusFee), 8);
         $this->priceEthMxn = $this->ticker->eth_mxn->ask * Config::$plusFee;
+    }
+
+    function setTableBtc(){
+        $this->sellBtc = number_format(round(($this->btc_mxn - Config::$objectiveBitcoinFix), 8), 8);
+
+        $this->sellMxnFee = round(($this->sellBtc * ($this->ticker->btc_mxn->bid * Config::$minusFee)), 2);
+
+        $this->priceBtc = round($this->ticker->btc_mxn->bid * Config::$minusFee, 2);
+
+        if ($this->sellMxnFee > 50) {
+            $this->btnBuy = <<<HTML
+<button class="btn btn-default" onclick="buy($this->sellBtc,$this->priceBtc,'btc_mxn')">Buy</button>
+HTML;
+        }
+        $this->sellMxn = round($this->mxn_btc - Config::$objective, 2);
+        $this->sellBtcFee = round($this->sellMxn / ($this->ticker->btc_mxn->ask * Config::$plusFee), 8);
+        $this->priceMxn = $this->ticker->btc_mxn->ask * Config::$plusFee;
     }
 }

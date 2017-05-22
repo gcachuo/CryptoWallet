@@ -56,7 +56,7 @@ class balanceController extends tickerController
         $jsonObjective = json_decode(file_get_contents("config/objective.json"));
 
         Config::$objective = round(isset($_GET['o']) ? $_GET['o'] : $jsonObjective->mxn * 1.02, 2);
-        Config::$objectiveEth = round(isset($_GET['o']) ? $_GET['o'] : $jsonObjective->ethmxn * 1.02, 2);
+        Config::$objectiveEth = round(isset($_GET['oe']) ? $_GET['oe'] : $jsonObjective->ethmxn * 1.02, 2);
         Config::$objectiveBitcoinFix = (isset($_GET['b']) ? $_GET['b'] : $jsonObjective->btc) * 1.02;
         Config::$objectiveEthereumFix = (isset($_GET['e']) ? $_GET['e'] : $jsonObjective->eth) * 1.02;
         Config::$plusFee = 1 + ($this->balance->fee / 100);
@@ -79,11 +79,11 @@ class balanceController extends tickerController
 
     function setEth()
     {
-        $this->mxn_eth = round($this->balance->eth_balance * ($this->ticker->eth_mxn->ask * Config::$plusFee), 2);
-
         $this->eth_mxn = round(($this->balance->mxn_balance + Config::$plusWithdraw) / ($this->ticker->eth_mxn->ask * Config::$minusFee), 8);
 
         $this->eth_btc = ($this->balance->btc_balance * ($this->ticker->btc_mxn->ask * Config::$plusFee)) / ($this->ticker->eth_mxn->ask * Config::$plusFee);
+
+        $this->mxn_eth = round($this->balance->eth_balance * ($this->ticker->eth_mxn->ask * Config::$plusFee), 2);
 
         $this->totalEth = round($this->mxn_eth + $this->balance->mxn_balance, 2);
     }

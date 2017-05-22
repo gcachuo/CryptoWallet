@@ -21,5 +21,7 @@ class tickerController
         $this->ticker->btc_mxn = Config::request("https://api.bitso.com/v2/ticker/?book=btc_mxn");
 
         $this->ticker->eth_mxn = Config::request("https://api.bitso.com/v2/ticker/?book=eth_mxn");
+
+        $this->ticker->xrp_mxn = Config::request("https://api.bitso.com/v2/ticker/?book=xrp_mxn");
     }
 }
