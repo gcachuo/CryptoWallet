@@ -1,5 +1,8 @@
 {
   "bitcoin": {
     "bitpay": "0.3"
+  },
+  "ethereum": {
+    "jaxx": "1.71910861"
   }
 }
