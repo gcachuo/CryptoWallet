@@ -48,7 +48,8 @@ class balanceController extends tickerController
         $keys = array("key" => Config::$key, "nonce" => $nonce, "signature" => $signature);
         $balance = Config::request("https://api.bitso.com/v2/balance/", $keys);
         $balance->btc_balance += $jsonWallet->bitcoin->bitpay;
-        $balance->eth_balance += $jsonWallet->ethereum->jaxx;
+        if ($_GET[jaxx] == "true")
+            $balance->eth_balance += $jsonWallet->ethereum->jaxx;
         $this->balance = $balance;
     }
 
@@ -89,7 +90,8 @@ class balanceController extends tickerController
         $this->totalEth = round($this->mxn_eth + $this->balance->mxn_balance, 2);
     }
 
-    function setXrp(){
+    function setXrp()
+    {
 
         $this->xrp_mxn = round(($this->balance->mxn_balance + Config::$plusWithdraw) / ($this->ticker->xrp_mxn->ask * Config::$minusFee), 8);
 
