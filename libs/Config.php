@@ -22,25 +22,29 @@ class Config
 
     static function request($url, $data = array())
     {
+        try {
+            ini_set('max_execution_time',60);
 // use key 'http' even if you send the request to https://...
-        $options = array(
-            'http' => array(
-                'header' => "Content-type: application/x-www-form-urlencoded\r\n",
-                'method' => 'POST',
-                'content' => http_build_query($data)
-            )
-        );
-        $data = new stdClass();
-        $context = stream_context_create($options);
-        $result = file_get_contents($url, false, $context);
-        if ($result === FALSE) { /* Handle error */
-            $result = new stdClass();
-            $result->error->message = "Error al conectar";
-        } else
-            $result = json_decode($result);
-        if (isset($result->error))
-            exit($result->error->message);
-        return $result;
+            $options = array(
+                'http' => array(
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method' => 'POST',
+                    'content' => http_build_query($data)
+                )
+            );
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            if ($result === FALSE) { /* Handle error */
+                $result = new stdClass();
+                $result->error->message = "Error al conectar";
+            } else
+                $result = json_decode($result);
+            if (isset($result->error))
+                exit($result->error->message);
+            return $result;
+        } catch (Exception $ex) {
+            exit($ex->getMessage());
+        }
     }
 
     static function generateSignature(&$nonce, &$signature)
