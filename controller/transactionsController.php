@@ -19,7 +19,7 @@ class transactionsController
     {
         $key = Config::$key;
         Config::generateSignature($nonce, $signature);
-        $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature);
+        $keys = array("key" => $key, "nonce" => $nonce, "signature" => $signature, "offset" => 100);
         $trades = Config::request("https://api.bitso.com/v2/user_transactions/", $keys);
         $objectiveBitcoin = 0;
         foreach ($trades as $trade) {

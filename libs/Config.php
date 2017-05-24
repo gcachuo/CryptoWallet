@@ -23,7 +23,7 @@ class Config
     static function request($url, $data = array())
     {
         try {
-            ini_set('max_execution_time',60);
+            set_time_limit(60);
 // use key 'http' even if you send the request to https://...
             $options = array(
                 'http' => array(
@@ -41,10 +41,10 @@ class Config
                 $result = json_decode($result);
             if (isset($result->error))
                 exit($result->error->message);
-            return $result;
         } catch (Exception $ex) {
             exit($ex->getMessage());
         }
+        return $result;
     }
 
     static function generateSignature(&$nonce, &$signature)
