@@ -48,8 +48,10 @@ class balanceController extends tickerController
         $keys = array("key" => Config::$key, "nonce" => $nonce, "signature" => $signature);
         $balance = Config::request("https://api.bitso.com/v2/balance/", $keys);
         $balance->btc_balance += $jsonWallet->bitcoin->bitpay;
-        if ($_GET[jaxx] == "true")
+        if ($_GET[jaxx] == "true") {
             $balance->eth_balance += $jsonWallet->ethereum->jaxx;
+            $balance->btc_balance += $jsonWallet->bitcoin->jaxx;
+        }
         $this->balance = $balance;
     }
 
