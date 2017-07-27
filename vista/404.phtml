@@ -1,0 +1,22 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 01/mar/2017
+ * Time: 10:36 AM
+ */
+$idioma = (object)$this->obtenerIdioma();
+$idioma = $idioma->notfound;
+if (strpos($_SESSION["modulo"], '/') !== false)
+    $modulo = explode("/", $_SESSION["modulo"])[0];
+else $modulo = "inicio";
+?>
+<div class="padding">
+    <div class="row">
+        <h3>Error 404: <?= $idioma->error ?></h3><br>
+        <a onclick="navegar('<?= $modulo ?>');"
+           class="btn btn-primary" data-toggle="dropdown">
+            <span><?= $idioma->regresar ?></span>
+        </a>
+    </div>
+</div>

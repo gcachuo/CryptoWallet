@@ -1,0 +1,16 @@
+.form-group {
+    /*margin-bottom:4vh;*/
+}
+
+.rightBarContent {
+    /*padding-top:8vh;*/
+}
+
+nav .navbar > a.btn {
+    width: 100%;
+}
+
+.select2-selection.select2-selection--single:focus,
+.c-select:focus {
+    background-color: aliceblue;
+}

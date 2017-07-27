@@ -1,0 +1,48 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 23/feb/2017
+ * Time: 02:18 PM
+ */
+/**
+ * @var Usuarios $this
+ */
+?>
+<div class="content-header">
+    <!-- link and dropdown -->
+    <ul class="nav navbar-nav">
+        <li class="nav-item acciones">
+            <?php if ($this->permisos->nuevo): ?>
+                <a onclick="navegar('usuarios','nuevo');"
+                   class="btn btn-primary" data-toggle="dropdown">
+                    <i class="fa fa-fw fa-plus text-muted"></i>
+                    <span><?= $this->idioma->btnNuevo ?></span>
+                </a>
+            <?php endif; ?>
+        </li>
+    </ul>
+</div>
+<div class="padding">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="table-responsive">
+                    <table class="table table-striped b-t b-b">
+                        <thead>
+                        <tr>
+                            <th><?= $idioma->lblNombre ?></th>
+                            <th><?= $idioma->lblUsuario ?></th>
+                            <th><?= $idioma->lblPerfil ?></th>
+                            <th style="width: 1px"><?= $idioma->lblAcciones ?></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <?= $this->tablaUsuarios ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

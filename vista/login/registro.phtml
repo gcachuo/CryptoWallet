@@ -1,0 +1,71 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 07/abr/2017
+ * Time: 05:19 PM
+ */
+/** @var Login $this */
+?>
+<div class="center-block w-xxl w-auto-xs">
+    <div class="p-a-md box-color r text-color m-a">
+        <div class="navbar">
+            <div class="pull-center">
+                <!-- brand -->
+                <div class="navbar-brand">
+                    <span class="hidden-folded inline"><?= $this->idioma->lblTitulo ?></span>
+                </div>
+                <!-- / brand -->
+            </div>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="usuario" type="email" class="md-input" required>
+            <label><?= $this->idioma->lblEmail ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="nombre" type="text" class="md-input" required>
+            <label><?= $this->idioma->lblNombre ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="apellidoP" type="text" class="md-input" required>
+            <label><?= $this->idioma->lblApellidoP ?></label>
+        </div>
+        <!--<div class="md-form-group float-label">
+            <input name="apellidoM" type="text" class="md-input" required>
+            <label><?= $this->idioma->lblApellidoM ?></label>
+        </div>-->
+        <div class="md-form-group float-label">
+            <input id="txtTelefono" name="telefono" type="tel" class="md-input" required
+                   maxlength="10"
+                   pattern="[0-9]{10}"
+                   oninvalid="setCustomValidity('El telefono debe llevar 10 digitos numéricos')"
+                   onkeyup="try{setCustomValidity('')}catch(e){}">
+            <label><?= $this->idioma->lblTelefono ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="password" type="password" class="md-input" required>
+            <label><?= $this->idioma->lblPassword ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="repassword" type="password" class="md-input" required>
+            <label><?= $this->idioma->lblRePassword ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="reseller" type="text" class="md-input">
+            <label><?= $this->idioma->lblReseller ?></label>
+        </div>
+        <div>
+            <a onclick="btnRegistrar()" class="btn lime-600 btn-block p-x-md"><?= $this->idioma->btnRegistrar ?></a>
+        </div>
+
+        <div class="md-form-group float-label">
+            <div class="checkbox">
+                <label class="ui-check">
+                    <input type="checkbox" value="" onclick="changeDist()">
+                    <i class="dark-white"></i>
+                    <?= $this->idioma->lblDistribuidor ?>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+.nombreUser {
+    font-size: 13px;
+    position: relative;
+    top: -15px;
+    float: left;
+    left: 40px;
+}
+
+.pagar {
+    text-align: center;
+    background-color: #727c86;
+}
+
+.version {
+    opacity: 0.3;
+    font-size: 0.6rem;
+    float: right;
+}

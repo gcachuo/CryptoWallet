@@ -1,0 +1,276 @@
+{
+  "login": {
+    "lblUsuario": "Email",
+    "lblPassword": "Contraseña",
+    "lblOr": "O",
+    "btnIniciarSesion": "Iniciar Sesión",
+    "btnPassword": "Olvidé mi contraseña",
+    "btnRegistrar": "Crear una cuenta",
+    "drpIdioma": {
+      "icono": "es_mx",
+      "lblIdioma": "Idioma",
+      "es_mx": "Español",
+      "en_us": "Inglés"
+    }
+  },
+  "login/password": {
+    "lblEmail": "Email",
+    "btnEnviar": "Reestablecer Contraseña"
+  },
+  "login/registro": {
+    "lblTitulo": "Crear Nueva Cuenta",
+    "lblDistribuidor": "Soy Partner",
+    "lblNombre": "Nombre",
+    "lblApellidoP": "Apellidos",
+    "lblApellidoM": "Apellido Materno",
+    "lblTelefono": "Telefono",
+    "lblEmail": "Email",
+    "lblPassword": "Contraseña",
+    "lblRePassword": "Repita la Contraseña",
+    "lblReseller": "Código de Agente de TAX",
+    "btnRegistrar": "Crear Cuenta"
+  },
+  "usuarios": {
+    "btnNuevo": "Nuevo",
+    "btnEditar": "Editar",
+    "btnEliminar": "Eliminar",
+    "lblNombre": "Nombre",
+    "lblUsuario": "Usuario",
+    "lblPerfil": "Perfil",
+    "lblAcciones": "Acciones",
+    "alertEliminar": "¿Esta seguro de eliminar este usuario?"
+  },
+  "usuarios/nuevo": {
+    "lblNombre": "Nombre",
+    "lblUsuario": "Usuario",
+    "lblCorreo": "Correo",
+    "lblPassword": "Contraseña",
+    "lblRePassword": "Repita la contraseña",
+    "lblPerfil": "Perfil",
+    "btnRegistrar": "Guardar",
+    "btnCancelar": "Cancelar"
+  },
+  "perfiles": {
+    "btnNuevo": "Nuevo",
+    "btnEditar": "Editar",
+    "btnEliminar": "Eliminar",
+    "lblNombre": "Nombre",
+    "lblAcciones": "Acciones"
+  },
+  "transacciones": {
+    "lblTitulo": "Transacciones",
+    "btnNuevo": "Nueva",
+    "btnEditar": "Editar",
+    "btnEliminar": "Eliminar",
+    "lblFecha": "Fecha",
+    "formatoFecha": "d/m/Y",
+    "lblPeriodo": "Total",
+    "lblIngresos": "Ingresos",
+    "lblEgresos": "Gastos",
+    "lblTraspasos": "Traspasos",
+    "lblConcepto": "Concepto",
+    "lblBeneficiario": "Acreedor",
+    "lblCategoria": "Categoria",
+    "lblAcredores": "Acredores",
+    "lblTipo": "Tipo",
+    "lblMostrarTraspasos": "Mostrar Traspasos",
+    "lblMonto": "Monto",
+    "lblCuenta": "Cuenta",
+    "lblCuentas": "Cuentas",
+    "lblAcciones": "Acciones",
+    "alertEliminar": "¿Esta seguro de eliminar esta transaccion?",
+    "lblSinCategoria": "Uncategorized"
+  },
+  "transacciones/nuevo": {
+    "lblCerrar": "Cerrar",
+    "lblTitulo": "Nueva Transaccion",
+    "lblFecha": "Fecha",
+    "formatoFecha": "d/m/Y",
+    "lblConcepto": "Concepto",
+    "lblBeneficiario": "Acreedor",
+    "lblCategoria": "Categoria",
+    "lblTipo": "Tipo",
+    "selectTipo": {
+      "ingreso": "Ingreso",
+      "egreso": "Gasto",
+      "traspaso": "Traspaso"
+    },
+    "lblMonto": "$0.00",
+    "lblFoto": "Foto",
+    "lblCuenta": "Cuenta",
+    "lblCuentaOrigen": "Cuenta Origen",
+    "lblCuentaDestino": "Cuenta Destino",
+    "btnGuardar": "Pagar",
+    "btnEditar": "Guardar Cambios",
+    "btnProyectar": "Proyectar",
+    "lblSinCategoria": "Uncategorized"
+  },
+  "clientes": {
+    "lblTitulo": "Clientes",
+    "btnNuevo": "Nuevo",
+    "btnEditar": "Editar",
+    "btnEliminar": "Eliminar",
+    "lblNombre": "Nombre",
+    "lblCiudad": "Ciudad",
+    "lblEstado": "Estado",
+    "lblCorreo": "Correo",
+    "lblAcciones": "Acciones"
+  },
+  "clientes/nuevo": {
+    "lblNombre": "Nombre Comercial",
+    "lblRazon": "Razón Social",
+    "lblRfc": "RFC",
+    "lblCalle": "Calle",
+    "lblNumExt": "Num. Ext.",
+    "lblNumInt": "Num. Int.",
+    "lblColonia": "Colonia",
+    "lblCP": "CP",
+    "lblEstado": "Estado",
+    "lblCiudad": "Ciudad",
+    "lblLocalidad": "Localidad",
+    "lblContacto": "Nombre de Contacto",
+    "lblCorreo": "Correo",
+    "lblTelefono": "Teléfono",
+    "lblSaldo": "Saldo Inicial",
+    "btnGuardar": "Guardar",
+    "btnCancelar": "Cancelar"
+  },
+  "categorias":{
+    "lblTitulo": "Categorias"
+  },
+  "cuentas": {
+    "lblTitulo": "Cuentas",
+    "btnNuevo": "Nueva",
+    "lblNombre": "Nombre",
+    "lblSaldo": "Saldo",
+    "lblAcciones": "Acciones"
+  },
+  "cuentas/nuevo": {
+    "lblTitulo": "Nueva Cuenta",
+    "lblNombre": "Nombre",
+    "lblSaldo": "Saldo Inicial",
+    "btnGuardar": "Guardar",
+    "btnEditar": "Guardar cambios"
+  },
+  "categorias/nuevo": {
+    "lblTitulo": "Categoria",
+    "lblNombre": "Nombre",
+    "btnGuardar": "Guardar"
+  },
+  "reportes": {
+    "lblTitulo": "Reportes",
+    "lblTransacciones": "Transacciones",
+    "lblCuentas": "Cuentas",
+    "lblCategorias": "Categorias"
+  },
+  "reportes/transacciones": {
+    "lblSubtitulo": "Balance",
+    "formatoFecha": "m d, Y",
+    "lblIngresos": "Ingresos",
+    "lblIngresosTotales": "Ingresos Totales",
+    "lblEgresos": "Gastos",
+    "lblEgresosTotales": "Gastos Totales",
+    "lblTotal": "Total"
+  },
+  "reportes/cuentas": {
+    "lblSubtitulo": "Balance",
+    "formatoFecha": "m d, Y",
+    "lblIngresos": "Saldo ",
+    "lblIngresosTotales": "Saldo Total",
+    "lblEgresos": "Gastos",
+    "lblEgresosTotales": "Gastos Totales",
+    "lblTotal": "Total"
+  },
+  "miperfil": {
+    "lblTitulo": "Mi Perfil",
+    "lblEmail": "Email",
+    "lblReestablecer": "Cambiar contraseña",
+    "lblPassword": "Nueva Contraseña",
+    "lblRePassword": "Repita la Contraseña",
+    "btnGuardar": "Guardar"
+  },
+  "pago": {
+    "btnNuevo": "Agregar Nueva Tarjeta",
+    "btnSuscripcion": "Suscribirse"
+  },
+  "proyecciones": {
+    "lblTitulo": "Proyecciones",
+    "lblEgresos": "Egresos",
+    "lblPeriodo": "Total",
+    "lblIngresos": "Ingresos",
+    "lblMonto": "Monto",
+    "lblCategoria": "Categoria",
+    "lblDescripcion":"Descripción",
+    "lblConcepto": "Acredor",
+    "lblCuenta": "Cuenta",
+    "lblFecha": "Fecha",
+    "lblAcciones": "Acciones",
+    "lblTipo": "Tipo",
+    "lblCuentas": "Cuentas",
+    "lblAcredores": "Acredores",
+    "selectTipo": {
+      "ingreso": "Ingreso",
+      "egreso": "Gasto",
+      "traspaso": "Traspaso"
+    },
+    "lblMostrarTraspasos": "Mostrar Traspasos"
+  },
+  "notfound": {
+    "error": "No se encuentra la pagina solicitada",
+    "regresar": "Regresar"
+  },
+  "datatable": {
+    "sSearchPlaceholder": "Búsqueda Rápida",
+    "sLengthMenu": "_MENU_ registros",
+    "sInfoEmpty": "Mostrando 0 a 0 de 0 registros",
+    "sInfo": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+    "sEmptyTable": "No hay registros en la tabla",
+    "next": "Siguiente",
+    "previous": "Anterior"
+  },
+  "datepicker": {
+    "customRangeLabel": "Personalizado",
+    "format": "DD/MM/YYYY",
+    "daysOfWeek": [
+      "Do",
+      "Lu",
+      "Ma",
+      "Mi",
+      "Ju",
+      "Vi",
+      "Sa"
+    ],
+    "monthNames": [
+      "Ene",
+      "Feb",
+      "Mar",
+      "Abr",
+      "May",
+      "Jun",
+      "Jul",
+      "Ago",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dic"
+    ]
+  },
+  "dropzone": {
+    "dictDefaultMessage": "<i class=\"material-icons\">camera_alt</i>",
+    "dictRemoveFile": "Eliminar Archivo"
+  },
+  "modulos": {
+    "1000": "Sistema",
+    "1001": "Usuarios",
+    "1002": "Perfiles",
+    "2000": "Administrativo",
+    "2001": "Transacciones",
+    "2002": "Clientes",
+    "2003": "Cuentas",
+    "2004": "Categorías",
+    "2005": "Proyecciones",
+    "3001": "Reportes",
+    "4001": "Productos",
+    "5001": "Ordenes de Servicio"
+  }
+}

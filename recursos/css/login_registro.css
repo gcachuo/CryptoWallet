@@ -1,0 +1,8 @@
+input[name=nombre],
+input[name=apellidoP] {
+    text-transform: capitalize;
+}
+
+input[name=reseller] {
+    text-transform: uppercase;
+}

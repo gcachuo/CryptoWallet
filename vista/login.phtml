@@ -1,0 +1,68 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 21/feb/2017
+ * Time: 04:28 PM
+ */
+?>
+<!-- ############ LAYOUT START-->
+<div class="center-block w-xxl w-auto-xs p-y-md">
+    <div class="navbar logo">
+        <div class="pull-center">
+            <!-- brand -->
+            <div class="navbar-brand">
+                <img src="recursos/img/logo.png" alt=".">
+            </div>
+            <!-- / brand -->
+        </div>
+    </div>
+    <div class="navbar">
+        <div class="pull-center">
+            <!-- brand -->
+            <div class="navbar-brand">
+                <span class="hidden-folded inline">Cbiz Gastos</span>
+            </div>
+            <!-- / brand -->
+        </div>
+    </div>
+    <div class="box-color r text-color container">
+        <div class="md-form-group float-label">
+            <input name="usuario" type="text" class="md-input" required>
+            <label><?= $this->idioma->lblUsuario ?></label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="password" type="password" class="md-input" required>
+            <label><?= $this->idioma->lblPassword ?></label>
+        </div>
+        <div>
+            <a onclick="btnIniciarSesion()"
+               class="btn lime-600 btn-block p-x-md"><?= $this->idioma->btnIniciarSesion ?></a>
+        </div>
+        <br>
+        <div style="text-align: center;font-size: 85%">
+            <a onclick="aside('login','password')"
+               class="p-x-md"><?= $this->idioma->btnPassword ?></a>
+        </div>
+        <br>
+        <div style="text-align: center;font-size: 85%">
+            <a onclick="aside('login','registro')"
+               class="p-x-md"><?= $this->idioma->btnRegistrar ?></a>
+        </div>
+    </div>
+    <div class="navbar">
+        <div class="btn-group dropdown pull-right">
+            <a class="btn white btn-sm dropdown-toggle" data-toggle="dropdown">
+                <div class="icono-idioma" role="img"
+                     style="background: url('recursos/lang/iconos/<?= $this->idioma->drpIdioma->icono ?>.ico') no-repeat center;"></div>
+            </a>
+            <div class="dropdown-menu dropdown-menu-scale pull-right">
+                <a class="dropdown-item" href="?lang=es_mx"><?= $this->idioma->drpIdioma->es_mx ?></a>
+                <a class="dropdown-item" href="?lang=en_us"><?= $this->idioma->drpIdioma->en_us ?></a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ############ LAYOUT END-->
+

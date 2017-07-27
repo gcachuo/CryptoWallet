@@ -2,20 +2,28 @@
 /**
  * Created by PhpStorm.
  * User: Cachu
- * Date: 05/abr/2017
- * Time: 12:12 PM
+ * Date: 20/feb/2017
+ * Time: 11:21 AM
  */
-register_shutdown_function('shutdown');
-error_reporting(E_ALL ^ (E_WARNING | E_NOTICE));
-require 'libs/FrontController.php';
-FrontController::main();
+try {
+    ini_set("display_errors", 1);
+    ini_set('log_errors', 1);
+    error_reporting(E_ALL ^ (E_NOTICE | E_WARNING));
+    mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+    session_start();
+    define(HTTP_PATH_ROOT, "");
+    date_default_timezone_set('America/Mexico_City');
 
-function shutdown()
-{
-    $a = error_get_last();
-    if ($a == null)
-        echo "No errors";
-    else
-        print_r($a);
+    if ($_GET["s"] == "1") session_unset();
 
+    require "globales.php";
+    require "control.php";
+    require "conexion.php";
+
+    Globales::$modulo = $_POST["modulo"] ?: $_SESSION["modulo"];
+    Globales::$namespace = __NAMESPACE__ . "\\";
+    Globales::setVista();
+    Globales::setControl(Globales::$modulo);
+} catch (Exception $ex) {
+    Globales::mostrar_exception($ex);
 }
