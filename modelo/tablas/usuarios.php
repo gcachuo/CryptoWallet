@@ -112,12 +112,12 @@ MySQL;
 
     function insertUsuario($nombre, $login, $password, $correo, $perfil, $usuario = null)
     {
-        if (is_null($usuario)) $usuario = $_SESSION["usuario"];
+        if (is_null($usuario)) $usuario = $_SESSION["usuario"] ?: 0;
         $sql = /** @lang MySQL */
             <<<MySQL
 REPLACE INTO
   _usuarios (nombre_usuario, login_usuario, password_usuario, correo_usuario, perfil_usuario,id_usuario_create)
-VALUES ('$nombre', '$login', '$password', '$correo', $perfil,$usuario)
+VALUES ('$nombre', '$login', '$password', '$correo', '$perfil','$usuario')
 MySQL;
         return $this->consulta($sql);
     }
@@ -188,6 +188,7 @@ MySQL;
     }
 }
 
-    function modify_table (){
-        
-    }
+function modify_table()
+{
+
+}

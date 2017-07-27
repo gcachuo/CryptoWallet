@@ -10,6 +10,8 @@
 /**
  * Class ModeloLogin
  * @property TablaUsuarios usuarios
+ * @property TablaContacto_Clientes contacto_clientes
+ * @property TablaClientes clientes
  */
 class ModeloLogin extends Tabla
 {
@@ -18,31 +20,16 @@ class ModeloLogin extends Tabla
         return $this->usuarios->selectUsuario($login, $password);
     }
 
-    function registrarCliente($nombre, $apellidoP, $apellidoM, $lada, $telefono, $correo, &$tokenCbiz, $idDistribuidor = null)
+    function registrarCliente($nombre, $apellidoP, $apellidoM, $telefono, $correo)
     {
-        Globales::setNamespace("distribuidor");
+        $idCliente = $this->clientes->insertCliente("$nombre $apellidoP $apellidoM");
 
-        $idCliente = $this->cliente->insertCliente("$nombre $apellidoP $apellidoM", $lada, $telefono, date('Y-m-d'), 1, $idDistribuidor ?: 1);
-
-        $this->contacto_cliente->insertContactoCliente($idCliente, $nombre, $apellidoP, $apellidoM, $lada . $telefono, $correo);
-
-        $estatus = false;
-        $tokenCbiz = null;
-        $num = 1;
-        while (!$estatus) {
-            $tokenCbiz = $this->generarToken($nombre, $apellidoP, $apellidoM, $num, $estatus);
-            $num++;
-        }
-
-        $this->cbiz_cliente->insertarCbizCliente($idCliente, $tokenCbiz, date('Y-m-d'), date('Y-m-d'), 0, date('Y-m-d'), date('Y-m-d'), 1);
-
+        $this->contacto_clientes->insertContactoCliente($idCliente,  $telefono, $correo);
     }
 
-    function registrarUsuario($token, $nombre, $email, $password, $reseller)
+    function registrarUsuario($nombre, $email, $password)
     {
-        Globales::setNamespace("");
-        Tabla::setToken($token);
-        $_SESSION[usuario] = $this->usuarios->insertUsuario($nombre, $email, $password, $email, 0, $reseller);
+        $_SESSION['usuario'] = $this->usuarios->insertUsuario($nombre, $email, $password, $email, 0);
     }
 
     function crearDatabase($token)
@@ -62,8 +49,7 @@ class ModeloLogin extends Tabla
 
     function correoExistente($correo)
     {
-        Globales::setNamespace("distribuidor");
-        $existe = boolval($this->contacto_cliente->selectCountCorreo($correo));
+        $existe = boolval($this->contacto_clientes->selectCountCorreo($correo));
         return $existe;
     }
 

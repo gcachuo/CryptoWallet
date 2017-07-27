@@ -84,26 +84,15 @@ class Login extends Control
         $exTel = explode(")", $telefono);
         $tel = trim($exTel[0], "(");
         #$tel = str_replace("-", "", $exTel[1]);
-        $reseller = $reseller == "" ? null : $reseller;
 
         if ($this->modelo->correoExistente($usuario))
             Globales::mensaje_error("El correo ya esta registrado. Ingrese otro.");
 
-        if (!is_null($reseller)) {
-            $idDistribuidor = $this->modelo->distribuidor->selectIdDistribuidorFromToken($reseller);
-            if (is_null($idDistribuidor))
-                Globales::mensaje_error("Codigo Promocional Invalido. Ingrese Otro.");
-        }
-        $this->modelo->registrarCliente($nombre, $apellidoP, $apellidoM, "", $tel, $usuario, $token, $idDistribuidor);
+        $this->modelo->registrarCliente($nombre, $apellidoP, $apellidoM, $tel, $usuario);
 
-        $this->modelo->crearDatabase($token);
-
-        $this->modelo->registrarUsuario($token, "$nombre $apellidoP", $usuario, $password, (int)$dist);
-
-        $this->enviarCorreoBienvenida();
+        $this->modelo->registrarUsuario("$nombre $apellidoP", $usuario, $password);
 
         unset($this->password);
-        if ($dist) unset($_SESSION[usuario]);
     }
 
     /**

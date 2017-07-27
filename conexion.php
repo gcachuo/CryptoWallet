@@ -155,7 +155,7 @@ abstract class bd extends Conexion
     public function __call($name, $arguments)
     {
         if (!method_exists($this, $name)) {
-            Globales::mensaje_error($name . ' has shuffled the mortal coil');
+            Globales::mensaje_error("No existe el metodo $name.");
         }
     }
 

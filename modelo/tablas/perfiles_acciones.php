@@ -15,7 +15,7 @@ class TablaPerfiles_Acciones extends bd
 
     function selectAccionesFromModuloAndPerfil($modulo, $perfil)
     {
-        $sql = /** @lang $MySQL */
+        $sql = /** @lang MySQL */
             <<<MySQL
 SELECT
   descripcion_accion                      accion,
