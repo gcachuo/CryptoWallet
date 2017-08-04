@@ -19,6 +19,8 @@ try {
     require "globales.php";
     require "control.php";
     require "conexion.php";
+    require 'vendor/autoload.php';
+    require 'config/bitsoConfig.php';
 
     Globales::$modulo = $_POST["modulo"] ?: $_SESSION["modulo"];
     Globales::$namespace = __NAMESPACE__ . "\\";

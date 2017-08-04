@@ -20,5 +20,5 @@ function iniciarSesion(result) {
         aside("miperfil", "miperfil");
     }
     else
-        navegar('inicio');
+        navegar('wallet');
 }

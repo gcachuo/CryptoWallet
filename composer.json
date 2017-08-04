@@ -1,0 +1,5 @@
+{
+    "require": {
+        "bitso/bitso-php": "dev-master"
+    }
+}

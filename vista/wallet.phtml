@@ -6,4 +6,63 @@
  * Time: 01:52 PM
  */
 ?>
-wallet
+<div class="padding">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="box">
+                <div class="table-responsive">
+                    <table class="table table-striped b-t b-b" width="100%">
+                        <thead>
+                        <tr>
+                            <th>Moneda</th>
+                            <th>Cantidad</th>
+                            <th>Costo</th>
+                            <th>Invertido</th>
+                            <th>Precio Actual</th>
+                            <th>Valor</th>
+                            <th>Ganancia/Perdida</th>
+                            <th>%</th>
+                            <th>Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>Bitcoin</td>
+                            <td><?= $this->bitcoin->cantidad ?></td>
+                            <td><?= $this->bitcoin->costo ?></td>
+                            <td><?= $this->bitcoin->invertido ?></td>
+                            <td><?= $this->bitcoin->ticker ?></td>
+                            <td><?= $this->bitcoin->valor ?></td>
+                            <td><?= $this->bitcoin->ganancia ?></td>
+                            <td><?= $this->bitcoin->porcentaje ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Ethereum</td>
+                            <td><?= $this->ethereum->cantidad ?></td>
+                            <td><?= $this->ethereum->costo ?></td>
+                            <td><?= $this->ethereum->invertido ?></td>
+                            <td><?= $this->ethereum->ticker ?></td>
+                            <td><?= $this->ethereum->valor ?></td>
+                            <td><?= $this->ethereum->ganancia ?></td>
+                            <td><?= $this->ethereum->porcentaje ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Ripple</td>
+                            <td><?= $this->ripple->cantidad ?></td>
+                            <td><?= $this->ripple->costo ?></td>
+                            <td><?= $this->ripple->invertido ?></td>
+                            <td><?= $this->ripple->ticker ?></td>
+                            <td><?= $this->ripple->valor ?></td>
+                            <td><?= $this->ripple->ganancia ?></td>
+                            <td><?= $this->ripple->porcentaje ?></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
