@@ -1,9 +1,12 @@
 {
   "bitcoin": {
     "bitpay": "0.000369",
-    "jaxx":"0.49056987"
+    "jaxx":"0.33428228"
+  },
+  "bitcoincash":{
+	"electrum":"0.49054758"
   },
   "ethereum": {
-    "jaxx": "0.00000000"
+    "jaxx": "1.27253890"
   }
 }

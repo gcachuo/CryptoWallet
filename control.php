@@ -31,7 +31,6 @@ abstract class Control
      */
     function __construct()
     {
-        $this->obtenerDiasRestantes();
         $this->buildListNotificacions();
         $this->obtenerIdioma();
         $this->permisos = $this->permisosModulo();

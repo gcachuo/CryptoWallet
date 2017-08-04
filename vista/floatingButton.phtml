@@ -17,16 +17,16 @@ $this->idioma = Globales::getIdioma('transacciones');
                 <div class="box-body">
                     <?php if ($_SESSION["namespace"] != "distribuidor\\"): ?>
                         <div class="row">
-                        <span style="cursor: pointer" onclick="aside('transacciones','nuevo',{tipo:2})"
-                              class="label label-lg pink-500"><?= $this->idioma->lblEgresos ?></span>
+                        <span style="cursor: pointer" onclick=""
+                              class="label label-lg pink-500"></span>
                         </div>
                         <div class="row">
-                        <span style="cursor: pointer" onclick="aside('transacciones','nuevo',{tipo:1})"
-                              class="label label-lg light-green-500"><?= $this->idioma->lblIngresos ?></span>
+                        <span style="cursor: pointer" onclick=""
+                              class="label label-lg light-green-500"></span>
                         </div>
                         <div class="row">
-                        <span style="cursor: pointer" onclick="aside('transacciones','nuevo',{tipo:3})"
-                              class="label label-lg accent"><?= $this->idioma->lblTraspasos ?></span>
+                        <span style="cursor: pointer" onclick=""
+                              class="label label-lg accent"></span>
                         </div>
                     <?php endif; ?>
                 </div>

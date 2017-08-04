@@ -13,9 +13,7 @@
  * @property TablaEstados estados
  * @property TablaCiudades ciudades
  * @property TablaPerfiles_Acciones perfiles_acciones
- * @property distribuidor\TablaCbiz_Cliente cbiz_cliente
- * @property distribuidor\TablaContacto_Cliente contacto_cliente
- * @property distribuidor\TablaSuscripciones suscripciones
+ * @property TablaContacto_Clientes contacto_clientes
  */
 class ModeloControl extends Tabla
 {
@@ -66,15 +64,12 @@ class ModeloControl extends Tabla
     function obtenerDiasRestantes($idUsuario)
     {
         $usuario = $this->usuarios->selectUsuarioFromId($idUsuario);
-        Globales::setNamespace("distribuidor");
-        $idCliente = $this->contacto_cliente->selectIdClienteFromCorreo($usuario->correo);
+        $idCliente = $this->contacto_clientes->selectIdClienteFromCorreo($usuario->correo);
         $estatus = (bool)$this->suscripciones->selectEstatusSuscripcion($idCliente);
         if ($estatus) {
-            Globales::setNamespace("");
             return -1;
         }
         $fecha = $this->cbiz_cliente->selectFechaCreacion($idCliente);
-        Globales::setNamespace("");
 
         $today = date_create(date("Y-m-d"));
         $start = date_create($fecha);
