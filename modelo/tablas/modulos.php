@@ -21,16 +21,7 @@ CREATE TABLE `_modulos`
   navegar_modulo VARCHAR(100)     NULL,
   estatus_modulo BIT DEFAULT b'1' NULL
 );
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (1000, 'memory', 0, 1, NULL, TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (1001, 'account_box', 1000, 1, 'usuarios', FALSE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (1002, 'lock', 1000, 2, 'perfiles', FALSE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2000, 'book', 0, 1, NULL, TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2001, 'list', 2000, 1, 'transacciones', TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2002, 'group', 2000, 2, 'clientes', TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2003, 'attach_money', 2000, 3, 'cuentas', TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2004, 'sort', 2000, 4, 'categorias', TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (3001, 'trending_up', 3000, 1, 'reportes', TRUE);
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2005, 'fast_forward', 2000, 2, 'proyecciones', true);
+INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (3001, null, 3000, 1, 'wallet', true);
 MySQL;
         return $this->multiconsulta($sql);
     }
