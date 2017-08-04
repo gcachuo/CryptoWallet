@@ -484,7 +484,7 @@ Class Tabla
     function __get($key)
     {
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$namespace}{$key}.php";
+        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$key}.php";
         if (file_exists($ruta)) {
             require_once $ruta;
             $modelo = "{$namespace}Tabla{$key}";
