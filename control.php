@@ -31,7 +31,6 @@ abstract class Control
      */
     function __construct()
     {
-        $this->buildListNotificacions();
         $this->obtenerIdioma();
         $this->permisos = $this->permisosModulo();
         $this->nombreUsuario = $this->obtenerNombreUsuario();
@@ -131,8 +130,6 @@ abstract class Control
      */
     private function buildModulos($padre, $modulos)
     {
-        if ($this->diasRestantes == 0)
-            return null;
         $idioma = Globales::getIdioma('modulos');
         foreach ($modulos as $modulo) {
             if ($modulo["padreModulo"] == 0) continue;
