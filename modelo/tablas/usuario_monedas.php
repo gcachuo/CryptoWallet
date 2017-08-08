@@ -18,7 +18,8 @@ CREATE TABLE usuario_monedas
     id_usuario_monedas BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
     id_usuario BIGINT(20) NOT NULL,
     id_moneda BIGINT(20) NOT NULL,
-    cantidad_usuario_moneda DECIMAL(10,8) NOT NULL
+    cantidad_usuario_moneda DECIMAL(10,8) NOT NULL,
+    costo_usuario_moneda DECIMAL(10,2)
 );
 MySQL;
         $this->multiconsulta($sql);

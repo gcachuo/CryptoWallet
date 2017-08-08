@@ -146,10 +146,14 @@ abstract class bd extends Conexion
     function __construct($token)
     {
         $token = $token ?: ($_SESSION[token] ?: "cbizgastos");
-        Conexion::$host = "db4free.net";
-        Conexion::$db = "cryptocachu";
-        Conexion::$user = "gcachuo";
-        Conexion::$pass = "0908070605*";
+        /* Conexion::$host = "db4free.net";
+         Conexion::$db = "cryptocachu";
+         Conexion::$user = "gcachuo";
+         Conexion::$pass = "0908070605*";*/
+        Conexion::$host = "localhost";
+        Conexion::$db = "crypto";
+        Conexion::$user = "cachu";
+        Conexion::$pass = "0908070605mM*";
     }
 
     public function __call($name, $arguments)

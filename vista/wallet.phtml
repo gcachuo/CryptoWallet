@@ -15,9 +15,9 @@
                         <thead>
                         <tr>
                             <th>Moneda</th>
+                            <th>Inversión Inicial</th>
+                            <th>Precio Inicial</th>
                             <th>Cantidad</th>
-                            <th>Costo</th>
-                            <th>Invertido</th>
                             <th>Precio Actual</th>
                             <th>Valor</th>
                             <th>Ganancia/Perdida</th>
@@ -27,10 +27,21 @@
                         </thead>
                         <tbody>
                         <tr>
+                            <td>Bitcoin Cash</td>
+                            <td><?= $this->bitcoincash->invertido ?></td>
+                            <td><?= $this->bitcoincash->costo ?></td>
+                            <td><?= $this->bitcoincash->cantidad ?></td>
+                            <td><?= $this->bitcoincash->ticker ?></td>
+                            <td><?= $this->bitcoincash->valor ?></td>
+                            <td><?= $this->bitcoincash->ganancia ?></td>
+                            <td><?= $this->bitcoincash->porcentaje ?></td>
+                            <td></td>
+                        </tr>
+                        <tr>
                             <td>Bitcoin</td>
-                            <td><?= $this->bitcoin->cantidad ?></td>
-                            <td><?= $this->bitcoin->costo ?></td>
                             <td><?= $this->bitcoin->invertido ?></td>
+                            <td><?= $this->bitcoin->costo ?></td>
+                            <td><?= $this->bitcoin->cantidad ?></td>
                             <td><?= $this->bitcoin->ticker ?></td>
                             <td><?= $this->bitcoin->valor ?></td>
                             <td><?= $this->bitcoin->ganancia ?></td>
@@ -39,9 +50,9 @@
                         </tr>
                         <tr>
                             <td>Ethereum</td>
-                            <td><?= $this->ethereum->cantidad ?></td>
-                            <td><?= $this->ethereum->costo ?></td>
                             <td><?= $this->ethereum->invertido ?></td>
+                            <td><?= $this->ethereum->costo ?></td>
+                            <td><?= $this->ethereum->cantidad ?></td>
                             <td><?= $this->ethereum->ticker ?></td>
                             <td><?= $this->ethereum->valor ?></td>
                             <td><?= $this->ethereum->ganancia ?></td>
@@ -50,9 +61,9 @@
                         </tr>
                         <tr>
                             <td>Ripple</td>
-                            <td><?= $this->ripple->cantidad ?></td>
-                            <td><?= $this->ripple->costo ?></td>
                             <td><?= $this->ripple->invertido ?></td>
+                            <td><?= $this->ripple->costo ?></td>
+                            <td><?= $this->ripple->cantidad ?></td>
                             <td><?= $this->ripple->ticker ?></td>
                             <td><?= $this->ripple->valor ?></td>
                             <td><?= $this->ripple->ganancia ?></td>
