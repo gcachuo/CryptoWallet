@@ -12,6 +12,7 @@
  * @property TablaUsuarios usuarios
  * @property TablaContacto_Clientes contacto_clientes
  * @property TablaClientes clientes
+ * @property TablaUsuario_Llaves usuario_llaves
  */
 class ModeloLogin extends Tabla
 {

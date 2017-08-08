@@ -23,9 +23,11 @@ class Login extends Control
     protected function cargarPrincipal()
     {
         #Si carga la pantalla de Login cierra la sesión del usuario
-        unset($_SESSION[usuario]);
-        unset($_SESSION[perfil]);
-        unset($_SESSION[conexion]);
+        unset($_SESSION['usuario']);
+        unset($_SESSION['perfil']);
+        unset($_SESSION['conexion']);
+        unset($_SESSION['api_key']);
+        unset($_SESSION['api_secret']);
     }
 
     protected function cargarAside()
@@ -55,7 +57,17 @@ class Login extends Control
             $_SESSION[perfil] = $usuario->idPerfil;
         } else Globales::mensaje_error("No existe el usuario con los datos ingresados.");
 
+        $this->getApiKeys($_POST["password"]);
+
         return compact("cambiarPass");
+    }
+
+    function getApiKeys($pass){
+        $api = $this->modelo->usuario_llaves->selectApiKey($_SESSION['usuario']);
+        $api->apiKey = Globales::decrypt($api->apiKey,$pass);
+        $api->apiSecret = Globales::decrypt($api->apiSecret,$pass);
+        $_SESSION['api_key'] = $api->apiKey;
+        $_SESSION['api_secret'] = $api->apiSecret;
     }
 
     function registrarNuevoCliente()

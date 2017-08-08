@@ -147,6 +147,22 @@ class Globales
         return crypt($password, $salt);
     }
 
+    static function encrypt($pass,$key)
+    {
+        $iv = openssl_random_pseudo_bytes(16);
+
+        $crypttext = openssl_encrypt($pass, 'RC4', $key);
+        return $crypttext;
+    }
+
+    static function decrypt($pass,$key)
+    {
+        $iv = openssl_random_pseudo_bytes(16);
+
+        $crypttext = openssl_decrypt($pass, 'RC4', $key);
+        return $crypttext;
+    }
+
     /**
      * @param string $datetime 'Y-m-d'
      * @param int $time_add

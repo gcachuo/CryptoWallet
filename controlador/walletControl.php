@@ -10,13 +10,9 @@
 class Wallet extends Control
 {
     public $bitcoincash, $bitcoin, $ethereum, $ripple;
-    private $api_key, $api_secret;
 
     protected function cargarPrincipal()
     {
-        $api = $this->modelo->usuario_llaves->selectApiKey($_SESSION['usuario']);
-        $this->api_key = $api->apiKey;
-        $this->api_secret = $api->apiSecret;
 
         /**
          * 0 = bch
@@ -31,7 +27,6 @@ class Wallet extends Control
         $this->ethereum = $this->cargarMoneda('eth_mxn', 3);
         $this->ripple = $this->cargarMoneda('xrp_mxn', 4);
 
-
     }
 
     protected function cargarAside()
@@ -42,7 +37,7 @@ class Wallet extends Control
     function cargarMoneda($book, $index)
     {
         try {
-            $bitso = new bitsoConfig($this->api_key, $this->api_secret);
+            $bitso = new bitsoConfig();
             $ticker = $bitso->getTicker($book)->ask;
             $explode = explode("_", $book);
             if ($explode[1] == "btc") {

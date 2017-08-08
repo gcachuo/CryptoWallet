@@ -10,9 +10,9 @@ class bitsoConfig
 {
     private $bitso;
 
-    public function __construct($api_key, $api_secret)
+    public function __construct()
     {
-        $this->bitso = new BitsoAPI\bitso($api_key, $api_secret);
+        $this->bitso = new BitsoAPI\bitso($_SESSION['api_key'], $_SESSION['api_secret']);
     }
 
     function getTicker($book)
