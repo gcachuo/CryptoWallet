@@ -106,6 +106,7 @@
     "1001": "Usuarios",
     "1002": "Perfiles",
     "2000": "Administrativo",
+    "2001": "Configuración",
     "3001": "Wallet"
   }
 }

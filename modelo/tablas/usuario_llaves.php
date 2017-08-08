@@ -25,10 +25,21 @@ MySQL;
         $this->multiconsulta($sql);
     }
 
-    function selectApiKey($id_usuario){
-        $sql=/** @MySQL */<<<MySQL
+    function selectApiKey($id_usuario)
+    {
+        $sql = /** @MySQL */
+            <<<MySQL
 select api_key apiKey, api_secret apiSecret from usuario_llaves where id_usuario='$id_usuario'
 MySQL;
-return $this->siguiente_registro($this->consulta($sql));
+        return $this->siguiente_registro($this->consulta($sql));
+    }
+
+    public function insertApiKeys($api_key, $api_secret, $id_usuario)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+REPLACE INTO usuario_llaves(id_usuario,api_key,api_secret) VALUES ('$id_usuario','$api_key','$api_secret');
+MySQL;
+        $this->consulta($sql);
     }
 }
