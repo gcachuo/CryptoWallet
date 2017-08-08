@@ -51,7 +51,7 @@ class Wallet extends Control
             }
             $balance = $bitso->getBalance();
         } catch (Exception $ex) {
-            echo "<script>alert('{$ex->getMessage()}')</script>";
+            echo "<script>console.log('{$ex->getMessage()}')</script>";
         }
 
         $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $index);
