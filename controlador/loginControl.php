@@ -62,14 +62,6 @@ class Login extends Control
         return compact("cambiarPass");
     }
 
-    function getApiKeys($pass){
-        $api = $this->modelo->usuario_llaves->selectApiKey($_SESSION['usuario']);
-        $api->apiKey = Globales::decrypt($api->apiKey,$pass);
-        $api->apiSecret = Globales::decrypt($api->apiSecret,$pass);
-        $_SESSION['api_key'] = $api->apiKey;
-        $_SESSION['api_secret'] = $api->apiSecret;
-    }
-
     function registrarNuevoCliente()
     {
         /**
