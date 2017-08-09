@@ -5,6 +5,7 @@
  * Date: 04/08/2017
  * Time: 01:52 PM
  */
+/** @var Wallet $this */
 ?>
 <div class="padding">
     <div class="row">
@@ -14,78 +15,19 @@
                     <table class="table table-striped b-t b-b" width="100%">
                         <thead>
                         <tr>
-                            <th>Moneda</th>
-                            <th>Inversión Inicial</th>
-                            <th>Precio Inicial</th>
+                            <th class="all">Moneda</th>
+                            <th class="none">Inversión Inicial</th>
+                            <th class="desktop">Precio Inicial</th>
                             <th>Cantidad</th>
                             <th>Precio Actual</th>
-                            <th>Valor</th>
-                            <th>Ganancia/Perdida</th>
-                            <th>%</th>
-                            <th>Acciones</th>
+                            <th class="all">Valor</th>
+                            <th class="desktop">Ganancia/Perdida</th>
+                            <th class="all">%</th>
+                            <th class="desktop">Acciones</th>
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>Bitcoin Cash</td>
-                            <td><?= $this->bitcoincash->invertido ?></td>
-                            <td><?= $this->bitcoincash->costo ?></td>
-                            <td><?= $this->bitcoincash->cantidad ?></td>
-                            <td><?= $this->bitcoincash->ticker ?></td>
-                            <td><?= $this->bitcoincash->valor ?></td>
-                            <td><?= $this->bitcoincash->ganancia ?></td>
-                            <td><?= $this->bitcoincash->porcentaje ?></td>
-                            <td class="tdAcciones">
-                                <a onclick="aside('wallet','trades',{id:'bch'})" class="btn btn-sm btn-default">
-                                    <i class="material-icons">format_list_bulleted</i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Bitcoin</td>
-                            <td><?= $this->bitcoin->invertido ?></td>
-                            <td><?= $this->bitcoin->costo ?></td>
-                            <td><?= $this->bitcoin->cantidad ?></td>
-                            <td><?= $this->bitcoin->ticker ?></td>
-                            <td><?= $this->bitcoin->valor ?></td>
-                            <td><?= $this->bitcoin->ganancia ?></td>
-                            <td><?= $this->bitcoin->porcentaje ?></td>
-                            <td class="tdAcciones">
-                                <a onclick="aside('wallet','trades',{id:'btc'})" class="btn btn-sm btn-default">
-                                    <i class="material-icons">format_list_bulleted</i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ethereum</td>
-                            <td><?= $this->ethereum->invertido ?></td>
-                            <td><?= $this->ethereum->costo ?></td>
-                            <td><?= $this->ethereum->cantidad ?></td>
-                            <td><?= $this->ethereum->ticker ?></td>
-                            <td><?= $this->ethereum->valor ?></td>
-                            <td><?= $this->ethereum->ganancia ?></td>
-                            <td><?= $this->ethereum->porcentaje ?></td>
-                            <td class="tdAcciones">
-                                <a onclick="aside('wallet','trades',{id:'eth'})" class="btn btn-sm btn-default">
-                                    <i class="material-icons">format_list_bulleted</i>
-                                </a>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Ripple</td>
-                            <td><?= $this->ripple->invertido ?></td>
-                            <td><?= $this->ripple->costo ?></td>
-                            <td><?= $this->ripple->cantidad ?></td>
-                            <td><?= $this->ripple->ticker ?></td>
-                            <td><?= $this->ripple->valor ?></td>
-                            <td><?= $this->ripple->ganancia ?></td>
-                            <td><?= $this->ripple->porcentaje ?></td>
-                            <td class="tdAcciones">
-                                <a onclick="aside('wallet','trades',{id:'xrp'})" class="btn btn-sm btn-default">
-                                    <i class="material-icons">format_list_bulleted</i>
-                                </a>
-                            </td>
-                        </tr>
+                        <?= $this->tablaMonedas ?>
                         </tbody>
                     </table>
                 </div>

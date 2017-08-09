@@ -40,4 +40,18 @@ SELECT
 MySQL;
         return $this->siguiente_registro($this->consulta($sql));
     }
+
+    public function selectMonedas()
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+SELECT 
+ id_moneda id,
+ nombre_moneda nombre,
+ simbolo_moneda simbolo,
+ book_moneda book
+ FROM monedas
+MySQL;
+        return $this->query2multiarray($this->consulta($sql));
+    }
 }
