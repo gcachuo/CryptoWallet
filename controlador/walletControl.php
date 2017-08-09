@@ -11,6 +11,8 @@ class Wallet extends Control
 {
     public $bitcoincash, $bitcoin, $ethereum, $ripple;
 
+    public $tablaTransacciones;
+
     protected function cargarPrincipal()
     {
 
@@ -22,24 +24,60 @@ class Wallet extends Control
          * 4 = xrp
          * 5 = mxn
          */
-        $this->bitcoincash = $this->cargarMoneda('bch_btc', 0);
-        $this->bitcoin = $this->cargarMoneda('btc_mxn', 1);
-        $this->ethereum = $this->cargarMoneda('eth_mxn', 3);
-        $this->ripple = $this->cargarMoneda('xrp_mxn', 4);
+        $this->bitcoincash = $this->cargarMoneda('bch');
+        $this->bitcoin = $this->cargarMoneda('btc');
+        $this->ethereum = $this->cargarMoneda('eth');
+        $this->ripple = $this->cargarMoneda('xrp');
 
     }
 
     protected function cargarAside()
     {
-        // TODO: Implement cargarAside() method.
+        switch ($_POST['asideAccion']) {
+            case "trades":
+                $this->cargarTransacciones($_POST['id']);
+                break;
+        }
     }
 
-    function cargarMoneda($book, $index)
+    function cargarTransacciones($simbolo)
     {
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
+        $bitso = new bitsoConfig();
+        $transacciones = $bitso->getTrades($moneda->book);
+        foreach ($transacciones as $transaccion) {
+            $fecha = Globales::convertir_formato_fecha($transaccion->created_at, "Y-m-d\TH:i:sO", "d/m/Y h:i:sa");
+            $transaccion->major = abs($transaccion->major);
+            $transaccion->minor = abs($transaccion->minor);
+            $compra = $transaccion->fees_currency == $transaccion->major_currency ? $transaccion->major - $transaccion->fees_amount : $transaccion->minor - $transaccion->fees_amount;
+            $precioFinal = $transaccion->side == "buy" ? ($transaccion->minor / $compra) : ($compra / $transaccion->major);
+            if ($transaccion->fees_currency == $simbolo) {
+                $pago = $compra * $precioFinal;
+                Globales::formato_moneda("$", $pago);
+            } else {
+                $pago = ($compra / $precioFinal) . " $simbolo";
+            }
+            Globales::formato_moneda("", $precioFinal);
+
+            $this->tablaTransacciones .= <<<HTML
+<tr>
+<td>$fecha</td>
+<td>{$transaccion->side}</td>
+<td>$compra {$transaccion->fees_currency}</td>
+<td>$pago</td>
+<td>$precioFinal</td>
+</tr>
+HTML;
+        }
+    }
+
+    function cargarMoneda($simbolo)
+    {
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
         try {
             $bitso = new bitsoConfig();
-            $ticker = $bitso->getTicker($book)->ask;
-            $explode = explode("_", $book);
+            $ticker = $bitso->getTicker($moneda->book)->ask;
+            $explode = explode("_", $moneda->book);
             if ($explode[1] == "btc") {
                 $tickerbtc = $bitso->getTicker("btc_mxn")->ask;
                 $ticker = $ticker * $tickerbtc;
@@ -49,9 +87,9 @@ class Wallet extends Control
             echo "<script>console.log('{$ex->getMessage()}')</script>";
         }
 
-        $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $index);
-        $cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $index);
-        $cantidad += $balance[$index]->total;
+        $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $moneda->id);
+        $cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda->id);
+        $cantidad += $balance[$moneda->id]->total;
 
         if ($cantidad == 0) $costo = 0;
         else $costo = $invertido / $cantidad;
