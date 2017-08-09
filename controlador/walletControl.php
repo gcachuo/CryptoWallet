@@ -9,26 +9,46 @@
 
 class Wallet extends Control
 {
-    public $bitcoincash, $bitcoin, $ethereum, $ripple;
-
-    public $tablaTransacciones;
+    public $tablaTransacciones,$tablaMonedas;
 
     protected function cargarPrincipal()
     {
+        $this->buildTablaMonedas();
+    }
 
-        /**
-         * 0 = bch
-         * 1 = btc
-         * 2 = etc
-         * 3 = eth
-         * 4 = xrp
-         * 5 = mxn
-         */
-        $this->bitcoincash = $this->cargarMoneda('bch');
-        $this->bitcoin = $this->cargarMoneda('btc');
-        $this->ethereum = $this->cargarMoneda('eth');
-        $this->ripple = $this->cargarMoneda('xrp');
+    function buildtablaMonedas()
+    {
+        $monedas = $this->modelo->monedas->selectMonedas();
+        foreach ($monedas as $moneda) {
+            $coin = $this->cargarMoneda($moneda['simbolo']);
+            $acciones= <<<HTML
+<a title="Compra" onclick="aside('wallet','',{})" class="btn btn-sm btn-default">
+    <i class="material-icons">file_download</i>
+</a>
+<a title="Venta" onclick="aside('wallet','',{})" class="btn btn-sm btn-default">
+    <i class="material-icons">file_upload</i>
+</a>
+<a title="Historial" onclick="aside('wallet','trades',{id:'$moneda[simbolo]'})" class="btn btn-sm btn-default">
+    <i class="material-icons">format_list_bulleted</i>
+</a>
+HTML;
 
+            $this->tablaMonedas.= <<<HTML
+<tr>
+    <td>$moneda[nombre]</td>
+    <td>$coin->invertido</td>
+    <td>$coin->costo</td>
+    <td>$coin->cantidad</td>
+    <td>$coin->ticker</td>
+    <td>$coin->valor</td>
+    <td>$coin->ganancia</td>
+    <td>$coin->porcentaje</td>
+    <td class="tdAcciones">
+       $acciones
+    </td>
+</tr>
+HTML;
+        }
     }
 
     protected function cargarAside()
