@@ -147,7 +147,7 @@ class Globales
         return crypt($password, $salt);
     }
 
-    static function encrypt($pass,$key)
+    static function encrypt($pass, $key)
     {
         $iv = openssl_random_pseudo_bytes(16);
 
@@ -155,7 +155,7 @@ class Globales
         return $crypttext;
     }
 
-    static function decrypt($pass,$key)
+    static function decrypt($pass, $key)
     {
         $iv = openssl_random_pseudo_bytes(16);
 
@@ -308,6 +308,19 @@ class Globales
         } catch (Exception $ex) {
             Globales::mensaje_error($ex->getMessage());
         }
+    }
+
+    /**
+     * @param string $fecha
+     * @param string $formato_inicial
+     * @param string $formato_final
+     * @return string
+     */
+    static function convertir_formato_fecha($fecha, $formato_inicial, $formato_final)
+    {
+        $fecha = date_create_from_format($formato_inicial, $fecha);
+        $fecha = $fecha->setTimezone(new DateTimeZone('America/Mexico_City'));
+        return $fecha->format($formato_final);
     }
 
     /**

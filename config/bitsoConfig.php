@@ -35,4 +35,22 @@ class bitsoConfig
 ##sample usage for account balances array
         return $balances->payload->balances;
     }
+
+    function getTrades($book)
+    {
+        /*
+         * book (str):
+                Specifies which order book to get user trades from.
+         * marker (str, optional):
+                Returns objects that are older or newer (depending on 'sort') than the object which
+                has the marker value as ID
+         * limit (int, optional):
+                Limit the number of results to parameter value, max=100, default=25
+         * sort (str, optional):
+                Sorting by datetime: 'asc', 'desc'
+                Default is 'desc'
+         */
+        $trades = $this->bitso->user_trades(["book" => $book, "limit" => 100]);
+        return $trades->payload;
+    }
 }
