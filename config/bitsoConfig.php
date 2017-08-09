@@ -76,8 +76,7 @@ class bitsoConfig
         $monto = round($monto / $precio, 6);
         if ($side == "sell") {
             $precio = round($precio * 1.01, 2);
-        }
-        else{
+        } else {
             $precio = round($precio * 0.99, 2);
         }
         $args = array(
@@ -88,5 +87,28 @@ class bitsoConfig
             "price" => $precio
         );
         $this->bitso->place_order($args);
+    }
+
+    /**
+     * Get a list of the user's open orders
+     * Args:
+     * book (str):
+     * Specifies which book to use. Default is btc_mxn
+     *
+     * Returns:
+     * A list of bitso.Order instances.
+     */
+    public function getActive($tipo, $book)
+    {
+        $buy = [];
+        $sell = [];
+        $args = [
+            "book" => $book
+        ];
+        $open = $this->bitso->open_orders($args);
+        foreach ($open->payload as $order) {
+           array_push(${$order->side}, $order);
+        }
+        return !empty($$tipo);
     }
 }
