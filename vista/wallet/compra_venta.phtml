@@ -1,0 +1,43 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: Cachu
+ * Date: 09/08/2017
+ * Time: 01:42 PM
+ */
+echo "";
+?>
+<div class="center-block w-xxl w-auto-xs">
+    <div class="p-a-md box-color r text-color m-a">
+        <div class="md-form-group float-label">
+            <input type="text" class="md-input has-value" readonly
+                   value="<?=$this->operacion->moneda->nombre?>">
+            <input name="book" type="hidden" class="md-input has-value" readonly
+                   value="<?=$this->operacion->moneda->book?>">
+            <label>Moneda</label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="monto" type="text" class="md-input has-value" readonly
+                   value="<?= $this->operacion->monto ?>">
+            <label>Monto</label>
+        </div>
+        <div class="md-form-group float-label">
+            <input name="precio" type="text" class="md-input has-value" readonly
+                   value="<?= $this->operacion->precio ?>">
+            <label>Precio</label>
+        </div>
+        <!--<div class="md-form-group float-label">
+            <input type="text" class="md-input has-value" readonly
+                   value="<?= $this->operacion->comision ?>">
+            <label>Comision</label>
+        </div>
+        <div class="md-form-group float-label">
+            <input type="text" class="md-input has-value" readonly
+                   value="<?= $this->operacion->total ?>">
+            <label>Total</label>
+        </div>-->
+        <div>
+            <a onclick="btnConfirmar('<?= $this->operacion->tipo ?>')" class="btn lime-600 btn-block p-x-md">Confirmar</a>
+        </div>
+    </div>
+</div>

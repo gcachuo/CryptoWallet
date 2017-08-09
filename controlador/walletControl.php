@@ -9,7 +9,7 @@
 
 class Wallet extends Control
 {
-    public $tablaTransacciones,$tablaMonedas;
+    public $tablaTransacciones, $tablaMonedas, $operacion;
 
     protected function cargarPrincipal()
     {
@@ -21,19 +21,30 @@ class Wallet extends Control
         $monedas = $this->modelo->monedas->selectMonedas();
         foreach ($monedas as $moneda) {
             $coin = $this->cargarMoneda($moneda['simbolo']);
-            $acciones= <<<HTML
-<a title="Compra" onclick="aside('wallet','',{})" class="btn btn-sm btn-default">
+            $monto = abs(substr($coin->ganancia, 1));
+            $precio = str_replace(',', '',substr($coin->ticker, 1));
+            if ($coin->porcentaje < 0)
+                $btnCompra = <<<HTML
+<a title="Compra" onclick="aside('wallet','compra_venta',{id:'$moneda[simbolo]',monto:'$monto',precio:'$precio',mode:'buy'})" class="btn btn-sm btn-default">
     <i class="material-icons">file_download</i>
 </a>
-<a title="Venta" onclick="aside('wallet','',{})" class="btn btn-sm btn-default">
+HTML;
+            elseif ($coin->porcentaje > 0)
+                $btnVenta = <<<HTML
+<a title="Venta" onclick="aside('wallet','compra_venta',{id:'$moneda[simbolo]',monto:'$monto',precio:'$precio',mode:'sell'})" class="btn btn-sm btn-default">
     <i class="material-icons">file_upload</i>
 </a>
+HTML;
+
+            $acciones = <<<HTML
+$btnCompra
+$btnVenta
 <a title="Historial" onclick="aside('wallet','trades',{id:'$moneda[simbolo]'})" class="btn btn-sm btn-default">
     <i class="material-icons">format_list_bulleted</i>
 </a>
 HTML;
 
-            $this->tablaMonedas.= <<<HTML
+            $this->tablaMonedas .= <<<HTML
 <tr>
     <td>$moneda[nombre]</td>
     <td>$coin->invertido</td>
@@ -48,6 +59,8 @@ HTML;
     </td>
 </tr>
 HTML;
+            unset($btnCompra);
+            unset($btnVenta);
         }
     }
 
@@ -57,7 +70,21 @@ HTML;
             case "trades":
                 $this->cargarTransacciones($_POST['id']);
                 break;
+            case "compra_venta":
+                $this->operacion->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['id']);
+                $this->operacion->monto = $_POST['monto'];
+                $this->operacion->precio = $_POST['precio'];
+                $this->operacion->tipo = $_POST['mode'];
+                $this->operacion->comision = $_POST['monto'] * 0.01;
+                $this->operacion->total = $_POST['monto'] - $this->operacion->comision;
+                break;
         }
+    }
+
+    function confirmarMovimiento()
+    {
+        $bitso = new bitsoConfig();
+        $bitso->crearOrden($_POST['book'], $_POST['monto'], $_POST['precio'], $_POST['tipo']);
     }
 
     function cargarTransacciones($simbolo)
