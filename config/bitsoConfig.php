@@ -75,9 +75,9 @@ class bitsoConfig
     {
         $monto = round($monto / $precio, 6);
         if ($side == "sell") {
-            $precio = round($precio * 1.01, 2);
+            $precio = round($precio * 1.02, 2);
         } else {
-            $precio = round($precio * 0.99, 2);
+            $precio = round($precio * 0.98, 2);
         }
         $args = array(
             "book" => $book,
@@ -109,6 +109,7 @@ class bitsoConfig
         foreach ($open->payload as $order) {
            array_push(${$order->side}, $order);
         }
-        return !empty($$tipo);
+        $active=!empty($$tipo);
+        return $active;
     }
 }

@@ -56,9 +56,9 @@ HTML;
             $this->tablaMonedas .= <<<HTML
 <tr>
     <td>$moneda[nombre]</td>
+    <td>$coin->cantidad</td>
     <td>$coin->invertido</td>
     <td>$coin->costo</td>
-    <td>$coin->cantidad</td>
     <td>$coin->ticker</td>
     <td>$coin->valor</td>
     <td>$coin->ganancia</td>
