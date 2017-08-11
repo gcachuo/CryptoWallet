@@ -10,12 +10,13 @@
 class Wallet extends Control
 {
     public $tablaTransacciones, $tablaMonedas, $operacion, $disponible;
+    private $cliente;
 
     protected function cargarPrincipal()
     {
+        $this->cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
-        Globales::send_notification($this->disponible);
         header("Refresh: 300;");
     }
 
@@ -24,6 +25,10 @@ class Wallet extends Control
         $bitso = new bitsoConfig();
         $balance = $bitso->getBalance();
         $this->disponible = $balance[5];
+        if ($this->disponible->total != $_SESSION['disponible']) {
+            Globales::send_notification(round($this->disponible->total, 2));
+            $_SESSION['disponible'] = $this->disponible->total;
+        }
     }
 
     function buildtablaMonedas()
@@ -129,6 +134,17 @@ HTML;
         }
     }
 
+    function balanceNanoPool()
+    {
+        $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
+        $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
+        return json_decode($nanopool)->data;
+    }
+
+    /**
+     * @param $simbolo
+     * @return object
+     */
     function cargarMoneda($simbolo)
     {
         $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
@@ -148,6 +164,13 @@ HTML;
         $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $moneda->id);
         $cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda->id);
         $cantidad += $balance[$moneda->id]->total;
+
+        if ($simbolo == "eth")
+            try {
+                $cantidad += number_format(round($this->balanceNanoPool(), 8), 8);
+            } catch (Exception $ex) {
+                echo "<script>console.log('{$ex->getMessage()}')</script>";
+            }
 
         if ($cantidad == 0) $costo = 0;
         else $costo = $invertido / $cantidad;

@@ -315,11 +315,21 @@ class Globales
     {
         $params = ["value1" => $value1];
         $JSONPayload = json_encode($params);
-        Globales::url_request('PUBLIC', 'https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz', 'POST', $JSONPayload);
+        Globales::url_request('PRIVATE', 'https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz', 'POST', $JSONPayload);
     }
 
     #function to perform curl url request depending on type and method
-    static private function url_request($type, $path, $HTTPMethod, $JSONPayload, $authHeader = '')
+
+    /**
+     * @param string $type PUBLIC or PRIVATE
+     * @param string $path URL
+     * @param string $HTTPMethod GET, POST or DELETE
+     * @param string $JSONPayload JSON parameters
+     * @param string $authHeader
+     * @return mixed
+     * @throws Exception
+     */
+    static function url_request($type, $path, $HTTPMethod, $JSONPayload='', $authHeader = '')
     {
         $ch = curl_init();
         if ($type == 'PUBLIC') {
