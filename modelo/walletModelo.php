@@ -10,8 +10,8 @@
  * @property TablaUsuario_Llaves usuario_llaves
  * @property TablaUsuario_Monedas usuario_monedas
  * @property TablaMonedas monedas
+ * @property TablaClientes clientes
  */
 class ModeloWallet extends Tabla
 {
-
 }

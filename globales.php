@@ -310,6 +310,56 @@ class Globales
         }
     }
 
+
+    static function send_notification($value1)
+    {
+        $params = ["value1" => $value1];
+        $JSONPayload = json_encode($params);
+        Globales::url_request('PRIVATE', 'https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz', 'POST', $JSONPayload);
+    }
+
+    #function to perform curl url request depending on type and method
+
+    /**
+     * @param string $type PUBLIC or PRIVATE
+     * @param string $path URL
+     * @param string $HTTPMethod GET, POST or DELETE
+     * @param string $JSONPayload JSON parameters
+     * @param string $authHeader
+     * @return mixed
+     * @throws Exception
+     */
+    static function url_request($type, $path, $HTTPMethod, $JSONPayload='', $authHeader = '')
+    {
+        $ch = curl_init();
+        if ($type == 'PUBLIC') {
+            curl_setopt($ch, CURLOPT_URL, $path);
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        } else if ($type == 'PRIVATE') {
+            if ($HTTPMethod == 'GET' or $HTTPMethod == 'DELETE') {
+                curl_setopt($ch, CURLOPT_URL, $path);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $HTTPMethod);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+                    'Authorization: ' . $authHeader,
+                    'Content-Type: application/json'));
+            } else if ($HTTPMethod == 'POST') {
+                curl_setopt($ch, CURLOPT_URL, $path);
+                curl_setopt($ch, CURLOPT_CUSTOMREQUEST, $HTTPMethod);
+                curl_setopt($ch, CURLOPT_POSTFIELDS, $JSONPayload);
+                curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+                curl_setopt($ch, CURLOPT_HTTPHEADER, array('Authorization: ' . $authHeader, 'Content-Type: application/json'));
+            } else {
+                echo "Incorrect HTTP method";
+            }
+        }
+        $result = curl_exec($ch);
+        if (FALSE === $result)
+            throw new \Exception(curl_error($ch), curl_errno($ch));
+        curl_close($ch);
+        return $result;
+    }
+
     /**
      * @param string $fecha
      * @param string $formato_inicial
