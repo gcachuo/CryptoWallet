@@ -107,9 +107,9 @@ class bitsoConfig
         ];
         $open = $this->bitso->open_orders($args);
         foreach ($open->payload as $order) {
-           array_push(${$order->side}, $order);
+            array_push(${$order->side}, $order);
         }
-        $active=!empty($$tipo);
+        $active = !empty($$tipo);
         return $active;
     }
 }

@@ -15,6 +15,8 @@ class Wallet extends Control
     {
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
+        Globales::send_notification($this->disponible);
+        header("Refresh: 300;");
     }
 
     function obtenerDisponible()
