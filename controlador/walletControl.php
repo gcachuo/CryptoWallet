@@ -17,7 +17,7 @@ class Wallet extends Control
         $this->cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
-        header("Refresh: 300;");
+        header("Refresh: 600;");
     }
 
     function obtenerDisponible()
@@ -26,7 +26,7 @@ class Wallet extends Control
         $balance = $bitso->getBalance();
         $this->disponible = $balance[5];
         if ($this->disponible->total != $_SESSION['disponible']) {
-            Globales::send_notification(round($this->disponible->total, 2));
+            Globales::send_notification("bitso: " . round($this->disponible->total, 2));
             $_SESSION['disponible'] = $this->disponible->total;
         }
     }
@@ -138,7 +138,9 @@ HTML;
     {
         $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
         $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
-        return json_decode($nanopool)->data;
+        $balance = json_decode($nanopool)->data;
+        Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
+        return $balance;
     }
 
     /**
