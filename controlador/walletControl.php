@@ -9,7 +9,7 @@
 
 class Wallet extends Control
 {
-    public $tablaTransacciones, $tablaMonedas, $operacion, $disponible;
+    public $tablaTransacciones, $tablaMonedas, $operacion, $disponible, $moneda;
     private $cliente;
 
     protected function cargarPrincipal()
@@ -17,7 +17,34 @@ class Wallet extends Control
         $this->cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
-        header("Refresh: 300;");
+        header("Refresh: 600;");
+    }
+
+    protected function cargarAside()
+    {
+        switch ($_POST['asideAccion']) {
+            case "trades":
+                $this->cargarTransacciones($_POST['id']);
+                break;
+            case "compra_venta":
+                $this->operacion->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['id']);
+                $this->operacion->monto = $_POST['monto'];
+                $this->operacion->precio = $_POST['precio'];
+                $this->operacion->tipo = $_POST['mode'];
+                $this->operacion->comision = $_POST['monto'] * 0.01;
+                $this->operacion->total = $_POST['monto'] - $this->operacion->comision;
+                break;
+            case "editar":
+                $this->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['simbolo']);
+                $this->moneda->cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $this->moneda->id);
+                $this->moneda->costo = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $this->moneda->id);
+                break;
+        }
+    }
+
+    function editarUsuarioMoneda()
+    {
+        $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], $_POST['costo']);
     }
 
     function obtenerDisponible()
@@ -26,7 +53,7 @@ class Wallet extends Control
         $balance = $bitso->getBalance();
         $this->disponible = $balance[5];
         if ($this->disponible->total != $_SESSION['disponible']) {
-            Globales::send_notification(round($this->disponible->total, 2));
+            Globales::send_notification("bitso: " . round($this->disponible->total, 2));
             $_SESSION['disponible'] = $this->disponible->total;
         }
     }
@@ -58,6 +85,7 @@ $btnVenta
 <a title="Historial" onclick="aside('wallet','trades',{id:'$moneda[simbolo]'})" class="btn btn-sm btn-default">
     <i class="material-icons">format_list_bulleted</i>
 </a>
+<a title="Editar" onclick="btnEditar('$moneda[simbolo]')" class="btn btn-sm btn-default"><i class="material-icons">edit</i></a>
 HTML;
 
             $this->tablaMonedas .= <<<HTML
@@ -77,23 +105,6 @@ HTML;
 HTML;
             unset($btnCompra);
             unset($btnVenta);
-        }
-    }
-
-    protected function cargarAside()
-    {
-        switch ($_POST['asideAccion']) {
-            case "trades":
-                $this->cargarTransacciones($_POST['id']);
-                break;
-            case "compra_venta":
-                $this->operacion->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['id']);
-                $this->operacion->monto = $_POST['monto'];
-                $this->operacion->precio = $_POST['precio'];
-                $this->operacion->tipo = $_POST['mode'];
-                $this->operacion->comision = $_POST['monto'] * 0.01;
-                $this->operacion->total = $_POST['monto'] - $this->operacion->comision;
-                break;
         }
     }
 
@@ -138,7 +149,9 @@ HTML;
     {
         $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
         $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
-        return json_decode($nanopool)->data;
+        $balance = json_decode($nanopool)->data;
+        #Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
+        return $balance;
     }
 
     /**

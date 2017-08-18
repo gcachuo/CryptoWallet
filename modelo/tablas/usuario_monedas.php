@@ -27,17 +27,31 @@ MySQL;
 
     public function selectCantidad($id_usuario, $id_moneda)
     {
-        $sql=/** @lang MySQL */<<<MySQL
-select cantidad_usuario_moneda cantidad from usuario_monedas where id_usuario='$id_usuario' and id_moneda='$id_moneda'
+        $sql = /** @lang MySQL */
+            <<<MySQL
+SELECT cantidad_usuario_moneda cantidad FROM usuario_monedas WHERE id_usuario='$id_usuario' AND id_moneda='$id_moneda'
 MySQL;
-return $this->siguiente_registro($this->consulta($sql))->cantidad;
+        return $this->siguiente_registro($this->consulta($sql))->cantidad;
     }
 
     public function selectCosto($id_usuario, $id_moneda)
     {
-        $sql=/** @lang MySQL */<<<MySQL
-select costo_usuario_moneda costo from usuario_monedas where id_usuario='$id_usuario' and id_moneda='$id_moneda'
+        $sql = /** @lang MySQL */
+            <<<MySQL
+SELECT costo_usuario_moneda costo FROM usuario_monedas WHERE id_usuario='$id_usuario' AND id_moneda='$id_moneda'
 MySQL;
         return $this->siguiente_registro($this->consulta($sql))->costo;
+    }
+
+    public function updateUsuarioMoneda($id_usuario, $id_moneda, $cantidad_usuario_moneda, $costo_usuario_moneda)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+UPDATE usuario_monedas SET 
+cantidad_usuario_moneda='$cantidad_usuario_moneda',
+costo_usuario_moneda='$costo_usuario_moneda'
+WHERE id_usuario='$id_usuario' AND id_moneda='$id_moneda'
+MySQL;
+        $this->consulta($sql);
     }
 }
