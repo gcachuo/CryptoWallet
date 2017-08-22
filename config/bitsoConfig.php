@@ -29,8 +29,12 @@ class bitsoConfig
 
     function getBalance()
     {
-        ## Your account balances
-        $balances = $this->bitso->balances();
+        try {
+            ## Your account balances
+            $balances = $this->bitso->balances();
+        } catch (Exception $ex) {
+            $balances = (object)[];
+        }
 
 ##sample usage for account balances array
         return $balances->payload->balances;
@@ -73,12 +77,12 @@ class bitsoConfig
      */
     public function crearOrden($book, $monto, $precio, $side)
     {
-        $monto = round($monto / $precio, 6);
         if ($side == "sell") {
-            $precio = round($precio * 1.02, 2);
+            $monto = round($monto * 0.98, 2);
         } else {
-            $precio = round($precio * 0.98, 2);
+            $monto = round($monto * 1.02, 2);
         }
+        $monto = round($monto / $precio, 6);
         $args = array(
             "book" => $book,
             "side" => $side,
@@ -100,16 +104,20 @@ class bitsoConfig
      */
     public function getActive($tipo, $book)
     {
-        $buy = [];
-        $sell = [];
-        $args = [
-            "book" => $book
-        ];
-        $open = $this->bitso->open_orders($args);
-        foreach ($open->payload as $order) {
-            array_push(${$order->side}, $order);
+        try {
+            $buy = [];
+            $sell = [];
+            $args = [
+                "book" => $book
+            ];
+            $open = $this->bitso->open_orders($args);
+            foreach ($open->payload as $order) {
+                array_push(${$order->side}, $order);
+            }
+            $active = !empty($$tipo);
+        } catch (Exception $ex) {
+            $active = true;
         }
-        $active = !empty($$tipo);
         return $active;
     }
 }

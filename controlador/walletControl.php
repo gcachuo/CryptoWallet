@@ -63,7 +63,7 @@ class Wallet extends Control
         $monedas = $this->modelo->monedas->selectMonedas();
         foreach ($monedas as $moneda) {
             $coin = $this->cargarMoneda($moneda['simbolo']);
-            $monto = abs(substr($coin->ganancia, 1));
+            $monto = abs(str_replace(',', '', substr($coin->ganancia, 1)));
             $precio = str_replace(',', '', substr($coin->ticker, 1));
             $bitso = new bitsoConfig();
             if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book']))
