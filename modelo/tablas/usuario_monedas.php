@@ -47,10 +47,8 @@ MySQL;
     {
         $sql = /** @lang MySQL */
             <<<MySQL
-UPDATE usuario_monedas SET 
-cantidad_usuario_moneda='$cantidad_usuario_moneda',
-costo_usuario_moneda='$costo_usuario_moneda'
-WHERE id_usuario='$id_usuario' AND id_moneda='$id_moneda'
+replace into usuario_monedas(id_usuario_monedas,id_usuario, id_moneda, cantidad_usuario_moneda, costo_usuario_moneda) VALUES 
+(id_usuario_monedas,'$id_usuario','$id_moneda','$cantidad_usuario_moneda','$costo_usuario_moneda')
 MySQL;
         $this->consulta($sql);
     }
