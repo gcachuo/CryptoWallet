@@ -52,6 +52,17 @@ $(function () {
         }
 });
 
+
+// request permission on page load
+document.addEventListener('DOMContentLoaded', function () {
+    if (!Notification) {
+        alert('Desktop notifications not available in your browser. Try Chromium.');
+        return;
+    }
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+});
+
 function showMessage(message, color) {
     $("#messages").show();
     $("#messages").find("li").html(message);
@@ -66,6 +77,23 @@ function showMessage(message, color) {
             clearInterval(interval);
         }, 1000);
     }, 2000);
+}
+
+function notifyMe(title, message) {
+    if (Notification.permission !== "granted")
+        Notification.requestPermission();
+    else {
+        var notification = new Notification(title, {
+            icon: 'recursos/img/logo.png',
+            body: message
+        });
+
+        notification.onclick = function () {
+            window.open('http://gcachuo.xyz/cryptowallet/');
+        };
+
+    }
+
 }
 
 function ajax(fn, post, modulo) {
@@ -336,7 +364,7 @@ function cargarSwitchery() {
 }
 
 function cargarDatePicker(elemento, eStartDate, eEndDate, idioma, fn) {
-    let date = new Date();
+    var date = new Date();
     var startDate = moment([date.getFullYear(), date.getMonth()]);
     var endDate = moment(moment([date.getFullYear(), date.getMonth()])).endOf('month');
     eStartDate.val(startDate.format('YYYY-MM-DD'));
@@ -377,8 +405,8 @@ function cargarDatePicker(elemento, eStartDate, eEndDate, idioma, fn) {
                 moment([date.getFullYear() - 1]),
                 moment(moment([date.getFullYear() - 1])).endOf('year')
             ],
-            "Todas":[
-                moment().subtract(7,'years').startOf('year'),
+            "Todas": [
+                moment().subtract(7, 'years').startOf('year'),
                 moment().endOf('year')
             ]
         },

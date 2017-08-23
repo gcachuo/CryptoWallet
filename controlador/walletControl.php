@@ -66,18 +66,33 @@ class Wallet extends Control
             $monto = abs(str_replace(',', '', substr($coin->ganancia, 1)));
             $precio = str_replace(',', '', substr($coin->ticker, 1));
             $bitso = new bitsoConfig();
-            if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book']))
-                $btnCompra = <<<HTML
+            $color = "none";
+            if (abs($coin->porcentaje) >= 2 and abs($coin->porcentaje <= 4)) {
+                if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book'])) {
+                    $color = "lightpink";
+                    $btnCompra = <<<HTML
 <a title="Compra" onclick="aside('wallet','compra_venta',{id:'$moneda[simbolo]',monto:'$monto',precio:'$precio',mode:'buy'})" class="btn btn-sm btn-default">
     <i class="material-icons">file_download</i>
 </a>
 HTML;
-            elseif ($coin->porcentaje > 0 and !$bitso->getActive('sell', $moneda['book']))
-                $btnVenta = <<<HTML
+                } elseif ($coin->porcentaje > 0 and !$bitso->getActive('sell', $moneda['book'])) {
+                    $color = "lightgreen";
+                    $btnVenta = <<<HTML
 <a title="Venta" onclick="aside('wallet','compra_venta',{id:'$moneda[simbolo]',monto:'$monto',precio:'$precio',mode:'sell'})" class="btn btn-sm btn-default">
     <i class="material-icons">file_upload</i>
 </a>
 HTML;
+                }
+
+                echo <<<HTML
+<script>
+    var moneda=[];
+    moneda.nombre = '$moneda[nombre]';
+    moneda.ganancia = '$coin->ganancia';
+    moneda.porcentaje = '$coin->porcentaje';
+</script>
+HTML;
+            }
 
             $acciones = <<<HTML
 $btnCompra
@@ -89,7 +104,7 @@ $btnVenta
 HTML;
 
             $this->tablaMonedas .= <<<HTML
-<tr>
+<tr style="background:$color">
     <td>$moneda[nombre]</td>
     <td>$coin->cantidad</td>
     <td>$coin->invertido</td>

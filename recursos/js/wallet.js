@@ -1,5 +1,6 @@
 $(function () {
     ajax('obtenerIdioma');
+    notifyMe(moneda.nombre, moneda.ganancia + ' | ' + moneda.porcentaje + '%')
 });
 
 function obtenerIdioma(idioma) {
