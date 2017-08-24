@@ -17,7 +17,7 @@ class Wallet extends Control
         $this->cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
-        header("Refresh: 600;");
+        header("Refresh: 300;"); #300 / 60 = 5min
     }
 
     protected function cargarAside()
@@ -67,7 +67,7 @@ class Wallet extends Control
             $precio = str_replace(',', '', substr($coin->ticker, 1));
             $bitso = new bitsoConfig();
             $color = "none";
-            if (abs($coin->porcentaje) >= 2 and abs($coin->porcentaje <= 4)) {
+            if (abs($coin->porcentaje) >= 2 and $coin->porcentaje <= 4) {
                 if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book'])) {
                     $color = "lightpink";
                     $btnCompra = <<<HTML
@@ -83,8 +83,8 @@ HTML;
 </a>
 HTML;
                 }
-
-                echo <<<HTML
+                if ($color != "none")
+                    echo <<<HTML
 <script>
     var moneda=[];
     moneda.nombre = '$moneda[nombre]';
@@ -92,8 +92,11 @@ HTML;
     moneda.porcentaje = '$coin->porcentaje';
 </script>
 HTML;
+            } elseif ($coin->porcentaje > 4) {
+                $cantidadmoneda=$this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
+                $valormoneda=str_replace(',', '', substr($coin->valor,1));
+                $this->modelo->usuario_monedas->updateUsuarioMoneda($_SESSION["usuario"], $moneda['id'], $cantidadmoneda, $valormoneda);
             }
-
             $acciones = <<<HTML
 $btnCompra
 $btnVenta

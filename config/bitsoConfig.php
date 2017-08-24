@@ -79,6 +79,7 @@ class bitsoConfig
     {
         if ($side == "sell") {
             $monto = round($monto * 0.98, 2);
+            $precio -= 0.01;
         } else {
             $monto = round($monto * 1.02, 2);
         }
