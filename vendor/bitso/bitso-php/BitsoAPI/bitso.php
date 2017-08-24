@@ -422,7 +422,7 @@ class bitso
         return $this->getData($nonce, $path, $RequestPath, $HTTPMethod, $JSONPayload, $type);
     }
 
-    function cancel_order($ids)
+    function cancel_order($params)
     {
         /*
       Cancels an open order
@@ -433,7 +433,7 @@ class bitso
       Returns:
         A list of Order IDs (OIDs) for the canceled orders. Orders may not be successfully cancelled if they have been filled, have been already cancelled, or the OIDs are incorrect
       */
-        if ($ids = 'all') {
+        if ($params == 'all') {
             $parameters = 'all';
         } else {
             $parameters = implode('', $params);

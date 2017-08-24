@@ -79,6 +79,7 @@ class bitsoConfig
     {
         if ($side == "sell") {
             $monto = round($monto * 0.98, 2);
+            $precio -= 0.01;
         } else {
             $monto = round($monto * 1.02, 2);
         }
@@ -119,5 +120,23 @@ class bitsoConfig
             $active = true;
         }
         return $active;
+    }
+
+    function getOrders($book)
+    {
+        $orders = [];
+        $args = [
+            "book" => $book
+        ];
+        $open = $this->bitso->open_orders($args);
+        foreach ($open->payload as $order) {
+            array_push($orders, $order);
+        }
+        return $orders;
+    }
+
+    public function deleteOrder($id)
+    {
+        $this->bitso->cancel_order(["order_id" => $id]);
     }
 }

@@ -21,7 +21,9 @@ CREATE TABLE `_modulos`
   navegar_modulo VARCHAR(100)     NULL,
   estatus_modulo BIT DEFAULT b'1' NULL
 );
+INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (2001, null, 2000, 1, 'config', true);
 INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (3001, null, 3000, 1, 'wallet', true);
+INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (4001, null, 4000, 1, 'orders', true);
 MySQL;
         return $this->multiconsulta($sql);
     }
