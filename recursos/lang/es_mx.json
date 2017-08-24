@@ -107,6 +107,7 @@
     "1002": "Perfiles",
     "2000": "Administrativo",
     "2001": "Configuración",
-    "3001": "Wallet"
+    "3001": "Cartera",
+    "4001": "Ordenes Abiertas"
   }
 }

@@ -121,4 +121,22 @@ class bitsoConfig
         }
         return $active;
     }
+
+    function getOrders($book)
+    {
+        $orders = [];
+        $args = [
+            "book" => $book
+        ];
+        $open = $this->bitso->open_orders($args);
+        foreach ($open->payload as $order) {
+            array_push($orders, $order);
+        }
+        return $orders;
+    }
+
+    public function deleteOrder($id)
+    {
+        $this->bitso->cancel_order(["order_id" => $id]);
+    }
 }
