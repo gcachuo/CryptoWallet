@@ -78,10 +78,9 @@ class bitsoConfig
     public function crearOrden($book, $monto, $precio, $side)
     {
         if ($side == "sell") {
-            $monto = round($monto * 0.98, 2);
-            $precio -= 0.01;
+            $precio = round($precio * 1.02, 2);
         } else {
-            $monto = round($monto * 1.02, 2);
+            $precio = round($precio, 2);
         }
         $monto = round($monto / $precio, 6);
         $args = array(

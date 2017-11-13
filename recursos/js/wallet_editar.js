@@ -4,5 +4,4 @@ function btnConfirmar(idUsuario, idMoneda) {
 
 function editarUsuarioMoneda() {
     cerrarAside();
-    location.reload(true);
 }

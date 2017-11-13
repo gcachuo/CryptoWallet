@@ -9,8 +9,19 @@
 
 class Wallet extends Control
 {
-    public $tablaTransacciones, $tablaMonedas, $operacion, $disponible, $moneda;
+    public $tablaTransacciones, $tablaMonedas, $operacion, $disponible, $moneda, $totalOriginal, $totalActual;
     private $cliente;
+
+    function editarUsuarioMoneda()
+    {
+        $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], $_POST['costo']);
+    }
+
+    function confirmarMovimiento()
+    {
+        $bitso = new bitsoConfig();
+        $bitso->crearOrden($_POST['book'], $_POST['monto'], $_POST['precio'], $_POST['tipo']);
+    }
 
     protected function cargarPrincipal()
     {
@@ -18,33 +29,6 @@ class Wallet extends Control
         $this->obtenerDisponible();
         $this->buildTablaMonedas();
         header("Refresh: 300;"); #300 / 60 = 5min
-    }
-
-    protected function cargarAside()
-    {
-        switch ($_POST['asideAccion']) {
-            case "trades":
-                $this->cargarTransacciones($_POST['id']);
-                break;
-            case "compra_venta":
-                $this->operacion->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['id']);
-                $this->operacion->monto = $_POST['monto'];
-                $this->operacion->precio = $_POST['precio'];
-                $this->operacion->tipo = $_POST['mode'];
-                $this->operacion->comision = $_POST['monto'] * 0.01;
-                $this->operacion->total = $_POST['monto'] - $this->operacion->comision;
-                break;
-            case "editar":
-                $this->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['simbolo']);
-                $this->moneda->cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $this->moneda->id);
-                $this->moneda->costo = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $this->moneda->id);
-                break;
-        }
-    }
-
-    function editarUsuarioMoneda()
-    {
-        $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], $_POST['costo']);
     }
 
     function obtenerDisponible()
@@ -93,8 +77,8 @@ HTML;
 </script>
 HTML;
             } elseif ($coin->porcentaje > 4) {
-                $cantidadmoneda=$this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
-                $valormoneda=str_replace(',', '', substr($coin->valor,1));
+                $cantidadmoneda = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
+                $valormoneda = str_replace(',', '', substr($coin->valor, 1));
                 $this->modelo->usuario_monedas->updateUsuarioMoneda($_SESSION["usuario"], $moneda['id'], $cantidadmoneda, $valormoneda);
             }
             $acciones = <<<HTML
@@ -124,52 +108,6 @@ HTML;
             unset($btnCompra);
             unset($btnVenta);
         }
-    }
-
-    function confirmarMovimiento()
-    {
-        $bitso = new bitsoConfig();
-        $bitso->crearOrden($_POST['book'], $_POST['monto'], $_POST['precio'], $_POST['tipo']);
-    }
-
-    function cargarTransacciones($simbolo)
-    {
-        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
-        $bitso = new bitsoConfig();
-        $transacciones = $bitso->getTrades($moneda->book);
-        foreach ($transacciones as $transaccion) {
-            $fecha = Globales::convertir_formato_fecha($transaccion->created_at, "Y-m-d\TH:i:sO", "d/m/Y h:i:sa");
-            $transaccion->major = abs($transaccion->major);
-            $transaccion->minor = abs($transaccion->minor);
-            $compra = $transaccion->fees_currency == $transaccion->major_currency ? $transaccion->major - $transaccion->fees_amount : $transaccion->minor - $transaccion->fees_amount;
-            $precioFinal = $transaccion->side == "buy" ? ($transaccion->minor / $compra) : ($compra / $transaccion->major);
-            if ($transaccion->fees_currency == $simbolo) {
-                $pago = $compra * $precioFinal;
-                Globales::formato_moneda("$", $pago);
-            } else {
-                $pago = ($compra / $precioFinal) . " $simbolo";
-            }
-            Globales::formato_moneda("", $precioFinal);
-
-            $this->tablaTransacciones .= <<<HTML
-<tr>
-<td>$fecha</td>
-<td>{$transaccion->side}</td>
-<td>$compra {$transaccion->fees_currency}</td>
-<td>$pago</td>
-<td>$precioFinal</td>
-</tr>
-HTML;
-        }
-    }
-
-    function balanceNanoPool()
-    {
-        $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
-        $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
-        $balance = json_decode($nanopool)->data;
-        #Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
-        return $balance;
     }
 
     /**
@@ -211,6 +149,9 @@ HTML;
         if ($invertido == 0) $porcentaje = 0;
         else $porcentaje = ($ganancia / $invertido) * 100;
 
+        $this->totalOriginal += $invertido;
+        $this->totalActual += $valor;
+
         Globales::formato_moneda("$", $costo);
         Globales::formato_moneda("$", $invertido);
         Globales::formato_moneda("$", $ticker);
@@ -219,5 +160,67 @@ HTML;
         Globales::formato_moneda("", $porcentaje);
 
         return (object)compact("ticker", "cantidad", "costo", "invertido", "valor", "ganancia", "porcentaje");
+    }
+
+    function balanceNanoPool()
+    {
+        $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
+        $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
+        $balance = json_decode($nanopool)->data;
+        #Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
+        return $balance;
+    }
+
+    protected function cargarAside()
+    {
+        switch ($_POST['asideAccion']) {
+            case "trades":
+                $this->cargarTransacciones($_POST['id']);
+                break;
+            case "compra_venta":
+                $this->operacion->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['id']);
+                $this->operacion->monto = $_POST['monto'];
+                $this->operacion->precio = $_POST['precio'];
+                $this->operacion->tipo = $_POST['mode'];
+                $this->operacion->comision = $_POST['monto'] * 0.01;
+                $this->operacion->total = $_POST['monto'] - $this->operacion->comision;
+                break;
+            case "editar":
+                $this->moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['simbolo']);
+                $this->moneda->cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $this->moneda->id);
+                $this->moneda->costo = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $this->moneda->id);
+                break;
+        }
+    }
+
+    function cargarTransacciones($simbolo)
+    {
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
+        $bitso = new bitsoConfig();
+        $transacciones = $bitso->getTrades($moneda->book);
+        foreach ($transacciones as $transaccion) {
+            $fecha = Globales::convertir_formato_fecha($transaccion->created_at, "Y-m-d\TH:i:sO", "d/m/Y h:i:sa");
+            $transaccion->major = abs($transaccion->major);
+            $transaccion->minor = abs($transaccion->minor);
+            $compra = $transaccion->fees_currency == $transaccion->major_currency ? $transaccion->major - $transaccion->fees_amount : $transaccion->minor - $transaccion->fees_amount;
+            $precioFinal = $transaccion->side == "buy" ? ($transaccion->minor / $compra) : ($compra / $transaccion->major);
+            if ($transaccion->fees_currency == $simbolo) {
+                $pago = $compra * $precioFinal;
+                Globales::formato_moneda("$", $pago);
+            } else {
+                $pago = ($compra / $precioFinal) . " $simbolo";
+            }
+            Globales::formato_moneda("", $precioFinal);
+
+            $this->tablaTransacciones .= <<<HTML
+<tr>
+<td>$fecha</td>
+<td>{$transaccion->side}</td>
+<td>$compra {$transaccion->fees_currency}</td>
+<td>$pago</td>
+<td>$precioFinal</td>
+</tr>
+HTML;
+        }
     }
 }
