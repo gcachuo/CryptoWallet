@@ -6,12 +6,46 @@
  * Time: 01:52 PM
  */
 /** @var Wallet $this */
+$gp = $this->totalActual - $this->totalOriginal;
 ?>
 <div class="padding">
+    <di class="row">
+        <div class="col-sm-4 pull-right">
+            <div class="box chart">
+                <div class="box-header">
+                    <h2 class="text-muted" style="padding-bottom:10px;">
+                        <small>G/P</small>
+                        <span class="pull-right text-muted"><?= Globales::formato_moneda("$", $gp); ?></span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 pull-right">
+            <div class="box chart">
+                <div class="box-header">
+                    <h2 class="text-muted" style="padding-bottom:10px;">
+                        <small>Actual</small>
+                        <span class="pull-right text-muted"><?= Globales::formato_moneda("$", $this->totalActual) ?></span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-4 pull-right">
+            <div class="box chart">
+                <div class="box-header">
+                    <h2 class="text-muted" style="padding-bottom:10px;">
+                        <small>Original</small>
+                        <span class="pull-right text-muted"><?= Globales::formato_moneda("$", $this->totalOriginal) ?>
+                            </span>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </di>
     <div class="box">
         <div class="row">
             <div class="col-md-12">
-                <label>Ultima Actualización: <?=date('Y-m-d h:i:sa')?></label>
+                <label>Ultima Actualización: <?= date('Y-m-d h:i:sa') ?></label>
             </div>
             <div class="col-md-12">
                 <div class="table-responsive">
@@ -49,7 +83,7 @@
             <div class="row">
                 <div class="form-group">
                     <div class="col-md-4">
-                        <h6>Total: <?= Globales::formato_moneda("$", $this->disponible->total)?></h6>
+                        <h6>Total: <?= Globales::formato_moneda("$", $this->disponible->total) ?></h6>
                     </div>
                 </div>
             </div>

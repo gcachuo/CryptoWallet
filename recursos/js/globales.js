@@ -189,7 +189,7 @@ function cargarDatatable(idioma, columnDefs, buttons) {
                     renderer: function (api, rowIdx, columns) {
                         var data = $.map(columns, function (col, i) {
                             return col.hidden ?
-                                '<div class="row child"><div class="col-xs-12"><div class="form-group">' + col.data + '</div></div></div>' :
+                                '<tr><th>'+col.title+'</th><td>' + col.data + '</td></tr>' :
                                 '';
                         }).join('');
 
