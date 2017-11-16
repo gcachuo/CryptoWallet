@@ -44,4 +44,13 @@ SELECT
 MySQL;
         return $this->siguiente_registro($this->consulta($sql));
     }
+
+    public function updateDireccionEth($id_cliente, $direccion_eth_cliente)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+UPDATE clientes SET direccion_eth_cliente='$direccion_eth_cliente' WHERE id_cliente='$id_cliente'
+MySQL;
+        $this->consulta($sql);
+    }
 }

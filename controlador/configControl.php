@@ -12,14 +12,12 @@
 class Config extends Control
 {
 
-    protected function cargarPrincipal()
-    {
-        // TODO: Implement cargarPrincipal() method.
-    }
+    public $eth;
 
-    protected function cargarAside()
+    function guardarEth()
     {
-        // TODO: Implement cargarAside() method.
+        $direccionEth = $_POST['direccionEth'];
+        $this->modelo->clientes->updateDireccionEth($_SESSION['usuario'], $direccionEth);
     }
 
     function cambiarLlavesApi()
@@ -34,5 +32,16 @@ class Config extends Control
             $apiSecret = Globales::encrypt($_POST['api_secret'], $_POST["pass"]);
             $this->modelo->usuario_llaves->insertApiKeys($apiKey, $apiSecret, $_SESSION["usuario"]);
         }
+    }
+
+    protected function cargarPrincipal()
+    {
+        $cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
+        $this->eth = $cliente->direccionEth;
+    }
+
+    protected function cargarAside()
+    {
+        // TODO: Implement cargarAside() method.
     }
 }
