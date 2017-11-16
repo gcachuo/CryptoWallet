@@ -9,6 +9,7 @@
 /**
  * @property TablaUsuarios usuarios
  * @property TablaUsuario_Llaves usuario_llaves
+ * @property TablaClientes clientes
  */
 class ModeloConfig extends Tabla
 {

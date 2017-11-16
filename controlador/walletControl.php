@@ -51,7 +51,7 @@ class Wallet extends Control
             $precio = str_replace(',', '', substr($coin->ticker, 1));
             $bitso = new bitsoConfig();
             $color = "none";
-            if (abs($coin->porcentaje) >= 2 and $coin->porcentaje <= 4) {
+            if (abs($coin->porcentaje) >= 3 and $coin->porcentaje <= 5) {
                 if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book'])) {
                     $color = "lightpink";
                     $btnCompra = <<<HTML
@@ -76,7 +76,7 @@ HTML;
     moneda.porcentaje = '$coin->porcentaje';
 </script>
 HTML;
-            } elseif ($coin->porcentaje > 4) {
+            } elseif ($coin->porcentaje > 5) {
                 $cantidadmoneda = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
                 $valormoneda = str_replace(',', '', substr($coin->valor, 1));
                 $this->modelo->usuario_monedas->updateUsuarioMoneda($_SESSION["usuario"], $moneda['id'], $cantidadmoneda, $valormoneda);
