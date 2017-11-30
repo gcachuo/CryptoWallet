@@ -469,7 +469,60 @@ function cargarDoughnut(id, data, names, color) {
                             var green = color.green + (params.dataIndex * 33);
                             var blue = color.blue + (params.dataIndex * 33);
                             return 'rgba(' + red + ',' + green + ',' + blue + ',1)';
-                            ;
+                        }
+                    }
+                },
+                type: 'pie',
+                radius: ['50%', '70%'],
+                data: data
+            }
+        ]
+    });
+    return myChart;
+}
+function cargarDoughnut3(id, data, names, colors) {
+    console.log(colors[0].red);
+    var myChart = echarts.init(document.getElementById(id));
+    myChart.setOption({
+        tooltip: {
+            transitionDuration: 0,
+            showDelay: 0,
+            hideDelay: 0,
+            position: [0, 0],
+            trigger: 'item',
+            formatter: '{a} <br/>{b} : {c} ({d}%)'
+        },
+        legend: {
+            orient: 'vertical',
+            x: 'left',
+            textStyle: {
+                color: 'auto'
+            },
+            data: names
+        },
+        calculable: true,
+        series: [
+            {
+                name: id,
+                itemStyle: {
+                    normal: {
+                        label: {
+                            show: false,
+                            textStyle: {
+                                color: 'rgba(165,165,165,1)'
+                            }
+                        },
+                        labelLine: {
+                            show: false,
+                            lineStyle: {
+                                color: 'rgba(165,165,165,1)'
+                            }
+                        },
+                        color: function (params) {
+                            var red = colors[params.dataIndex].red;
+                            var green = colors[params.dataIndex].green;
+                            var blue = colors[params.dataIndex].blue;
+                            return 'rgba(' + red + ',' + green + ',' + blue + ',1)';
                         }
                     }
                 },
