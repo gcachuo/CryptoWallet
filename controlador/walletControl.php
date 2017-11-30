@@ -12,6 +12,96 @@ class Wallet extends Control
     public $tablaTransacciones, $tablaMonedas, $operacion, $disponible, $moneda, $totalOriginal, $totalActual;
     private $cliente;
 
+    function cargarGraficas()
+    {
+        $bitso = new bitsoConfig();
+        $data = ["balance" => ["names" => [], "values" => []]];
+        $monedas = $this->modelo->monedas->selectMonedas();
+        foreach ($monedas as $moneda) {
+            $ticker = $bitso->getTicker($moneda['book'])->ask;
+            $explode = explode("_", $moneda['book']);
+            if ($explode[1] == "btc") {
+                $tickerbtc = $bitso->getTicker("btc_mxn")->ask;
+                $ticker = $ticker * $tickerbtc;
+            }
+            $coin = $this->cargarMoneda($moneda['simbolo']);
+            array_push($data['balance']['names'], $moneda["nombre"]);
+            array_push($data['balance']['values'], ["name" => $moneda["nombre"], "value" => ($coin->cantidad * $ticker)]);
+        }
+        $data['colores'] = [
+            ['red' => 76, 'green' => 202, 'blue' => 71],
+            ['red' => 247, 'green' => 147, 'blue' => 23],
+            ['red' => 130, 'green' => 131, 'blue' => 132],
+            ['red' => 0, 'green' => 164, 'blue' => 225]
+        ];
+
+        $data['balance']['names'] = array_reverse(array_unique(array_reverse($data['balance']['names'])));
+        $data['balance']['values'] = array_values($data['balance']['values']);
+
+        return $data;
+    }
+
+    /**
+     * @param $simbolo
+     * @return object
+     */
+    function cargarMoneda($simbolo)
+    {
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
+        try {
+            $bitso = new bitsoConfig();
+            $ticker = $bitso->getTicker($moneda->book)->ask;
+            $explode = explode("_", $moneda->book);
+            if ($explode[1] == "btc") {
+                $tickerbtc = $bitso->getTicker("btc_mxn")->ask;
+                $ticker = $ticker * $tickerbtc;
+            }
+            $balance = $bitso->getBalance();
+        } catch (Exception $ex) {
+            echo "<script>console.log('{$ex->getMessage()}')</script>";
+        }
+
+        $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $moneda->id);
+        $cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda->id);
+        $cantidad += $balance[$moneda->id]->total;
+
+        if ($simbolo == "eth")
+            try {
+                $cantidad += number_format(round($this->balanceNanoPool(), 8), 8);
+            } catch (Exception $ex) {
+                echo "<script>console.log('{$ex->getMessage()}')</script>";
+            }
+
+        if ($cantidad == 0) $costo = 0;
+        else $costo = $invertido / $cantidad;
+        $valor = $cantidad * $ticker;
+
+        $ganancia = $valor - $invertido;
+        if ($invertido == 0) $porcentaje = 0;
+        else $porcentaje = ($ganancia / $invertido) * 100;
+
+        $this->totalOriginal += $invertido;
+        $this->totalActual += $valor;
+
+        Globales::formato_moneda("$", $costo);
+        Globales::formato_moneda("$", $invertido);
+        Globales::formato_moneda("$", $ticker);
+        Globales::formato_moneda("$", $valor);
+        Globales::formato_moneda("$", $ganancia);
+        Globales::formato_moneda("", $porcentaje);
+
+        return (object)compact("ticker", "cantidad", "costo", "invertido", "valor", "ganancia", "porcentaje");
+    }
+
+    function balanceNanoPool()
+    {
+        $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
+        $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
+        $balance = json_decode($nanopool)->data;
+        #Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
+        return $balance;
+    }
+
     function editarUsuarioMoneda()
     {
         $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], $_POST['costo']);
@@ -108,67 +198,6 @@ HTML;
             unset($btnCompra);
             unset($btnVenta);
         }
-    }
-
-    /**
-     * @param $simbolo
-     * @return object
-     */
-    function cargarMoneda($simbolo)
-    {
-        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($simbolo);
-        try {
-            $bitso = new bitsoConfig();
-            $ticker = $bitso->getTicker($moneda->book)->ask;
-            $explode = explode("_", $moneda->book);
-            if ($explode[1] == "btc") {
-                $tickerbtc = $bitso->getTicker("btc_mxn")->ask;
-                $ticker = $ticker * $tickerbtc;
-            }
-            $balance = $bitso->getBalance();
-        } catch (Exception $ex) {
-            echo "<script>console.log('{$ex->getMessage()}')</script>";
-        }
-
-        $invertido = $this->modelo->usuario_monedas->selectCosto($_SESSION['usuario'], $moneda->id);
-        $cantidad = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda->id);
-        $cantidad += $balance[$moneda->id]->total;
-
-        if ($simbolo == "eth")
-            try {
-                $cantidad += number_format(round($this->balanceNanoPool(), 8), 8);
-            } catch (Exception $ex) {
-                echo "<script>console.log('{$ex->getMessage()}')</script>";
-            }
-
-        if ($cantidad == 0) $costo = 0;
-        else $costo = $invertido / $cantidad;
-        $valor = $cantidad * $ticker;
-
-        $ganancia = $valor - $invertido;
-        if ($invertido == 0) $porcentaje = 0;
-        else $porcentaje = ($ganancia / $invertido) * 100;
-
-        $this->totalOriginal += $invertido;
-        $this->totalActual += $valor;
-
-        Globales::formato_moneda("$", $costo);
-        Globales::formato_moneda("$", $invertido);
-        Globales::formato_moneda("$", $ticker);
-        Globales::formato_moneda("$", $valor);
-        Globales::formato_moneda("$", $ganancia);
-        Globales::formato_moneda("", $porcentaje);
-
-        return (object)compact("ticker", "cantidad", "costo", "invertido", "valor", "ganancia", "porcentaje");
-    }
-
-    function balanceNanoPool()
-    {
-        $address = $this->cliente->direccionEth;//"0xa6edd791405f49021a7e7096c036cff0ce6e085a";
-        $nanopool = Globales::url_request('PUBLIC', "https://api.nanopool.org/v1/eth/balance/$address", 'GET');
-        $balance = json_decode($nanopool)->data;
-        #Globales::send_notification("nanopool: " . number_format(round($balance, 8), 8));
-        return $balance;
     }
 
     protected function cargarAside()
