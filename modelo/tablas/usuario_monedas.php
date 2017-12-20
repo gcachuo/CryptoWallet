@@ -45,9 +45,10 @@ MySQL;
 
     public function updateUsuarioMoneda($id_usuario, $id_moneda, $cantidad_usuario_moneda, $costo_usuario_moneda)
     {
+        $cantidad_usuario_moneda = $cantidad_usuario_moneda ?: 0;
         $sql = /** @lang MySQL */
             <<<MySQL
-replace into usuario_monedas(id_usuario_monedas,id_usuario, id_moneda, cantidad_usuario_moneda, costo_usuario_moneda) VALUES 
+REPLACE INTO usuario_monedas(id_usuario_monedas,id_usuario, id_moneda, cantidad_usuario_moneda, costo_usuario_moneda) VALUES 
 (id_usuario_monedas,'$id_usuario','$id_moneda','$cantidad_usuario_moneda','$costo_usuario_moneda')
 MySQL;
         $this->consulta($sql);

@@ -213,9 +213,13 @@ HTML;
     private function obtenerPorcentajeDelta($porcentaje, $moneda)
     {
         $file = $this->getPorcentajeFromFile($moneda['simbolo']);
-        $valor = ($this->totalActual * $file) / 100;
-        $this->modelo->updateOriginal($moneda, $valor);
-        $diferencia = $file == 0 ? 0 : $porcentaje - $file;
+        if ($file == 0) {
+            $diferencia = 0;
+        } else {
+            $diferencia = $porcentaje - $file;
+            $valor = ($this->totalActual * $file) / 100;
+            $this->modelo->updateOriginal($moneda, $valor);
+        }
         return $diferencia;
     }
 
