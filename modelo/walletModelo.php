@@ -14,4 +14,9 @@
  */
 class ModeloWallet extends Tabla
 {
+    public function updateOriginal($moneda, $nuevovalor)
+    {
+        $cantidadmoneda = $this->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
+        $this->usuario_monedas->updateUsuarioMoneda($_SESSION["usuario"], $moneda['id'], $cantidadmoneda, $nuevovalor);
+    }
 }

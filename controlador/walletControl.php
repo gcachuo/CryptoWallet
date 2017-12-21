@@ -80,16 +80,6 @@ class Wallet extends Control
         if ($invertido == 0) $porcentaje = 0;
         else $porcentaje = ($ganancia / $invertido) * 100;
 
-        $this->totalOriginal += $invertido;
-        $this->totalActual += $valor;
-
-        Globales::formato_moneda("$", $costo);
-        Globales::formato_moneda("$", $invertido);
-        Globales::formato_moneda("$", $ticker);
-        Globales::formato_moneda("$", $valor);
-        Globales::formato_moneda("$", $ganancia);
-        Globales::formato_moneda("", $porcentaje);
-
         return (object)compact("ticker", "cantidad", "costo", "invertido", "valor", "ganancia", "porcentaje");
     }
 
@@ -104,7 +94,7 @@ class Wallet extends Control
 
     function editarUsuarioMoneda()
     {
-        $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], $_POST['costo']);
+        $this->modelo->usuario_monedas->updateUsuarioMoneda($_POST['idUsuario'], $_POST['idMoneda'], $_POST['cantidad'], str_replace(',', '', $_POST['costo']));
     }
 
     function confirmarMovimiento()
@@ -115,9 +105,16 @@ class Wallet extends Control
 
     protected function cargarPrincipal()
     {
+        $monedas = $this->modelo->monedas->selectMonedas();
+        foreach ($monedas as $key => $moneda) {
+            $coin = $this->cargarMoneda($moneda['simbolo']);
+            $this->totalOriginal += $coin->invertido;
+            $this->totalActual += $coin->valor;
+            $monedas[$key]['coin'] = $coin;
+        }
         $this->cliente = $this->modelo->clientes->selectClienteFromId($_SESSION['usuario']);
         $this->obtenerDisponible();
-        $this->buildTablaMonedas();
+        $this->buildTablaMonedas($monedas);
         header("Refresh: 300;"); #300 / 60 = 5min
     }
 
@@ -132,16 +129,29 @@ class Wallet extends Control
         }
     }
 
-    function buildtablaMonedas()
+    function buildtablaMonedas($monedas)
     {
-        $monedas = $this->modelo->monedas->selectMonedas();
+        $tabla = "";
         foreach ($monedas as $moneda) {
-            $coin = $this->cargarMoneda($moneda['simbolo']);
+            $coin = $moneda['coin'];
             $monto = abs(str_replace(',', '', substr($coin->ganancia, 1)));
             $precio = str_replace(',', '', substr($coin->ticker, 1));
             $bitso = new bitsoConfig();
             $color = "none";
-            if (abs($coin->porcentaje) >= 3 and $coin->porcentaje <= 5) {
+
+            $porcentaje = ($coin->valor / $this->totalActual) * 100;
+            $diferencia = $this->obtenerPorcentajeDelta($porcentaje, $moneda);
+            $coin->ganancia = $this->totalActual * ($diferencia / 100);
+
+            Globales::formato_moneda("$", $coin->costo);
+            Globales::formato_moneda("$", $coin->invertido);
+            Globales::formato_moneda("$", $coin->ticker);
+            Globales::formato_moneda("$", $coin->valor);
+            Globales::formato_moneda("$", $coin->ganancia);
+            Globales::formato_moneda("", $coin->porcentaje);
+            Globales::formato_moneda("", $porcentaje);
+
+            if (abs($coin->porcentaje) >= 3) {
                 if ($coin->porcentaje < 0 and !$bitso->getActive('buy', $moneda['book'])) {
                     $color = "lightpink";
                     $btnCompra = <<<HTML
@@ -157,6 +167,7 @@ HTML;
 </a>
 HTML;
                 }
+
                 if ($color != "none")
                     echo <<<HTML
 <script>
@@ -166,10 +177,6 @@ HTML;
     moneda.porcentaje = '$coin->porcentaje';
 </script>
 HTML;
-            } elseif ($coin->porcentaje > 5) {
-                $cantidadmoneda = $this->modelo->usuario_monedas->selectCantidad($_SESSION['usuario'], $moneda['id']);
-                $valormoneda = str_replace(',', '', substr($coin->valor, 1));
-                $this->modelo->usuario_monedas->updateUsuarioMoneda($_SESSION["usuario"], $moneda['id'], $cantidadmoneda, $valormoneda);
             }
             $acciones = <<<HTML
 $btnCompra
@@ -180,7 +187,7 @@ $btnVenta
 <a title="Editar" onclick="btnEditar('$moneda[simbolo]')" class="btn btn-sm btn-default"><i class="material-icons">edit</i></a>
 HTML;
 
-            $this->tablaMonedas .= <<<HTML
+            $tabla .= <<<HTML
 <tr style="background:$color">
     <td>$moneda[nombre]</td>
     <td>$coin->cantidad</td>
@@ -189,7 +196,8 @@ HTML;
     <td>$coin->ticker</td>
     <td>$coin->valor</td>
     <td>$coin->ganancia</td>
-    <td>$coin->porcentaje</td>
+    <td>$porcentaje%</td>
+    <td>$coin->porcentaje%</td>
     <td class="tdAcciones">
        $acciones
     </td>
@@ -198,6 +206,40 @@ HTML;
             unset($btnCompra);
             unset($btnVenta);
         }
+        $this->tablaMonedas = $tabla;
+        return compact("tabla");
+    }
+
+    private function obtenerPorcentajeDelta($porcentaje, $moneda)
+    {
+        $file = $this->getPorcentajeFromFile($moneda['simbolo']);
+        if ($file == 0) {
+            $diferencia = 0;
+        } else {
+            $diferencia = $porcentaje - $file;
+            $valor = ($this->totalActual * $file) / 100;
+            $this->modelo->updateOriginal($moneda, $valor);
+        }
+        return $diferencia;
+    }
+
+    private function getPorcentajeFromFile($simbolo)
+    {
+        $usuario = $_SESSION["usuario"];
+        $path = "recursos/config/$usuario.json";
+        if (!file_exists($path)) {
+            $array = [];
+            foreach ($this->modelo->monedas->selectMonedas() as $moneda) {
+                $array[$moneda['simbolo']] = 0;
+            }
+            $json = json_encode($array);
+            $fp = fopen($path, "wb");
+            fwrite($fp, $json);
+            fclose($fp);
+        }
+        $object = json_decode(file_get_contents($path));
+        $porcentaje = $object->$simbolo;
+        return $porcentaje;
     }
 
     protected function cargarAside()
