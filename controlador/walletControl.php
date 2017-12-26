@@ -32,6 +32,7 @@ class Wallet extends Control
             ['red' => 76, 'green' => 202, 'blue' => 71],
             ['red' => 247, 'green' => 147, 'blue' => 23],
             ['red' => 130, 'green' => 131, 'blue' => 132],
+            ['red' => 190, 'green' => 190, 'blue' => 190],
             ['red' => 0, 'green' => 164, 'blue' => 225]
         ];
 
@@ -122,7 +123,7 @@ class Wallet extends Control
     {
         $bitso = new bitsoConfig();
         $balance = $bitso->getBalance();
-        $this->disponible = $balance[5];
+        $this->disponible = $balance[6];
         if ($this->disponible->total != $_SESSION['disponible']) {
             Globales::send_notification("bitso: " . round($this->disponible->total, 2));
             $_SESSION['disponible'] = $this->disponible->total;
@@ -140,8 +141,7 @@ class Wallet extends Control
             $color = "none";
 
             $porcentaje = ($coin->valor / $this->totalActual) * 100;
-            $diferencia = $this->obtenerPorcentajeDelta($porcentaje, $moneda);
-            $coin->ganancia = $this->totalActual * ($diferencia / 100);
+            $coin->ganancia = $this->obtenerPorcentajeDelta($porcentaje, $moneda);
 
             Globales::formato_moneda("$", $coin->costo);
             Globales::formato_moneda("$", $coin->invertido);
@@ -214,13 +214,14 @@ HTML;
     {
         $file = $this->getPorcentajeFromFile($moneda['simbolo']);
         if ($file == 0) {
-            $diferencia = 0;
+            $ganancia = $moneda['coin']->valor - $moneda['coin']->invertido;
         } else {
             $diferencia = $porcentaje - $file;
             $valor = ($this->totalActual * $file) / 100;
             $this->modelo->updateOriginal($moneda, $valor);
+            $ganancia = $this->totalActual * ($diferencia / 100);
         }
-        return $diferencia;
+        return $ganancia;
     }
 
     private function getPorcentajeFromFile($simbolo)
