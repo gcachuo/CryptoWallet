@@ -58,7 +58,7 @@
                         <!-- brand -->
                         <a class="navbar-brand" onclick="navegar('inicio')">
                             <img src="<?= HTTP_PATH_ROOT ?>recursos/img/logo.png" alt="Logo">
-                            <span class="hidden-folded inline">CRYPTO WALLET</span>
+                            <span class="hidden-folded inline">CRYPTO</span>
                         </a>
                         <div>
                             <a onclick="btnMiPerfil()">
@@ -144,8 +144,6 @@
                                 </a>
                                 <div class="dropdown-menu pull-right dropdown-menu-scale">
                                     <a class="dropdown-item" onclick="btnMiPerfil()">Perfil</a>
-                                    <a class="dropdown-item" onclick="btnCuenta()">Cuenta</a>
-                                    <a class="dropdown-item" onclick="navegar('pago');">Suscripción</a>
                                     <div class="dropdown-divider"></div>
                                     <a class="dropdown-item" onclick="cerrarSesion()">Cerrar Sesión</a>
                                 </div>
@@ -173,7 +171,7 @@
 
                     <?php
                     $namespace = Globales::$namespace;
-                    include_once HTTP_PATH_ROOT . "vista/floatingButton.phtml"
+                    #include_once HTTP_PATH_ROOT . "vista/floatingButton.phtml"
                     ?>
 
                     <?php endif; ?>
