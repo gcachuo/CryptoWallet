@@ -16,7 +16,7 @@
  * @property TablaContacto_Clientes contacto_clientes
  * @property TablaUsuario_Llaves usuario_llaves
  */
-class ModeloControl extends Tabla
+class ModeloControl extends Modelo
 {
     /**
      * @return object
@@ -24,7 +24,7 @@ class ModeloControl extends Tabla
     function obtenerModulos()
     {
         $objectModulos = (object)array();
-        $modulos = $this->modulos->selectModulos();
+        $modulos = $this->modulos->selectModulos($_SESSION['usuario']);
         foreach ($modulos as $modulo) {
             $objectModulos->$modulo["idModulo"] = $modulo;
         }

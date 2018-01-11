@@ -12,7 +12,7 @@
  * @property distribuidor\TablaContacto_Cliente contacto_cliente
  * @property distribuidor\TablaDistribuidor distribuidor
  */
-class ModeloMiPerfil extends Tabla
+class ModeloMiPerfil extends Modelo
 {
     function obtenerCorreo($idUsuario)
     {

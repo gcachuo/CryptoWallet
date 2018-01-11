@@ -37,6 +37,7 @@ abstract class Conexion
     /**
      * @param string $sql
      * @return int|mysqli_result
+     * @throws Exception
      */
     protected function consulta($sql)
     {
@@ -52,7 +53,7 @@ abstract class Conexion
                 $this->desconectar();
                 $this->retry = false;
             } catch (mysqli_sql_exception $ex) {
-                $this->handleErrors($ex->getCode(), $ex->getMessage());
+                $this->handleErrors($ex, $sql);
             }
         }
         return $resultado;
@@ -67,21 +68,30 @@ abstract class Conexion
         return $class;
     }
 
-    private function handleErrors($code, $message)
+    /**
+     * @param Exception $ex
+     * @param $sql
+     * @throws Exception
+     */
+    private function handleErrors($ex, $sql)
     {
-        /** @var bd $this */
+        $code = $ex->getCode();
+        $message = $ex->getMessage();
+        $trace = $ex->getTrace();
+        /** @var Tabla $this */
         switch ($code) {
             case 1146:
-                /** @var bd $table */
-                $token = strtolower($_SESSION[token]) ?: Conexion::$db;
+                /** @var Tabla $table */
+                $token = "crypto";
                 $table = trim(str_replace("Table '$token.", "", str_replace("' doesn't exist", "", $message)), "_");
-                if (is_null($this->$table->create_table())) {
+                $verificar = is_null($this->$table->create_table());
+                if ($verificar) {
                     $this->retry = false;
                     Globales::mensaje_error("No se creo la tabla $table");
                 }
                 break;
             case 1054:
-                $table = str_replace("Tabla", "", get_class($this));
+                $table = str_replace("distribuidor\\", "", str_replace("Tabla", "", get_class($this)));
                 if (method_exists($this->$table, "modify_table")) {
                     $this->retry = false;
                     if (is_null($this->$table->modify_table())) {
@@ -89,15 +99,30 @@ abstract class Conexion
                     }
                 } else {
                     $this->retry = false;
-                    Globales::mensaje_error($message);
+                    Globales::mensaje_error($message . " [" . get_class($this) . "]");
                 }
                 break;
             case 1060:
                 $this->retry = false;
                 break;
+            case 1064:
+                /** Error de sintaxis */
+                $this->retry = false;
+                Globales::mensaje_error("Error 1064. Contacte al desarrollador. [{$trace[2]['class']}]");
+                break;
+            case 2002:
+                /** Error de conexion */
+                $this->retry = false;
+                Globales::mensaje_error("Error 2002. Verifique su conexion.");
+                break;
+            case 2006:
+                $this->retry = true;
+                mysqli_ping(self::$conexion);
+                Globales::mensaje_error('Error 2006. Intente de nuevo. [MySQL Server Has Gone Away]');
+                break;
             default:
                 $this->retry = false;
-                Globales::mensaje_error($message);
+                Globales::mensaje_error("Error $code. $message");
                 break;
         }
     }
@@ -137,27 +162,31 @@ abstract class Conexion
     }
 }
 
-abstract class bd extends Conexion
+abstract class Tabla extends Conexion
 {
     /**
-     * bd constructor.
+     * cbiz constructor.
      * @param string $token
      */
     function __construct($token)
     {
-        $token = $token ?: ($_SESSION[token] ?: "cbizgastos");
-        Conexion::$host = "localhost";
-        Conexion::$db = "crypto";
-        Conexion::$user = "cachu";
-        Conexion::$pass = "0908070605mM*";
+        $config = Globales::getConfig()->conexion;
+        $token = $token ?: $config->default_database;
+        Conexion::$host = $config->host;
+        Conexion::$db = "{$config->prefix}$token";
+        Conexion::$user = $config->user;
+        Conexion::$pass = $config->password;
     }
 
     public function __call($name, $arguments)
     {
         if (!method_exists($this, $name)) {
-            Globales::mensaje_error("No existe el metodo $name.");
+
         }
     }
 
+    /**
+     * @return bool regresar la consulta
+     */
     abstract function create_table();
 }

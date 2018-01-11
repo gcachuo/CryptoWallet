@@ -6,7 +6,7 @@
  * Time: 04:33 PM
  */
 
-class TablaUsuario_Llaves extends bd
+class TablaUsuario_Llaves extends Tabla
 {
 
     function create_table()

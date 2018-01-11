@@ -6,7 +6,7 @@
  * Date: 09/mar/2017
  * Time: 05:06 PM
  */
-class TablaCiudades extends bd
+class TablaCiudades extends Tabla
 {
     function create_table()
     {

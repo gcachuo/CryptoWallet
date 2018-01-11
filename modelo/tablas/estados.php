@@ -6,7 +6,7 @@
  * Date: 09/mar/2017
  * Time: 05:06 PM
  */
-class TablaEstados extends bd
+class TablaEstados extends Tabla
 {
     function create_table()
     {

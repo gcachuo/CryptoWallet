@@ -6,7 +6,7 @@
  * Time: 04:35 PM
  */
 
-class TablaClientes extends bd
+class TablaClientes extends Tabla
 {
 
     function create_table()

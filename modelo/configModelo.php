@@ -11,7 +11,7 @@
  * @property TablaUsuario_Llaves usuario_llaves
  * @property TablaClientes clientes
  */
-class ModeloConfig extends Tabla
+class ModeloConfig extends Modelo
 {
 
 }

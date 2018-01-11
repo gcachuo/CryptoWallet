@@ -6,7 +6,7 @@
  * Date: 23/feb/2017
  * Time: 10:44 AM
  */
-class TablaUsuarios extends bd
+class TablaUsuarios extends Tabla
 {
     function create_table()
     {

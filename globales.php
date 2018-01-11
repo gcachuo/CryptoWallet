@@ -97,6 +97,11 @@ class Globales
         return (object)$permisos;
     }
 
+    static function getConfig()
+    {
+        return self::get_json_to_object("config.json");
+    }
+
     /**
      * @param string $namespace
      */
