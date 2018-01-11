@@ -385,19 +385,6 @@ HTML;
         $_SESSION['api_secret'] = $api->apiSecret;
     }
 
-    function __get($key)
-    {
-        if ($key == "control") $modulo = $key;
-        else {
-            $modulo = explode("/", Globales::$modulo)[0];
-            //if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
-            if ($modulo != get_class($this)) $modulo = get_class($this);
-            elseif ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
-        }
-        $modelo = new ArchivoModelo();
-        return $modelo->$modulo;
-    }
-
     function buildListNotificacions()
     {
         $this->numNot = 0;
@@ -415,6 +402,19 @@ HTML;
     </div>
 HTML;
         }
+    }
+
+    function __get($key)
+    {
+        if ($key == "control") $modulo = $key;
+        else {
+            $modulo = explode("/", Globales::$modulo)[0];
+            //if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
+            if ($modulo != get_class($this)) $modulo = get_class($this);
+            elseif ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
+        }
+        $modelo = new ArchivoModelo();
+        return $modelo->$modulo;
     }
 
     protected function buildListaEstados()
@@ -460,21 +460,18 @@ HTML;
             }
         }
     }
-}class ArchivoModelo
+}
+
+class ArchivoModelo
 {
     function __get($key)
     {
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "{$namespace}modelo/{$key}Modelo.php";
-        if (!file_exists($ruta)) {
-            $ruta = HTTP_PATH_ROOT . "modelo/{$key}Modelo.php";
-            $namespace = "";
-        };
-        if (file_exists($ruta)) {
-            require_once $ruta;
-            $modelo = "{$namespace}Modelo{$key}";
-            $class = new $modelo();
-        }
+        $key = mb_strtolower($key);
+        $ruta = "modelo/{$key}Modelo.php";
+        require_once $ruta;
+        $modelo = "Modelo{$key}";
+        $class = new $modelo();
         return $class;
     }
 }
@@ -489,12 +486,17 @@ Class Modelo
         self::$token = null;
     }
 
+    public function __toString()
+    {
+        return get_class($this);
+    }
+
     function __get($key)
     {
         self::getToken();
         $key = ltrim($key, "_");
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$namespace}{$key}.php";
+        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$key}.php";
         if (file_exists($ruta)) {
             require_once $ruta;
             $modelo = "{$namespace}Tabla{$key}";

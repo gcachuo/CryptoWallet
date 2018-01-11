@@ -29,3 +29,12 @@ try {
 } catch (Exception $ex) {
     Globales::mostrar_exception($ex);
 }
+
+function autoloader($class)
+{
+    if (strpos($class, 'Modelo') !== false) {
+        $class = str_replace('Modelo', '', $class);
+        require "modelo/{$class}Modelo.php";
+    } else
+        require "controlador/{$class}Control.php";
+}
