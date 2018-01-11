@@ -12,7 +12,7 @@
  * @property TablaMonedas monedas
  * @property TablaClientes clientes
  */
-class ModeloWallet extends Tabla
+class ModeloWallet extends Modelo
 {
     public function updateOriginal($moneda, $nuevovalor)
     {

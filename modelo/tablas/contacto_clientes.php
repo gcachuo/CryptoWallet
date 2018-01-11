@@ -6,7 +6,7 @@
  * Time: 04:13 PM
  */
 
-class TablaContacto_Clientes extends bd
+class TablaContacto_Clientes extends Tabla
 {
     function create_table()
     {

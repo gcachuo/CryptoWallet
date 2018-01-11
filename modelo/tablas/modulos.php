@@ -6,7 +6,7 @@
  * Date: 27/feb/2017
  * Time: 05:08 PM
  */
-class TablaModulos extends bd
+class TablaModulos extends Tabla
 {
     function create_table()
     {
@@ -29,21 +29,30 @@ MySQL;
     }
 
     /**
+     * @param $id_usuario
      * @return mysqli_result|null
      */
-    function selectModulos()
+    function selectModulos($id_usuario)
     {
         $sql = /** @lang MySQL */
             <<<MySQL
 SELECT
-  id_modulo    idModulo,
-  padre_modulo padreModulo,
-  orden_modulo ordenModulo,
-  icono_modulo iconoModulo,
-  navegar_modulo navegarModulo
-FROM _modulos
+  m.id_modulo               idModulo,
+  padre_modulo              padreModulo,
+  orden_modulo              ordenModulo,
+  icono_modulo              iconoModulo,
+  navegar_modulo            navegarModulo,
+  u.id_usuario,
+  coalesce(pa.id_perfil, 0) perfil,
+  id_accion
+FROM _modulos m
+  LEFT JOIN `_perfiles_acciones` pa ON pa.id_modulo = m.id_modulo
+  LEFT JOIN `_perfiles` p ON p.id_perfil = pa.id_perfil
+  JOIN _usuarios u ON u.perfil_usuario = p.id_perfil or perfil_usuario=0
 WHERE estatus_modulo = TRUE
-order by padre_modulo, orden_modulo;
+      AND if(pa.id_perfil = 0, 0 = 0, u.id_usuario = '$id_usuario')
+/*GROUP BY idModulo*/
+ORDER BY padre_modulo, orden_modulo;
 MySQL;
         return $this->consulta($sql);
     }

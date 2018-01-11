@@ -7,7 +7,7 @@
  */
 
 /** @property TablaMonedas $monedas */
-class ModeloOrders extends Tabla
+class ModeloOrders extends Modelo
 {
 
 }

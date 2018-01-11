@@ -14,7 +14,7 @@
  * @property TablaClientes clientes
  * @property TablaUsuario_Llaves usuario_llaves
  */
-class ModeloLogin extends Tabla
+class ModeloLogin extends Modelo
 {
     function getUsuario($login, $password)
     {

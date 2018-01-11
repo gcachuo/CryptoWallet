@@ -20,10 +20,6 @@ abstract class Control
 
     private $customStylesheets, $customScripts, $stylesheets, $scripts, $page;
 
-    protected abstract function cargarPrincipal();
-
-    protected abstract function cargarAside();
-
     /**
      * Constructor.
      * Carga los recursos, agrega el script del modulo y genera el codigo HTML para la vista.
@@ -84,89 +80,27 @@ abstract class Control
         }
     }
 
-    function getApiKeys($pass){
-        $api = $this->control->usuario_llaves->selectApiKey($_SESSION['usuario']);
-        $api->apiKey = Globales::decrypt($api->apiKey,$pass);
-        $api->apiSecret = Globales::decrypt($api->apiSecret,$pass);
-        $_SESSION['api_key'] = $api->apiKey;
-        $_SESSION['api_secret'] = $api->apiSecret;
-    }
-
-    function showMessage()
-    {
-        if (isset($_SESSION[messages])) {
-            $message = "";
-            $color = "";
-            switch (true) {
-                case $_SESSION[messages][transaccion]:
-                    $message = "Registrado correctamente";
-                    $color = "light-green-500";
-                    break;
-            }
-            echo "<script>showMessage('$message', '$color');</script>";
-            unset($_SESSION[messages]);
-        }
-    }
-
-    function __get($key)
-    {
-        if ($key == "control") $modulo = $key;
-        else {
-            $modulo = explode("/", Globales::$modulo)[0];
-            if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
-            if ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
-        }
-        $modelo = new Modelo();
-        return $modelo->$modulo;
-    }
-
-    private function setVista()
-    {
-        if (!empty($_POST["accion"])) $vista = $_POST["accion"];
-        elseif (empty($_POST["vista"])) $vista = Globales::$modulo;
-        else $vista = $_POST["vista"];
-
-        Globales::$modulo = $vista;
-
-        return $vista;
-    }
-
     /**
-     * @param int $padre
-     * @param object $modulos
-     * @return string
+     * @property $formatoFecha
+     * @return array
      */
-    private function buildModulos($padre, $modulos)
+    private function obtenerIdioma()
     {
-        $idioma = Globales::getIdioma('modulos');
-        foreach ($modulos as $modulo) {
-            if ($modulo["padreModulo"] == 0) continue;
-            /*$permisos = $this->permisosModulo($modulo["idModulo"]);*/
-            if ($_SESSION[perfil] != 0) {
-                if (!$permisos->accesar and $padre != 0) continue;
-            }
+        if (!empty($_GET["lang"])) $selectIdioma = $_GET["lang"];
+        elseif (!empty($_SESSION["idioma"])) $selectIdioma = $_SESSION["idioma"];
+        else $selectIdioma = "es_mx";
 
-            $nombre = mb_strtolower($idioma->$modulo["idModulo"]);
-            $navegar = mb_strtolower($modulo["navegarModulo"]);
+        $_SESSION["idioma"] = $selectIdioma;
 
-            if ($modulo["iconoModulo"] != "")
-                $icono = <<<HTML
-        <span class="nav-icon"><i class="material-icons">$modulo[iconoModulo]</i></span>
-HTML;
+        $json = file_get_contents(HTTP_PATH_ROOT . "recursos/lang/$selectIdioma.json");
+        $idioma = json_decode($json, false);
 
-            if ($submodulos == null) {
-                if ($navegar != "") $onclick = "onclick=\"navegar('$navegar');\"";
-            }
-            $htmlModulos .= <<<HTML
-<li class="nav-header hidden-folded">
-        $icono
-    <a $onclick>
-        <span class="nav-text">$nombre</span>
-    </a>
-</li>
-HTML;
-        }
-        return $htmlModulos;
+        $modulo = Globales::$modulo;
+        if ($_GET[aside])
+            $modulo = $modulo . "/" . $_POST[asideAccion];
+        Globales::setIdioma($idioma);
+        $this->idioma = $idioma->$modulo;
+        return (array)$idioma;
     }
 
     /**
@@ -184,35 +118,31 @@ HTML;
         return Globales::getPermisos($_SESSION['modulo']);
     }
 
-    /**
-     * Genera la vista en HTML a partir del controlador
-     * @param $vista
-     * @return string
-     * @throws Exception
-     */
-    private function buildPage($vista, $data)
+    function obtenerNombreUsuario()
     {
-        $version = Globales::$version;
-
-        ob_start();
-        if (!file_exists("vista/{$vista}.phtml")) $vista = "404";
-        require "vista/{$vista}.phtml";
-        $this->page = ob_get_contents();
-        ob_end_clean();
-        require "vista/wrap.phtml";
-        $pagina = ob_get_contents();
-        ob_end_clean();
-        return $pagina;
+        $usuario = new stdClass();
+        $namespace = Globales::$namespace;
+        if (isset($_SESSION[usuario]))
+            if ($namespace == "\\")
+                $usuario = $this->control->usuarios->selectUsuarioFromId($_SESSION[usuario]);
+            else
+                $usuario = $_SESSION[usuario];
+        return $usuario->nombre;
     }
 
-    private function buildAside($vista, $data)
+    protected abstract function cargarAside();
+
+    protected abstract function cargarPrincipal();
+
+    private function setVista()
     {
-        ob_start();
-        if (!file_exists("vista/{$vista}.phtml")) $vista = "404";
-        require_once "vista/{$vista}.phtml";
-        $pagina = ob_get_contents();
-        ob_end_clean();
-        return $pagina;
+        if (!empty($_POST["accion"])) $vista = $_POST["accion"];
+        elseif (empty($_POST["vista"])) $vista = Globales::$modulo;
+        else $vista = $_POST["vista"];
+
+        Globales::$modulo = $vista;
+
+        return $vista;
     }
 
     /**
@@ -327,17 +257,6 @@ HTML;
     }
 
     /**
-     * Hojas de estilo especificas del modulo
-     * @param $href
-     */
-    private function customStylesheet($href)
-    {
-        $this->customStylesheets .= <<<HTML
-<link rel="stylesheet" type="text/css" href="$href">
-HTML;
-    }
-
-    /**
      * Convierte el enlace del recurso en etiquetas de referencia para Javascript
      * @param $src
      */
@@ -347,6 +266,55 @@ HTML;
 <script src="$src"></script>
 HTML;
 
+    }
+
+    /**
+     * @param int $padre
+     * @param object $modulos
+     * @return string
+     */
+    private function buildModulos($padre, $modulos)
+    {
+        $idioma = Globales::getIdioma('modulos');
+        foreach ($modulos as $modulo) {
+            if ($modulo["padreModulo"] == 0) continue;
+            /*$permisos = $this->permisosModulo($modulo["idModulo"]);*/
+            if ($_SESSION[perfil] != 0) {
+                if (!$permisos->accesar and $padre != 0) continue;
+            }
+
+            $nombre = mb_strtolower($idioma->$modulo["idModulo"]);
+            $navegar = mb_strtolower($modulo["navegarModulo"]);
+
+            if ($modulo["iconoModulo"] != "")
+                $icono = <<<HTML
+        <span class="nav-icon"><i class="material-icons">$modulo[iconoModulo]</i></span>
+HTML;
+
+            if ($submodulos == null) {
+                if ($navegar != "") $onclick = "onclick=\"navegar('$navegar');\"";
+            }
+            $htmlModulos .= <<<HTML
+<li class="nav-header hidden-folded">
+        $icono
+    <a $onclick>
+        <span class="nav-text">$nombre</span>
+    </a>
+</li>
+HTML;
+        }
+        return $htmlModulos;
+    }
+
+    /**
+     * Hojas de estilo especificas del modulo
+     * @param $href
+     */
+    private function customStylesheet($href)
+    {
+        $this->customStylesheets .= <<<HTML
+<link rel="stylesheet" type="text/css" href="$href">
+HTML;
     }
 
     /**
@@ -361,27 +329,92 @@ HTML;
 
     }
 
-    /**
-     * @property $formatoFecha
-     * @return array
-     */
-    private function obtenerIdioma()
+    private function buildAside($vista, $data)
     {
-        if (!empty($_GET["lang"])) $selectIdioma = $_GET["lang"];
-        elseif (!empty($_SESSION["idioma"])) $selectIdioma = $_SESSION["idioma"];
-        else $selectIdioma = "es_mx";
+        ob_start();
+        if (!file_exists("vista/{$vista}.phtml")) $vista = "404";
+        require_once "vista/{$vista}.phtml";
+        $pagina = ob_get_contents();
+        ob_end_clean();
+        return $pagina;
+    }
 
-        $_SESSION["idioma"] = $selectIdioma;
+    /**
+     * Genera la vista en HTML a partir del controlador
+     * @param $vista
+     * @return string
+     * @throws Exception
+     */
+    private function buildPage($vista, $data)
+    {
+        $version = Globales::$version;
 
-        $json = file_get_contents(HTTP_PATH_ROOT . "recursos/lang/$selectIdioma.json");
-        $idioma = json_decode($json, false);
+        ob_start();
+        if (!file_exists("vista/{$vista}.phtml")) $vista = "404";
+        require "vista/{$vista}.phtml";
+        $this->page = ob_get_contents();
+        ob_end_clean();
+        require "vista/wrap.phtml";
+        $pagina = ob_get_contents();
+        ob_end_clean();
+        return $pagina;
+    }
 
-        $modulo = Globales::$modulo;
-        if ($_GET[aside])
-            $modulo = $modulo . "/" . $_POST[asideAccion];
-        Globales::setIdioma($idioma);
-        $this->idioma = $idioma->$modulo;
-        return (array)$idioma;
+    function showMessage()
+    {
+        if (isset($_SESSION[messages])) {
+            $message = "";
+            $color = "";
+            switch (true) {
+                case $_SESSION[messages][transaccion]:
+                    $message = "Registrado correctamente";
+                    $color = "light-green-500";
+                    break;
+            }
+            echo "<script>showMessage('$message', '$color');</script>";
+            unset($_SESSION[messages]);
+        }
+    }
+
+    function getApiKeys($pass)
+    {
+        $api = $this->control->usuario_llaves->selectApiKey($_SESSION['usuario']);
+        $api->apiKey = Globales::decrypt($api->apiKey, $pass);
+        $api->apiSecret = Globales::decrypt($api->apiSecret, $pass);
+        $_SESSION['api_key'] = $api->apiKey;
+        $_SESSION['api_secret'] = $api->apiSecret;
+    }
+
+    function __get($key)
+    {
+        if ($key == "control") $modulo = $key;
+        else {
+            $modulo = explode("/", Globales::$modulo)[0];
+            //if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
+            if ($modulo != get_class($this)) $modulo = get_class($this);
+            elseif ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
+        }
+        $modelo = new ArchivoModelo();
+        return $modelo->$modulo;
+    }
+
+    function buildListNotificacions()
+    {
+        $this->numNot = 0;
+        if ($this->diasRestantes != -1) {
+            $this->numNot++;
+            $this->listNotifications .= <<<HTML
+    <div class="scrollable" style="max-height: 220px">
+        <ul class="list-group list-group-gap m-a-0">
+            <li class="list-group-item black lt box-shadow-z0 b">
+                <a onclick="navegar('pago')">Te quedan $this->diasRestantes días de la version
+                    de
+                    prueba</a>
+            </li>
+        </ul>
+    </div>
+HTML;
+        }
     }
 
     protected function buildListaEstados()
@@ -414,18 +447,6 @@ HTML;
         return compact('listaCiudades');
     }
 
-    function obtenerNombreUsuario()
-    {
-        $usuario = new stdClass();
-        $namespace = Globales::$namespace;
-        if (isset($_SESSION[usuario]))
-            if ($namespace == "\\")
-                $usuario = $this->control->usuarios->selectUsuarioFromId($_SESSION[usuario]);
-            else
-                $usuario = $_SESSION[usuario];
-        return $usuario->nombre;
-    }
-
     private function obtenerDiasRestantes()
     {
         if (isset($_SESSION[usuario])) {
@@ -439,28 +460,7 @@ HTML;
             }
         }
     }
-
-    function buildListNotificacions()
-    {
-        $this->numNot = 0;
-        if ($this->diasRestantes != -1) {
-            $this->numNot++;
-            $this->listNotifications .= <<<HTML
-    <div class="scrollable" style="max-height: 220px">
-        <ul class="list-group list-group-gap m-a-0">
-            <li class="list-group-item black lt box-shadow-z0 b">
-                <a onclick="navegar('pago')">Te quedan $this->diasRestantes días de la version
-                    de
-                    prueba</a>
-            </li>
-        </ul>
-    </div>
-HTML;
-        }
-    }
-}
-
-class Modelo
+}class ArchivoModelo
 {
     function __get($key)
     {
@@ -479,20 +479,22 @@ class Modelo
     }
 }
 
-Class Tabla
+Class Modelo
 {
     static private $token;
 
-    static function setToken($token)
+    static function clearToken()
     {
-        $_SESSION[token] = $token;
-        self::$token = $token;
+        unset($_SESSION[token]);
+        self::$token = null;
     }
 
     function __get($key)
     {
+        self::getToken();
+        $key = ltrim($key, "_");
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$key}.php";
+        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$namespace}{$key}.php";
         if (file_exists($ruta)) {
             require_once $ruta;
             $modelo = "{$namespace}Tabla{$key}";
@@ -501,6 +503,27 @@ Class Tabla
             Globales::mensaje_error("No existe el archivo. ($ruta)");
         }
         return $tabla;
+    }
+
+    static function getToken()
+    {
+        $default = Globales::getConfig()->conexion->default_database;
+        self::$token = $_SESSION['token'] ?: $default;
+        return self::$token;
+    }
+
+    static function setToken($token)
+    {
+        $token = $token ?: self::getToken();
+        $_SESSION[token] = $token;
+        self::$token = $token;
+    }
+
+    public function obtenerCampos($nombre = null)
+    {
+        $nombre = is_null($nombre) ? $_SESSION['modulo'] : $nombre;
+        $idModulo = $this->modulos->selectIdFromNombre($nombre);
+        return $this->campos->selectCampos($idModulo);
     }
 
     protected function obtenerNombrePadre($idPadre)

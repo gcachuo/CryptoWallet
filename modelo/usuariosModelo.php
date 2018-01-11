@@ -11,7 +11,7 @@
  * @property TablaUsuarios usuarios
  * @property TablaPerfiles perfiles
  */
-class ModeloUsuarios extends Tabla
+class ModeloUsuarios extends Modelo
 {
     public function getRegistrosUsuarios()
     {

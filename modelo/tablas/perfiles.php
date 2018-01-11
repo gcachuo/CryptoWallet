@@ -6,11 +6,22 @@
  * Date: 27/feb/2017
  * Time: 04:31 PM
  */
-class TablaPerfiles extends bd
+class TablaPerfiles extends Tabla
 {
     function create_table()
     {
-        // TODO: Implement create_table() method.
+        $sql = /** @lang MySQL */
+            <<<MySQL
+CREATE TABLE _perfiles(
+  id_perfil BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+  nombre_perfil VARCHAR(100) NOT NULL,
+  id_usuario BIGINT(20) NOT NULL DEFAULT 1 COMMENT 'Creador del perfil',
+  estatus_perfil BIT(1) DEFAULT b'1'
+);
+CREATE UNIQUE INDEX `_perfiles_nombre_perfil_uindex` ON `_perfiles` (nombre_perfil);
+INSERT INTO _perfiles (id_perfil, nombre_perfil, id_usuario, estatus_perfil) VALUES (1, 'Administrador', 1, TRUE);
+MySQL;
+        return $this->multiconsulta($sql);
     }
 
     function selectPerfiles()

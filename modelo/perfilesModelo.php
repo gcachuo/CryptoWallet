@@ -12,7 +12,7 @@
  * @property TablaAcciones acciones
  * @property TablaPerfiles_Acciones perfiles_acciones
  */
-class ModeloPerfiles extends Tabla
+class ModeloPerfiles extends Modelo
 {
     function obtenerPerfiles()
     {

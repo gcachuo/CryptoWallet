@@ -6,7 +6,7 @@
  * Time: 05:32 PM
  */
 
-class TablaUsuario_Monedas extends bd
+class TablaUsuario_Monedas extends Tabla
 {
 
     function create_table()
