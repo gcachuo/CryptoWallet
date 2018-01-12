@@ -18,9 +18,9 @@ class ModeloClientes extends Modelo
     {
         require_once "config/bitsoConfig.php";
         $bitso = new bitsoConfig();
-        $clientes = $this->clientes->selectClientesFromUser($_SESSION['usuario']);
-        foreach ($clientes as $key => $cliente) {
-            unset($clientes[$key]);
+        $clientesSQL = $this->clientes->selectClientesFromUser($_SESSION['usuario']);
+        $clientes = [];
+        foreach ($clientesSQL as $key => $cliente) {
             $clientes[$cliente['id']] = $cliente;
             $cantidades = $this->obtenerCantidadesCliente($bitso, $cliente['id']);
             $clientes[$cliente['id']] = array_merge($clientes[$cliente['id']], $cantidades);
