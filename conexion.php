@@ -17,21 +17,18 @@ abstract class Conexion
     static private $conexion;
     private $retry;
 
-    protected function conectar()
-    {
-        if (is_null(self::$conexion->sqlstate)) {
-            self::$conexion = mysqli_connect(self::$host, self::$user, self::$pass, self::$db);
-        }
-    }
-
-    protected function desconectar()
-    {
-        mysqli_close(self::$conexion);
-    }
-
     function __destruct()
     {
         self::$host = self::$db = self::$user = self::$pass = "";
+    }
+
+    function __get($name)
+    {
+        $name = rtrim($name, "_");
+        include_once "modelo/tablas/$name.php";
+        $tabla = "Tabla$name";
+        $class = new $tabla();
+        return $class;
     }
 
     /**
@@ -59,13 +56,16 @@ abstract class Conexion
         return $resultado;
     }
 
-    function __get($name)
+    protected function conectar()
     {
-        $name = rtrim($name, "_");
-        include_once "modelo/tablas/$name.php";
-        $tabla = "Tabla$name";
-        $class = new $tabla();
-        return $class;
+        if (is_null(self::$conexion->sqlstate)) {
+            self::$conexion = mysqli_connect(self::$host, self::$user, self::$pass, self::$db);
+        }
+    }
+
+    protected function desconectar()
+    {
+        mysqli_close(self::$conexion);
     }
 
     /**
@@ -189,4 +189,16 @@ abstract class Tabla extends Conexion
      * @return bool regresar la consulta
      */
     abstract function create_table();
+
+    protected function query2array($result, $name = false, $index = "id")
+    {
+        $array = array();
+        foreach ($result as $item) {
+            if (!$name)
+                array_push($array, $item);
+            else
+                $array[$item[$index]] = $item[$name];
+        }
+        return $array;
+    }
 }

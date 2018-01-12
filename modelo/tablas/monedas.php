@@ -54,4 +54,16 @@ SELECT
 MySQL;
         return $this->query2multiarray($this->consulta($sql));
     }
+
+    public function selectListaMonedas()
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+SELECT 
+ simbolo_moneda id,
+ nombre_moneda nombre
+ FROM monedas
+MySQL;
+        return $this->query2array($this->consulta($sql),"nombre");
+    }
 }

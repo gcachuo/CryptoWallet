@@ -14,11 +14,11 @@ class TablaAcciones extends Tabla
             <<<MySQL
 CREATE TABLE `_acciones`
 (
-    id_accion bigint(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
-    nombre_accion varchar(100) NOT NULL,
-    estatus_accion bit(1) DEFAULT b'1'
+    id_accion BIGINT(20) PRIMARY KEY NOT NULL AUTO_INCREMENT,
+    nombre_accion VARCHAR(100) NOT NULL,
+    estatus_accion BIT(1) DEFAULT b'1'
 );
-INSERT INTO `_acciones` (id_accion, nombre_accion, estatus_accion) VALUES (1, 'accesar', true);
+INSERT INTO `_acciones` (id_accion, nombre_accion, estatus_accion) VALUES (1, 'accesar', TRUE);
 MySQL;
         return $this->multiconsulta($sql);
     }
@@ -29,11 +29,10 @@ MySQL;
             <<<MySQL
 SELECT
   id_accion          id,
-  descripcion_accion nombre
+  nombre_accion nombre
 FROM `_acciones`
-WHERE estatus_accion = TRUE AND descripcion_accion != 'accesar';
+WHERE estatus_accion = TRUE AND nombre_accion != 'accesar';
 MySQL;
-
-        return $this->consulta($sql);
+        return $this->query2multiarray($this->consulta($sql));
     }
 }

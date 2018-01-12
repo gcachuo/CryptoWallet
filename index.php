@@ -13,6 +13,7 @@ try {
     session_start();
     define(HTTP_PATH_ROOT, "");
     date_default_timezone_set('America/Mexico_City');
+    spl_autoload_register('autoloader');
 
     if ($_GET["s"] == "1") session_unset();
 
@@ -28,4 +29,13 @@ try {
     Globales::setControl(Globales::$modulo);
 } catch (Exception $ex) {
     Globales::mostrar_exception($ex);
+}
+
+function autoloader($class)
+{
+    if (strpos($class, 'Modelo') !== false) {
+        $class = str_replace('Modelo', '', $class);
+        require "modelo/{$class}Modelo.php";
+    } else
+        require "controlador/{$class}Control.php";
 }

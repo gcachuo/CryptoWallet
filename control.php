@@ -113,6 +113,9 @@ abstract class Control
         if ($nombreModulo != null) {
             if ($_SESSION[perfil] != 0)
                 $permisos = $this->control->obtenerPermisosModulo();
+            else {
+                $permisos = $this->control->acciones->selectAcciones();
+            }
             Globales::setPermisos($permisos);
         }
         return Globales::getPermisos($_SESSION['modulo']);
@@ -385,19 +388,6 @@ HTML;
         $_SESSION['api_secret'] = $api->apiSecret;
     }
 
-    function __get($key)
-    {
-        if ($key == "control") $modulo = $key;
-        else {
-            $modulo = explode("/", Globales::$modulo)[0];
-            //if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
-            if ($modulo != get_class($this)) $modulo = get_class($this);
-            elseif ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
-        }
-        $modelo = new ArchivoModelo();
-        return $modelo->$modulo;
-    }
-
     function buildListNotificacions()
     {
         $this->numNot = 0;
@@ -415,6 +405,120 @@ HTML;
     </div>
 HTML;
         }
+    }
+
+    function __get($key)
+    {
+        if ($key == "control") $modulo = $key;
+        else {
+            $modulo = explode("/", Globales::$modulo)[0];
+            //if (isset($_POST["modulo"])) $modulo = $_POST["modulo"];
+            if ($modulo != get_class($this)) $modulo = get_class($this);
+            elseif ($_GET["aside"]) $modulo = $_REQUEST["asideModulo"];
+        }
+        $modelo = new ArchivoModelo();
+        return $modelo->$modulo;
+    }
+
+    /**
+     * @param mysqli_result $registros
+     * @return array
+     */
+    protected function obtenerRegistros($registros)
+    {
+        $datos = [];
+        foreach ($registros as $dato) {
+            $datos[$dato['id']] = $dato;
+            unset($datos[$dato['id']]['id']);
+        }
+        return $datos;
+    }
+
+    protected function buildLista($lista, $default = null, $disallowed = [])
+    {
+        $html = "";
+        foreach ($lista as $key => $item) {
+            $disabled = (in_array($key, $disallowed)) ? "disabled" : "";
+            $selected = $key == $default ? "selected" : "";
+            $html .= <<<HTML
+<option $selected $disabled value="$key">$item</option>
+HTML;
+        }
+        return $html;
+    }
+
+    /**
+     * @param $registros
+     * @param array $acciones
+     * @param array $columns
+     * @return string
+     * @throws Exception
+     */
+    protected function buildTabla($registros, $acciones = [], $columns = [])
+    {
+        $tabla = "";
+        if (get_class($registros) == "mysqli_result") {
+            $registros = $this->obtenerRegistros($registros);
+        }
+        foreach ($registros as $id => $cells) {
+            $rows = "";
+
+            $index = 0;
+            foreach ($cells as $key => $cell) {
+                $explode = explode("-", $columns[$index]);
+                $type = $explode[0] ?: $columns[$index]["type"];
+                switch ($type) {
+                    case "select":
+                        $table = $explode[1];
+                        $funcion = "selectLista" . ucfirst($table);
+                        $registros = $this->modelo->$table->$funcion();
+                        $lista = $this->buildLista($registros, $cell);
+                        $select = <<<HTML
+<select name="$key" id="select$key" data-id="$id">
+<option selected disabled value="0">$key</option>
+$lista
+</select>
+HTML;
+
+                        $rows .= <<<HTML
+<td>$select</td>
+HTML;
+                        break;
+                    case "date":
+                        $cell = Globales::formato_fecha("d/m/Y h:ia", $cell);
+                        $rows .= <<<HTML
+<td>$cell</td>
+HTML;
+                        break;
+                    case "estatus":
+                        $cell = $columns[$index][$cell];
+                        $rows .= <<<HTML
+<td><a onclick="btnCambiarEstatus($id)" class="label label-lg btn-primary btn">$cell</a></td>
+HTML;
+                        break;
+                    default:
+                        $rows .= <<<HTML
+<td>$cell</td>
+HTML;
+                        break;
+                }
+                $index++;
+            }
+            $btnAcciones = "";
+            foreach ($acciones as $icono => $accion) {
+                $btnAcciones .= <<<HTML
+<a onclick="btn$accion($id)" title="$accion" class="btn btn-sm btn-default"><i class="material-icons">$icono</i></a>
+HTML;
+            }
+            $rowAcciones = !empty($acciones) ? "<td class='tdAcciones'>$btnAcciones</td>" : "";
+            $tabla .= <<<HTML
+<tr>
+$rows
+$rowAcciones
+</tr>
+HTML;
+        }
+        return $tabla;
     }
 
     protected function buildListaEstados()
@@ -460,21 +564,18 @@ HTML;
             }
         }
     }
-}class ArchivoModelo
+}
+
+class ArchivoModelo
 {
     function __get($key)
     {
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "{$namespace}modelo/{$key}Modelo.php";
-        if (!file_exists($ruta)) {
-            $ruta = HTTP_PATH_ROOT . "modelo/{$key}Modelo.php";
-            $namespace = "";
-        };
-        if (file_exists($ruta)) {
-            require_once $ruta;
-            $modelo = "{$namespace}Modelo{$key}";
-            $class = new $modelo();
-        }
+        $key = mb_strtolower($key);
+        $ruta = "modelo/{$key}Modelo.php";
+        require_once $ruta;
+        $modelo = "Modelo{$key}";
+        $class = new $modelo();
         return $class;
     }
 }
@@ -489,12 +590,17 @@ Class Modelo
         self::$token = null;
     }
 
+    public function __toString()
+    {
+        return get_class($this);
+    }
+
     function __get($key)
     {
         self::getToken();
         $key = ltrim($key, "_");
         $namespace = Globales::$namespace;
-        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$namespace}{$key}.php";
+        $ruta = HTTP_PATH_ROOT . "modelo/tablas/{$key}.php";
         if (file_exists($ruta)) {
             require_once $ruta;
             $modelo = "{$namespace}Tabla{$key}";
