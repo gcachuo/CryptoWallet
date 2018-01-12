@@ -13,10 +13,20 @@ class Clientes extends Control
 {
 
     protected $tablaClientes;
+    protected $listaMonedas;
+
+    function guardarCompra()
+    {
+        $bitso = new bitsoConfig();
+        $ticker = $bitso->getTicker($_POST['moneda'] . "_mxn");
+        $cantidad = $_POST['pesos'] / $ticker->ask;
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['moneda']);
+        $this->modelo->usuario_monedas->comprarMoneda($_POST['id'], $moneda->id, $cantidad, $_POST['pesos']);
+    }
 
     protected function cargarAside()
     {
-        // TODO: Implement cargarAside() method.
+        $this->listaMonedas = $this->buildLista($this->modelo->monedas->selectListaMonedas());
     }
 
     protected function cargarPrincipal()
@@ -24,7 +34,7 @@ class Clientes extends Control
         $this->buildTablaClientes();
     }
 
-    private function buildTablaClientes()
+    function buildTablaClientes()
     {
         $registros = $this->modelo->obtenerClientes();
         $tabla = $this->buildTabla($registros, ["add" => "Comprar", "remove" => "Vender", "cached" => "Rebalancear"]);

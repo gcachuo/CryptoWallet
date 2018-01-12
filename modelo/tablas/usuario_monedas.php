@@ -53,4 +53,15 @@ REPLACE INTO usuario_monedas(id_usuario_monedas,id_usuario, id_moneda, cantidad_
 MySQL;
         $this->consulta($sql);
     }
+
+    public function comprarMoneda($id_usuario, $id_moneda, $cantidad_usuario_moneda, $costo_usuario_moneda)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+            INSERT INTO usuario_monedas (id_usuario, id_moneda, cantidad_usuario_moneda, costo_usuario_moneda) VALUES ($id_usuario, $id_moneda, $cantidad_usuario_moneda, $costo_usuario_moneda)
+ON DUPLICATE KEY UPDATE cantidad_usuario_moneda = cantidad_usuario_moneda + $cantidad_usuario_moneda,
+  costo_usuario_moneda                          = costo_usuario_moneda + $costo_usuario_moneda;
+MySQL;
+        $this->consulta($sql);
+    }
 }

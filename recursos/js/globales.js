@@ -46,6 +46,9 @@ $(function () {
         $(".quickMenu").find(".label").toggleClass("open");
     });
     cargarSwitchery();
+    $("td a").click(function(event){
+       event.stopPropagation();
+    });
     if (getVars !== undefined)
         if (getVars.tryit !== undefined) {
             aside("login", "registro");
@@ -189,7 +192,7 @@ function cargarDatatable(idioma, columnDefs, buttons) {
                     renderer: function (api, rowIdx, columns) {
                         var data = $.map(columns, function (col, i) {
                             return col.hidden ?
-                                '<tr><th>'+col.title+'</th><td>' + col.data + '</td></tr>' :
+                                '<tr><th>' + col.title + '</th><td>' + col.data + '</td></tr>' :
                                 '';
                         }).join('');
 
@@ -480,6 +483,7 @@ function cargarDoughnut(id, data, names, color) {
     });
     return myChart;
 }
+
 function cargarDoughnut3(id, data, names, colors) {
     console.log(colors[0].red);
     var myChart = echarts.init(document.getElementById(id));
