@@ -18,7 +18,13 @@ class Clientes extends Control
     function guardarCompra()
     {
         $bitso = new bitsoConfig();
-        $ticker = $bitso->getTicker($_POST['moneda'] . "_mxn");
+        try {
+            $ticker = $bitso->getTicker($_POST['moneda'] . "_mxn");
+        } catch (Exception $ex) {
+            $ticker = $bitso->getTicker($_POST['moneda'] . "_btc");
+            $btc_mxn = $bitso->getTicker("btc_mxn");
+            $ticker->ask = $ticker->ask * $btc_mxn->ask;
+        }
         $cantidad = $_POST['pesos'] / $ticker->ask;
         $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['moneda']);
         $this->modelo->usuario_monedas->comprarMoneda($_POST['id'], $moneda->id, $cantidad, $_POST['pesos']);
