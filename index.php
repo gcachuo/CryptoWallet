@@ -13,6 +13,7 @@ try {
     session_start();
     define(HTTP_PATH_ROOT, "");
     date_default_timezone_set('America/Mexico_City');
+    spl_autoload_register('autoloader');
 
     if ($_GET["s"] == "1") session_unset();
 

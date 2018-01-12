@@ -53,4 +53,22 @@ UPDATE clientes SET direccion_eth_cliente='$direccion_eth_cliente' WHERE id_clie
 MySQL;
         $this->consulta($sql);
     }
+
+    public function selectClientesFromUser($id_admin)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+SELECT
+  id_cliente       id,
+  nombre_cliente nombre,
+  sum(costo_usuario_moneda) original
+FROM clientes c
+  LEFT JOIN `_usuarios` a ON a.id_usuario = c.id_admin
+  LEFT JOIN `_usuarios` u ON u.id_usuario = c.id_cliente
+  LEFT JOIN usuario_monedas um ON um.id_usuario = u.id_usuario
+WHERE u.estatus_usuario = TRUE and id_admin='$id_admin'
+GROUP BY id_cliente
+MySQL;
+        return $this->query2multiarray($this->consulta($sql));
+    }
 }
