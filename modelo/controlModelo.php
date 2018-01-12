@@ -15,6 +15,7 @@
  * @property TablaPerfiles_Acciones perfiles_acciones
  * @property TablaContacto_Clientes contacto_clientes
  * @property TablaUsuario_Llaves usuario_llaves
+ * @property TablaAcciones acciones
  */
 class ModeloControl extends Modelo
 {

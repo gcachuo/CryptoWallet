@@ -113,6 +113,9 @@ abstract class Control
         if ($nombreModulo != null) {
             if ($_SESSION[perfil] != 0)
                 $permisos = $this->control->obtenerPermisosModulo();
+            else {
+                $permisos = $this->control->acciones->selectAcciones();
+            }
             Globales::setPermisos($permisos);
         }
         return Globales::getPermisos($_SESSION['modulo']);
