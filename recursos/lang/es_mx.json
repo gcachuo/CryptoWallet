@@ -30,6 +30,14 @@
     "lblReseller": "Código de Agente de TAX",
     "btnRegistrar": "Crear Cuenta"
   },
+  "miperfil": {
+    "lblTitulo": "Mi Perfil",
+    "lblEmail": "Email",
+    "lblReestablecer": "Cambiar contraseña",
+    "lblPassword": "Nueva Contraseña",
+    "lblRePassword": "Repita la Contraseña",
+    "btnGuardar": "Guardar"
+  },
   "usuarios": {
     "btnNuevo": "Nuevo",
     "btnEditar": "Editar",

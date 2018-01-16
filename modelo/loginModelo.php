@@ -30,7 +30,7 @@ class ModeloLogin extends Modelo
 
     function registrarUsuario($nombre, $email, $password)
     {
-        $_SESSION['usuario'] = $this->usuarios->insertUsuario($nombre, $email, $password, $email, 0);
+        $_SESSION['usuario'] = $this->usuarios->insertUsuario($nombre, $email, $password, $email, 1);
     }
 
     function crearDatabase($token)
