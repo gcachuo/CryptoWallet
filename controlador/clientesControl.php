@@ -30,6 +30,21 @@ class Clientes extends Control
         $this->modelo->usuario_monedas->comprarMoneda($_POST['id'], $moneda->id, $cantidad, $_POST['pesos']);
     }
 
+    function guardarVenta()
+    {
+        $bitso = new bitsoConfig();
+        try {
+            $ticker = $bitso->getTicker($_POST['moneda'] . "_mxn");
+        } catch (Exception $ex) {
+            $ticker = $bitso->getTicker($_POST['moneda'] . "_btc");
+            $btc_mxn = $bitso->getTicker("btc_mxn");
+            $ticker->bid = $ticker->bid * $btc_mxn->bid;
+        }
+        $cantidad = $_POST['pesos'] / $ticker->bid;
+        $moneda = $this->modelo->monedas->selectMonedaFromSimbolo($_POST['moneda']);
+        $this->modelo->usuario_monedas->venderMoneda($_POST['id'], $moneda->id, $cantidad, $_POST['pesos']);
+    }
+
     protected function cargarAside()
     {
         $this->listaMonedas = $this->buildLista($this->modelo->monedas->selectListaMonedas());

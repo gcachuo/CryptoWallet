@@ -5,3 +5,23 @@
  * Date: 12/01/2018
  * Time: 04:07 PM
  */
+?>
+<div class="center-block w-xxl w-auto-xs">
+    <div class="p-a-md box-color r text-color m-a">
+        <div class="md-form-group float-label">
+            <input name="pesos" type="text" class="md-input has-value"
+                   value="">
+            <label>Pesos</label>
+        </div>
+        <div class="md-form-group float-label">
+            <select name="moneda" id="selectMonedas" class="md-input has-value" title="Moneda">
+                <option selected disabled value="">Moneda</option>
+                <?= $this->listaMonedas ?>
+            </select>
+        </div>
+        <div>
+            <a onclick="btnGuardar(<?= $_POST['id'] ?>)"
+               class="btn lime-600 btn-block p-x-md">Guardar</a>
+        </div>
+    </div>
+</div>
