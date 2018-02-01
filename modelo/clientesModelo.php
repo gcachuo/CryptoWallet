@@ -54,7 +54,8 @@ class ModeloClientes extends Modelo
             }
             $simbolo = $moneda['simbolo'];
             $ask = $ticker[$book]->ask;
-            $cantidad = $this->usuario_monedas->selectCantidad($idCliente, $moneda['id']) + $cantidadBitso[$moneda['id']]->total ?: 0;
+            $monedaBitso = $_SESSION['usuario'] == $idCliente ? ($cantidadBitso[$moneda['id']]->total ?: 0) : 0;
+            $cantidad = $this->usuario_monedas->selectCantidad($idCliente, $moneda['id']) + $monedaBitso ?: 0;
             $monto = $cantidad * $ask;
             $cliente[$simbolo] = round($monto, 2);
             $actual += $monto;
