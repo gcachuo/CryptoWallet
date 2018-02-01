@@ -6,14 +6,32 @@
  * Time: 10:15 AM
  */
 /** @var Clientes $this */
-$total=$this->totalActual - $this->totalClientes;
-Globales::formato_moneda("$",$total);
-Globales::formato_moneda("$",$this->totalActual);
-Globales::formato_moneda("$",$this->totalClientes);
+$total = $this->totalActual - $this->totalClientes;
+Globales::formato_moneda("$", $total);
+Globales::formato_moneda("$", $this->totalActual);
+Globales::formato_moneda("$", $this->totalClientes);
 ?>
 <div class="padding">
     <div class="row header">
-        <div class="col-md-8"></div>
+        <div class="col-xs-12 col-md-4 no-border-sm">
+            <div class="box-totales">
+                <div class="hidden box-header">
+                    <h2 class="text-muted" style="padding-bottom:10px;">
+                        <small>Totales</small>
+                    </h2>
+                </div>
+                <div class="list-group list-group-sm no-borders no-radius text-muted">
+                    <?php foreach ($this->cantidades as $moneda => $cantidad): ?>
+                        <div class="list-group-item">
+                            <span class="pull-right"><?= Globales::formato_moneda("$", $cantidad) ?></span>
+                            <i class="fa fa-fw fa-circle"></i>
+                            <?= $moneda ?>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4"></div>
         <div class="col-xs-12 col-md-4 no-border-sm">
             <div class="box-totales">
                 <div class="hidden box-header">
