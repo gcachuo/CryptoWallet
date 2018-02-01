@@ -585,3 +585,34 @@ div.loading-invisible {
     margin: auto;
     height: 50%;
 }
+
+.header {
+    height: fit-content;
+}
+
+.header > div {
+    display: flex;
+    flex-flow: column;
+}
+
+.box-totales {
+    background-color: white;
+    margin-bottom: 1rem;
+    align-items: center !important;
+    height: 100%;
+}
+
+.box-totales .list-group {
+    height: fit-content;
+    margin: auto;
+    position: absolute;
+    display: block;
+    top: 0;
+    bottom: 20px;
+    left: 12px;
+    right: 12px;
+}
+
+.box-totales {
+    height: 136px;
+}

@@ -6,8 +6,41 @@
  * Time: 10:15 AM
  */
 /** @var Clientes $this */
+$total=$this->totalActual - $this->totalClientes;
+Globales::formato_moneda("$",$total);
+Globales::formato_moneda("$",$this->totalActual);
+Globales::formato_moneda("$",$this->totalClientes);
 ?>
 <div class="padding">
+    <div class="row header">
+        <div class="col-md-8"></div>
+        <div class="col-xs-12 col-md-4 no-border-sm">
+            <div class="box-totales">
+                <div class="hidden box-header">
+                    <h2 class="text-muted" style="padding-bottom:10px;">
+                        <small>Totales</small>
+                    </h2>
+                </div>
+                <div class="list-group list-group-sm no-borders no-radius text-muted">
+                    <div class="list-group-item">
+                        <span class="pull-right"><?= $total ?></span>
+                        <i class="fa fa-fw fa-circle"></i>
+                        Total
+                    </div>
+                    <div class="list-group-item">
+                        <span class="pull-right"><?= $this->totalActual ?></span>
+                        <i class="fa fa-fw fa-circle"></i>
+                        Actual
+                    </div>
+                    <div class="list-group-item">
+                        <span class="pull-right"><?= $this->totalClientes ?></span>
+                        <i class="fa fa-fw fa-circle"></i>
+                        Clientes
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="box row">
         <div class="col-md-12">
             <div class="table-responsive">

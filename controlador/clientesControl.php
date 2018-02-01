@@ -14,6 +14,7 @@ class Clientes extends Control
 
     protected $tablaClientes;
     protected $listaMonedas;
+    protected $totalActual, $totalClientes;
 
     function guardarCompra()
     {
@@ -57,9 +58,16 @@ class Clientes extends Control
 
     function buildTablaClientes()
     {
+        $totalActual = $this->modelo->obtenerCantidades()['actual'];
         $registros = $this->modelo->obtenerClientes();
+        $totalClientes = 0;
+        foreach ($registros as $registro) {
+            $totalClientes += $registro['actual'];
+        }
         $tabla = $this->buildTabla($registros, ["add" => "Comprar", "remove" => "Vender", "cached" => "Rebalancear"]);
+        $this->totalActual = $totalActual;
+        $this->totalClientes = $totalClientes;
         $this->tablaClientes = $tabla;
-        return compact('tabla');
+        return compact('tabla', 'totalActual', 'totalClientes');
     }
 }
