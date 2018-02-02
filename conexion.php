@@ -58,8 +58,13 @@ abstract class Conexion
 
     protected function conectar()
     {
-        if (is_null(self::$conexion->sqlstate)) {
-            self::$conexion = mysqli_connect(self::$host, self::$user, self::$pass, self::$db);
+        try {
+            if (is_null(self::$conexion->sqlstate)) {
+                self::$conexion = mysqli_connect(self::$host, self::$user, self::$pass, self::$db);
+                if (!self::$conexion) Globales::mensaje_error('Error de conexion. [' . self::$db . ']');
+            }
+        } catch (mysqli_sql_exception $ex) {
+            Globales::mensaje_error($ex->getMessage());
         }
     }
 

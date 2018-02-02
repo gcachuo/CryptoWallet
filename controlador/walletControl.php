@@ -181,8 +181,6 @@ HTML;
 
             if ($this->permisos->editar)
                 $acciones = <<<HTML
-$btnCompra
-$btnVenta
 <a title="Historial" onclick="aside('wallet','trades',{id:'$moneda[simbolo]'})" class="btn btn-sm btn-default">
     <i class="material-icons">format_list_bulleted</i>
 </a>

@@ -8,6 +8,12 @@
  */
 class TablaUsuarios extends Tabla
 {
+    function __construct($token)
+    {
+        $token = $token ?: ($_SESSION[token]);
+        parent::__construct($token);
+    }
+
     function create_table()
     {
         $sql = <<<MySQL
@@ -25,12 +31,6 @@ CREATE TABLE `_usuarios`
 CREATE UNIQUE INDEX usuarios_login_usuario_uindex ON `_usuarios` (login_usuario);
 MySQL;
         return $this->multiconsulta($sql);
-    }
-
-    function __construct($token)
-    {
-        $token = $token ?: ($_SESSION[token]);
-        parent::__construct($token);
     }
 
     function selectUsuario($login, $password)
@@ -183,6 +183,15 @@ MySQL;
     {
         $sql = <<<MySQL
 update _usuarios set id_usuario_create='$id_usuario_create' where id_usuario='$id_usuario';
+MySQL;
+        $this->consulta($sql);
+    }
+
+    public function updateLastLogin($id_usuario, $last_login_usuario)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+UPDATE `_usuarios` SET last_login_usuario='$last_login_usuario' WHERE id_usuario='$id_usuario'
 MySQL;
         $this->consulta($sql);
     }

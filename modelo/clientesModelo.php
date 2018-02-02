@@ -18,9 +18,9 @@ class ModeloClientes extends Modelo
     {
         require_once "config/bitsoConfig.php";
         $bitso = new bitsoConfig();
-        $clientes = $this->clientes->selectClientesFromUser($_SESSION['usuario']);
-        foreach ($clientes as $key => $cliente) {
-            unset($clientes[$key]);
+        $clientesSQL = $this->clientes->selectClientesFromUser($_SESSION['usuario']);
+        $clientes = [];
+        foreach ($clientesSQL as $key => $cliente) {
             $clientes[$cliente['id']] = $cliente;
             $cantidades = $this->obtenerCantidadesCliente($bitso, $cliente['id']);
             $clientes[$cliente['id']] = array_merge($clientes[$cliente['id']], $cantidades);
@@ -36,10 +36,10 @@ class ModeloClientes extends Modelo
      */
     function obtenerCantidadesCliente($bitso, $idCliente)
     {
-        $cliente = [];
+        $cliente = $ticker = [];
         $actual = 0;
-        $ticker = [];
         $monedas = $this->monedas->selectMonedas();
+        $cantidadBitso = $bitso->getBalance();
         foreach ($monedas as $key => $moneda) {
             $book = $moneda['book'];
             if (!isset($ticker[$book])) {
@@ -54,12 +54,21 @@ class ModeloClientes extends Modelo
             }
             $simbolo = $moneda['simbolo'];
             $ask = $ticker[$book]->ask;
-            $cantidad = $this->usuario_monedas->selectCantidad($idCliente, $moneda['id']) ?: 0;
+            $monedaBitso = $_SESSION['usuario'] == $idCliente ? ($cantidadBitso[$moneda['id']]->total ?: 0) : 0;
+            $cantidad = $this->usuario_monedas->selectCantidad($idCliente, $moneda['id']) + $monedaBitso ?: 0;
             $monto = $cantidad * $ask;
             $cliente[$simbolo] = round($monto, 2);
             $actual += $monto;
         }
         $cliente['actual'] = round($actual, 2);
         return $cliente;
+    }
+
+    public function obtenerCantidades()
+    {
+        require_once "config/bitsoConfig.php";
+        $bitso = new bitsoConfig();
+        $cantidades = $this->obtenerCantidadesCliente($bitso, $_SESSION['usuario']);
+        return $cantidades;
     }
 }

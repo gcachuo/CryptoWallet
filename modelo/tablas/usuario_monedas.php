@@ -64,4 +64,14 @@ ON DUPLICATE KEY UPDATE cantidad_usuario_moneda = cantidad_usuario_moneda + $can
 MySQL;
         $this->consulta($sql);
     }
+
+    public function venderMoneda($id_usuario, $id_moneda, $cantidad_usuario_moneda, $costo_usuario_moneda)
+    {
+        $sql = /** @lang MySQL */
+            <<<MySQL
+UPDATE usuario_monedas SET cantidad_usuario_moneda=cantidad_usuario_moneda-$cantidad_usuario_moneda,
+costo_usuario_moneda=costo_usuario_moneda-$costo_usuario_moneda WHERE id_usuario=$id_usuario AND id_moneda=$id_moneda
+MySQL;
+        $this->consulta($sql);
+    }
 }

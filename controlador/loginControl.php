@@ -20,21 +20,6 @@ class Login extends Control
 {
     private $password;
 
-    protected function cargarPrincipal()
-    {
-        #Si carga la pantalla de Login cierra la sesión del usuario
-        unset($_SESSION['usuario']);
-        unset($_SESSION['perfil']);
-        unset($_SESSION['conexion']);
-        unset($_SESSION['api_key']);
-        unset($_SESSION['api_secret']);
-    }
-
-    protected function cargarAside()
-    {
-
-    }
-
     function iniciarSesion()
     {
         /**
@@ -55,6 +40,7 @@ class Login extends Control
         if ($usuario != null) {
             $_SESSION[usuario] = $usuario->idUsuario;
             $_SESSION[perfil] = $usuario->idPerfil;
+            $this->modelo->usuarios->updateLastLogin($usuario->idUsuario, date('Y-m-d H:i:s'));
         } else Globales::mensaje_error("No existe el usuario con los datos ingresados.");
 
         $this->getApiKeys($_POST["password"]);
@@ -143,5 +129,20 @@ class Login extends Control
         if (!$send) {
             Globales::mensaje_error("No Enviado. " . $errorInfo);
         }
+    }
+
+    protected function cargarPrincipal()
+    {
+        #Si carga la pantalla de Login cierra la sesión del usuario
+        unset($_SESSION['usuario']);
+        unset($_SESSION['perfil']);
+        unset($_SESSION['conexion']);
+        unset($_SESSION['api_key']);
+        unset($_SESSION['api_secret']);
+    }
+
+    protected function cargarAside()
+    {
+
     }
 }
