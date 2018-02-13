@@ -97,17 +97,44 @@ class Globales
         return (object)$permisos;
     }
 
+    /**
+     * @param array $array
+     * @param string $key
+     * @param string $value
+     * @return array
+     */
+    static function search_in_multi($array, $key, $value)
+    {
+        $results = array();
+
+        if (is_array($array)) {
+            if (isset($array[$key]) && $array[$key] == $value) {
+                $results[] = $array;
+            }
+
+            foreach ($array as $subarray) {
+                $results = array_merge($results, self::search_in_multi($subarray, $key, $value));
+            }
+        }
+
+        return $results;
+    }
+
     static function getConfig()
     {
         return self::get_json_to_object("config.json");
     }
 
     /**
-     * @param string $namespace
+     * @param string $path
+     * @return object
      */
-    static function setNamespace($namespace)
+    static function get_json_to_object($path)
     {
-        self::$namespace = $namespace . "\\";
+        if (!file_exists($path))
+            self::mensaje_error("No existe el archivo $path");
+        $json = file_get_contents($path);
+        return json_decode($json, false);
     }
 
     /**
@@ -148,8 +175,10 @@ class Globales
      */
     static function crypt_blowfish_bydinvaders($password)
     {
-        $salt = '$2a$%02d$' . $password;
-        return crypt($password, $salt);
+        $salt = "$2a$%02d$$password";
+        //$encrypted = crypt($password, $salt);
+        $encrypted = password_hash($password,PASSWORD_DEFAULT);
+        return $encrypted;
     }
 
     static function encrypt($pass, $key)
@@ -214,18 +243,6 @@ class Globales
      * @param string $path
      * @return object
      */
-    static function get_json_to_object($path)
-    {
-        if (!file_exists($path))
-            self::mensaje_error("No existe el archivo $path");
-        $json = file_get_contents($path);
-        return json_decode($json, false);
-    }
-
-    /**
-     * @param string $path
-     * @return object
-     */
     static function get_json_to_array($path)
     {
         if (!file_exists($path))
@@ -272,29 +289,6 @@ class Globales
     }
 
     /**
-     * @param array $array
-     * @param string $key
-     * @param string $value
-     * @return array
-     */
-    static function search_in_multi($array, $key, $value)
-    {
-        $results = array();
-
-        if (is_array($array)) {
-            if (isset($array[$key]) && $array[$key] == $value) {
-                $results[] = $array;
-            }
-
-            foreach ($array as $subarray) {
-                $results = array_merge($results, self::search_in_multi($subarray, $key, $value));
-            }
-        }
-
-        return $results;
-    }
-
-    /**
      * @param string $formato
      * @param string $fecha
      * @return string
@@ -315,15 +309,12 @@ class Globales
         }
     }
 
-
     static function send_notification($value1)
     {
         $params = ["value1" => $value1];
         $JSONPayload = json_encode($params);
         Globales::url_request('PRIVATE', 'https://maker.ifttt.com/trigger/bitcoin/with/key/chImOTt-BFhD5zcj3BzzOz', 'POST', $JSONPayload);
     }
-
-    #function to perform curl url request depending on type and method
 
     /**
      * @param string $type PUBLIC or PRIVATE
@@ -334,7 +325,7 @@ class Globales
      * @return mixed
      * @throws Exception
      */
-    static function url_request($type, $path, $HTTPMethod, $JSONPayload='', $authHeader = '')
+    static function url_request($type, $path, $HTTPMethod, $JSONPayload = '', $authHeader = '')
     {
         $ch = curl_init();
         if ($type == 'PUBLIC') {
@@ -378,6 +369,8 @@ class Globales
         return $fecha->format($formato_final);
     }
 
+    #function to perform curl url request depending on type and method
+
     /**
      * @param string $simbolo
      * @param double $cantidad
@@ -389,6 +382,41 @@ class Globales
         $cantidad += $suma;
         $cantidad = $simbolo . number_format($cantidad, 2);
         return $cantidad;
+    }
+
+    static function setVista()
+    {
+        if ($_GET[file]) {
+            $path = "recursos\\imagenes\\transacciones\\";
+            $nombreImagen = self::subirImagenSimple($path, $_FILES["file"]);
+            if ($nombreImagen != false)
+                echo $nombreImagen;
+            exit;
+        } else {
+            if (isset($_GET[tryit])) {
+                if (isset($_SESSION[usuario]))
+                    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
+                $json = json_encode($_REQUEST, JSON_FORCE_OBJECT);
+                print "<script>getVars = $json;</script>";
+            }
+            if (self::$modulo != "registro")
+                if (isset($_SESSION["usuario"]))
+                    self::$modulo = empty($_POST["vista"]) ? self::$modulo : $_POST["vista"];
+                else
+                    self::$modulo = "login";
+
+            if (isset($_POST["vista"])) {
+                if (!empty($_POST["accion"])) $vista = $_POST["accion"];
+                elseif (empty($_POST["vista"])) $vista = $_SESSION["modulo"];
+                else $vista = $_POST["vista"];
+
+                if (empty($_POST["modulo"]))
+                    self::$modulo = $vista;
+                if (!empty($_POST["post"])) $_SESSION["post"] = $_POST["post"];
+                $_SESSION["modulo"] = self::$modulo;
+                exit;
+            }
+        }
     }
 
     /**
@@ -429,41 +457,6 @@ class Globales
             $msg = $ex->getMessage();
             error_log($msg);
             exit($msg);
-        }
-    }
-
-    static function setVista()
-    {
-        if ($_GET[file]) {
-            $path = "recursos\\imagenes\\transacciones\\";
-            $nombreImagen = self::subirImagenSimple($path, $_FILES["file"]);
-            if ($nombreImagen != false)
-                echo $nombreImagen;
-            exit;
-        } else {
-            if (isset($_GET[tryit])) {
-                if (isset($_SESSION[usuario]))
-                    header('Location: ' . strtok($_SERVER['REQUEST_URI'], '?'));
-                $json = json_encode($_REQUEST, JSON_FORCE_OBJECT);
-                print "<script>getVars = $json;</script>";
-            }
-            if (self::$modulo != "registro")
-                if (isset($_SESSION["usuario"]))
-                    self::$modulo = empty($_POST["vista"]) ? self::$modulo : $_POST["vista"];
-                else
-                    self::$modulo = "login";
-
-            if (isset($_POST["vista"])) {
-                if (!empty($_POST["accion"])) $vista = $_POST["accion"];
-                elseif (empty($_POST["vista"])) $vista = $_SESSION["modulo"];
-                else $vista = $_POST["vista"];
-
-                if (empty($_POST["modulo"]))
-                    self::$modulo = $vista;
-                if (!empty($_POST["post"])) $_SESSION["post"] = $_POST["post"];
-                $_SESSION["modulo"] = self::$modulo;
-                exit;
-            }
         }
     }
 
@@ -526,5 +519,24 @@ HTML;
     function __destruct()
     {
         self::setNamespace("");
+    }
+
+    /**
+     * @param string $namespace
+     */
+    static function setNamespace($namespace)
+    {
+        self::$namespace = $namespace . "\\";
+    }
+
+    private function getSalt()
+    {
+        $salt = sprintf('$2a$%02d$', 12);
+
+        $bytes = $this->getRandomBytes(16);
+
+        $salt .= $this->encodeBytes($bytes);
+
+        return $salt;
     }
 }

@@ -27,7 +27,7 @@ class ModeloControl extends Modelo
         $objectModulos = (object)array();
         $modulos = $this->modulos->selectModulos($_SESSION['usuario']);
         foreach ($modulos as $modulo) {
-            $objectModulos->$modulo["idModulo"] = $modulo;
+            $objectModulos->{$modulo["idModulo"]} = $modulo;
         }
         return $objectModulos;
     }

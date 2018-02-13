@@ -29,11 +29,11 @@ class Login extends Control
         extract($_POST);
         if ($usuario == "" or $password == "") Globales::mensaje_error("Ingrese usuario o contraseña");
 
-        #Encripta la contraseña antes de mandarla al modelo
-        $password = Globales::crypt_blowfish_bydinvaders($_POST["password"]);
-
         #Obtiene el registro del usuario con la funcion en el modelo
-        $usuario = $this->modelo->getUsuario($usuario, $password);
+        $usuario = $this->modelo->usuarios->selectUsuario($usuario);
+        if (!password_verify($password, $usuario->passwordUsuario))
+            Globales::mensaje_error("No existe el usuario con los datos ingresados.");
+
         $cambiarPass = (bool)$usuario->idUserCreate;
 
         #Si el usuario existe llena la variable de usuario en sesión con el id del usuario

@@ -16,11 +16,6 @@
  */
 class ModeloLogin extends Modelo
 {
-    function getUsuario($login, $password)
-    {
-        return $this->usuarios->selectUsuario($login, $password);
-    }
-
     function registrarCliente($nombre, $apellidoP, $apellidoM, $telefono, $correo)
     {
         $idCliente = $this->clientes->insertCliente("$nombre $apellidoP $apellidoM");
