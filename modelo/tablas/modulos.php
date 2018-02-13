@@ -51,7 +51,7 @@ FROM _modulos m
   JOIN _usuarios u ON u.perfil_usuario = p.id_perfil or perfil_usuario=0
 WHERE estatus_modulo = TRUE
       AND if(pa.id_perfil = 0, 0 = 0, u.id_usuario = '$id_usuario')
-/*GROUP BY idModulo*/
+GROUP BY idModulo
 ORDER BY padre_modulo, orden_modulo;
 MySQL;
         return $this->consulta($sql);

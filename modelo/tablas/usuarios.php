@@ -33,18 +33,18 @@ MySQL;
         return $this->multiconsulta($sql);
     }
 
-    function selectUsuario($login, $password)
+    function selectUsuario($login)
     {
         $sql = /** @lang MySQL */
             <<<MySQL
 SELECT 
 id_usuario idUsuario,
+password_usuario passwordUsuario,
 perfil_usuario idPerfil,
 id_usuario_create idUserCreate
 FROM _usuarios
 WHERE
   login_usuario = '$login'
-  AND password_usuario = '$password'
  AND estatus_usuario = TRUE 
 MySQL;
 

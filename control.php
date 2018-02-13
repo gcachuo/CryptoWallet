@@ -48,7 +48,7 @@ abstract class Control
                 $data = $this->$_POST["modo"]();*/
         }
         if (isset($_POST["fn"])) {
-            $json = $this->$_POST["fn"]();
+            $json = $this->{$_POST["fn"]}();
             echo json_encode($json);
         } else {
             if (isset($_SESSION["post"]) and empty($_POST["post"])) $_POST["post"] = $_SESSION["post"];
@@ -286,8 +286,8 @@ HTML;
                 if (!$permisos->accesar and $padre != 0) continue;
             }
 
-            $nombre = mb_strtolower($idioma->$modulo["idModulo"]);
-            $navegar = mb_strtolower($modulo["navegarModulo"]);
+            $nombre = (strtolower($idioma->{$modulo["idModulo"]}));
+            $navegar = strtolower($modulo["navegarModulo"]);
 
             if ($modulo["iconoModulo"] != "")
                 $icono = <<<HTML
@@ -571,7 +571,7 @@ class ArchivoModelo
     function __get($key)
     {
         $namespace = Globales::$namespace;
-        $key = mb_strtolower($key);
+        $key = strtolower($key);
         $ruta = "modelo/{$key}Modelo.php";
         require_once $ruta;
         $modelo = "Modelo{$key}";
