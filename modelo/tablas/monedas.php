@@ -17,8 +17,8 @@ CREATE TABLE monedas
 (
     id_moneda BIGINT(20) PRIMARY KEY NOT NULL,
     nombre_moneda VARCHAR(100) NOT NULL,
-    simbolo_moneda VARCHAR(3) NOT NULL,
-    book_moneda VARCHAR(7) NOT NULL
+    simbolo_moneda VARCHAR(4) NOT NULL,
+    book_moneda VARCHAR(8) NOT NULL
 );
 CREATE UNIQUE INDEX monedas_book_moneda_uindex ON monedas (book_moneda);
 CREATE UNIQUE INDEX monedas_nombre_moneda_uindex ON monedas (nombre_moneda);
