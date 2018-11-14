@@ -1,4 +1,5 @@
-import './css/cordova.css';
-
 $ = require('jquery');
+require('bootstrap');
+
 require('./js/cordova');
+require('./css/cordova.css');
