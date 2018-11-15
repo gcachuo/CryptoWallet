@@ -1,5 +1,10 @@
-$ = require('jquery');
+require('jquery');
 require('bootstrap');
 
+Mustache = require('mustache');
+
 require('./js/cordova');
-require('./css/cordova.css');
+
+Project = require('./js/project');
+require('./js/main');
+require('./scss/main.scss');
