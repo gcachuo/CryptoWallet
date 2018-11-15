@@ -3,7 +3,7 @@ const Project = {
         $("form").on('submit', event => {
             const $this = $(event.currentTarget);
             event.preventDefault();
-            Project.request($this.attr('action'));
+            Project.request($this.attr('action'), $this.serializeArray(), 'POST');
         });
     },
     navigate: function (file, data) {
@@ -14,12 +14,26 @@ const Project = {
         }, 'html');
     },
     request: function (uri, data, method) {
-        return $.ajax(Project.url+uri, {
+        return $.ajax(Project.url + uri, {
             method: method || 'GET',
             dataType: 'json',
             data: data,
             error: response => {
-                if (response.responseText) {
+                if (response.responseJSON) {
+                    const result = response.responseJSON;
+                    switch (result.code) {
+                        case 500:
+                            console.error(result.error.message);
+                            break;
+                        case 400:
+                            alert(result.error.message);
+                            return;
+                        default:
+                            console.error(result);
+                            break;
+                    }
+                }
+                else if (response.responseText) {
                     console.error(`${Project.url} ${response.responseText}`);
                 }
                 alert('An error ocurred.');
