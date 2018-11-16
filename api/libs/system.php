@@ -55,3 +55,15 @@ function auto_loader($clase)
 {
     include 'controllers/' . $clase . '.php';
 }
+
+function encrypt($value)
+{
+    $value_encrypted = openssl_encrypt($value, "AES-256-CBC", SEED, 0, str_pad(SEED, 16, 'X', STR_PAD_LEFT));
+    return $value_encrypted;
+}
+
+function decrypt($value_encrypted)
+{
+    $value = openssl_decrypt($value_encrypted, "AES-256-CBC", SEED, 0, str_pad(SEED, 16, 'X', STR_PAD_LEFT));
+    return $value;
+}

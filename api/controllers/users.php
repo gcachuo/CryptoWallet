@@ -25,5 +25,19 @@ sql;
         if (!password_verify($password, $hash)) {
             set_error("El usuario o la contraseña son incorrectos.");
         }
+
+        $sql = <<<sql
+select id_usuario id, nombre_usuario nombre, correo_usuario correo, perfil_usuario perfil
+from usuarios
+where correo_usuario='$email'
+sql;
+        $user = db_result($sql);
+
+        $sql = <<<sql
+update usuarios set last_login_usuario=NOW() where id_usuario='$user[id]'
+sql;
+        db_query($sql);
+
+        return compact('user');
     }
 }
