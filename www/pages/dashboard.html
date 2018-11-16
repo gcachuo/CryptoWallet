@@ -1,1 +1,17 @@
-dashboard
+{{^response}}
+    dashboard
+{{/response}}
+{{#response}}
+    {{#user}}
+        <script>
+            const user = {
+                id: '{{id}}',
+                nombre: '{{nombre}}',
+                correo: '{{correo}}',
+                perfil: '{{perfil}}'
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+            Project.navigate('dashboard');
+        </script>
+    {{/user}}
+{{/response}}

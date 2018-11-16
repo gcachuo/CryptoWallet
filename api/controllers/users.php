@@ -38,6 +38,8 @@ update usuarios set last_login_usuario=NOW() where id_usuario='$user[id]'
 sql;
         db_query($sql);
 
+        $user['id'] = encrypt($user['id']);
+
         return compact('user');
     }
 }

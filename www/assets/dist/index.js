@@ -193,7 +193,7 @@ eval("/*\n * Licensed to the Apache Software Foundation (ASF) under one\n * or m
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("$(function () {\n    Project.url = 'http://dev.gcachuo.ml/api/';\n    Project.init();\n    Project.navigate('sign-in');\n});\n\n//# sourceURL=webpack:///./src/js/main.js?");
+eval("$(function () {\n    Project.url = 'http://dev.gcachuo.ml/api/';\n    Project.init();\n    if (!localStorage.getItem('user')) {\n        Project.navigate('sign-in');\n    }\n    else {\n        Project.navigate('dashboard');\n    }\n});\n\n//# sourceURL=webpack:///./src/js/main.js?");
 
 /***/ }),
 
