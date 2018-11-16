@@ -3,7 +3,9 @@ const Project = {
         $("form").on('submit', event => {
             const $this = $(event.currentTarget);
             event.preventDefault();
-            Project.request($this.attr('action'), $this.serializeArray(), 'POST');
+            Project.request($this.data('action'), $this.serializeArray(), 'POST').done(data => {
+                Project.navigate($this.data('redirect'), data);
+            });
         });
     },
     navigate: function (file, data) {

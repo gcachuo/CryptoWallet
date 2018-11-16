@@ -14,11 +14,12 @@ $mysqli = db_connect();
 function db_connect()
 {
     $config = [
+        "host" => getenv('CONFIG_DB_HOST'),
         "user" => getenv('CONFIG_DB_USER'),
         "password" => getenv('CONFIG_DB_PASSWORD'),
         "database" => getenv('CONFIG_DB_DATABASE')
     ];
-    $mysqli = new mysqli("localhost", $config['user'], $config['password'], $config['database']);
+    $mysqli = new mysqli($config['host'], $config['user'], $config['password'], $config['database']);
     return $mysqli;
 }
 
