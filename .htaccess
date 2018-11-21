@@ -1,12 +1,12 @@
 RewriteEngine on
 
-RewriteBase /cryptowallet/www
-RewriteCond %{REQUEST_URI} !^/cryptowallet/api/
-RewriteCond %{REQUEST_URI} !^/cryptowallet/www/
+RewriteBase /www
+RewriteCond %{REQUEST_URI} !^/api/
+RewriteCond %{REQUEST_URI} !^/www/
 # Rewrite all those to insert /www
 RewriteRule ^(.*)$ www/$1 [L]
 
-RewriteBase /cryptowallet/
+RewriteBase /
 
 RewriteCond %{REQUEST_FILENAME}.php -f
 RewriteRule ^(.*)$ $1.php [L]
