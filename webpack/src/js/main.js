@@ -1,10 +1,10 @@
 $(function () {
-    Project.url = 'http://dev.gcachuo.ml/api/';
+    Project.host = localStorage.getItem('host') || 'http://gcachuo.ml/cryptowallet/';
+    Project.url = Project.host + 'api/';
     Project.init();
     if (!localStorage.getItem('user')) {
         Project.navigate('sign-in');
-    }
-    else {
+    } else {
         Project.navigate('dashboard');
     }
 });
