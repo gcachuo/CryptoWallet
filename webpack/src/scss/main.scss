@@ -1,2 +1,15 @@
-@import "custom";
-@import "~bootstrap/scss/bootstrap";
+body {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+body > header.navbar {
+  display: none;
+  border-bottom: 1px black solid;
+  box-shadow: 0 1px 10px grey;
+  border-radius: 0 0 10px 10px;
+  background-color: white;
+}
+
+.loading {
+  display: none;
+}

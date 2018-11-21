@@ -4,5 +4,10 @@ Project.Users = {
             user: JSON.parse(localStorage.getItem('user'))
         }, 'POST');
         return data.response.amounts;
+    },
+    signOut: function () {
+        localStorage.removeItem('user');
+        Project.navigate('sign-in');
+        $("body > header").hide();
     }
 };
