@@ -42,4 +42,23 @@ sql;
 
         return compact('user');
     }
+
+    function fetchAmounts()
+    {
+        $user_id = decrypt($_POST['user']['id']);
+
+        $sql = <<<sql
+select
+  nombre_moneda moneda,
+  sum(costo_usuario_moneda)              costo,
+  round(sum(cantidad_usuario_moneda), 8) cantidad
+from usuarios_transacciones ut
+inner join monedas m on ut.id_moneda = m.id_moneda
+where id_usuario = '$user_id'
+group by ut.id_moneda;
+sql;
+        $amounts = db_all_results($sql);
+
+        return compact('amounts');
+    }
 }

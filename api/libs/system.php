@@ -64,6 +64,7 @@ function encrypt($value)
 
 function decrypt($value_encrypted)
 {
+    $value_encrypted = html_entity_decode($value_encrypted);
     $value = openssl_decrypt($value_encrypted, "AES-256-CBC", SEED, 0, str_pad(SEED, 16, 'X', STR_PAD_LEFT));
     return $value;
 }
