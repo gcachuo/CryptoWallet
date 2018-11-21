@@ -86,6 +86,28 @@
 /************************************************************************/
 /******/ ({
 
+/***/ "./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss":
+/*!**************************************************************************!*\
+  !*** ./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss ***!
+  \**************************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("// removed by extract-text-webpack-plugin\n\n//# sourceURL=webpack:///./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss?");
+
+/***/ }),
+
+/***/ "./node_modules/@fortawesome/fontawesome-free/scss/solid.scss":
+/*!********************************************************************!*\
+  !*** ./node_modules/@fortawesome/fontawesome-free/scss/solid.scss ***!
+  \********************************************************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+eval("// removed by extract-text-webpack-plugin\n\n//# sourceURL=webpack:///./node_modules/@fortawesome/fontawesome-free/scss/solid.scss?");
+
+/***/ }),
+
 /***/ "./node_modules/bootstrap/dist/js/bootstrap.js":
 /*!*****************************************************!*\
   !*** ./node_modules/bootstrap/dist/js/bootstrap.js ***!
@@ -182,7 +204,7 @@ eval("var g;\n\n// This works in non-strict mode\ng = (function() {\n\treturn th
 /*! no static exports found */
 /***/ (function(module, exports, __webpack_require__) {
 
-eval("__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js?fe57\");\n__webpack_require__(/*! bootstrap */ \"./node_modules/bootstrap/dist/js/bootstrap.js\");\n\nMustache = __webpack_require__(/*! mustache */ \"./node_modules/mustache/mustache.js\");\nnumeral = __webpack_require__(/*! numeral */ \"./node_modules/numeral/numeral.js\");\n\n__webpack_require__(/*! ./js/cordova */ \"./src/js/cordova.js\");\n\nProject = __webpack_require__(/*! ./js/project */ \"./src/js/project.js\");\n__webpack_require__(/*! ./js/main */ \"./src/js/main.js\");\n__webpack_require__(/*! ./scss/main.scss */ \"./src/scss/main.scss\");\n\n__webpack_require__(/*! ./js/users */ \"./src/js/users.js\");\n\n//# sourceURL=webpack:///./src/index.js?");
+eval("__webpack_require__(/*! jquery */ \"./node_modules/jquery/dist/jquery.js?fe57\");\n__webpack_require__(/*! bootstrap */ \"./node_modules/bootstrap/dist/js/bootstrap.js\");\n\nMustache = __webpack_require__(/*! mustache */ \"./node_modules/mustache/mustache.js\");\nnumeral = __webpack_require__(/*! numeral */ \"./node_modules/numeral/numeral.js\");\n__webpack_require__(/*! @fortawesome/fontawesome-free/scss/fontawesome.scss */ \"./node_modules/@fortawesome/fontawesome-free/scss/fontawesome.scss\");\n__webpack_require__(/*! @fortawesome/fontawesome-free/scss/solid.scss */ \"./node_modules/@fortawesome/fontawesome-free/scss/solid.scss\");\n\n__webpack_require__(/*! ./js/cordova */ \"./src/js/cordova.js\");\n\nProject = __webpack_require__(/*! ./js/project */ \"./src/js/project.js\");\n__webpack_require__(/*! ./js/main */ \"./src/js/main.js\");\n__webpack_require__(/*! ./scss/main.scss */ \"./src/scss/main.scss\");\n\n__webpack_require__(/*! ./js/users */ \"./src/js/users.js\");\n\n//# sourceURL=webpack:///./src/index.js?");
 
 /***/ }),
 

@@ -3,6 +3,8 @@ require('bootstrap');
 
 Mustache = require('mustache');
 numeral = require('numeral');
+require('@fortawesome/fontawesome-free/scss/fontawesome.scss');
+require('@fortawesome/fontawesome-free/scss/solid.scss');
 
 require('./js/cordova');
 
