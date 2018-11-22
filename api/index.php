@@ -11,6 +11,7 @@ define('SEED', 'crypt0w4113t');
 
 require "libs/system.php";
 require "libs/database.php";
+require "vendor/autoload.php";
 
 setcookie('XDEBUG_SESSION', 'PHPSTORM');
 error_reporting(E_ALL);
