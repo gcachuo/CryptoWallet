@@ -1,10 +1,7 @@
 RewriteEngine on
 
-RewriteBase /www
-RewriteCond %{REQUEST_URI} !^/api/
-RewriteCond %{REQUEST_URI} !^/www/
-# Rewrite all those to insert /www
-RewriteRule ^(.*)$ www/$1 [L]
+RewriteBase /CryptoWallet/
+RewriteRule new/(.*) $1 [NC,L]
 
 RewriteBase /
 
