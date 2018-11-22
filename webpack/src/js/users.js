@@ -9,5 +9,6 @@ Project.Users = {
         localStorage.removeItem('user');
         Project.navigate('sign-in');
         $("body > header").hide();
+        clearInterval(Project.refreshInterval);
     }
 };

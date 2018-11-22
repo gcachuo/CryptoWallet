@@ -48,7 +48,7 @@
         $(function () {
             $("body > header").css('display', 'flex');
             cantidades();
-            setInterval(cantidades, 60000);
+            Project.refreshInterval = setInterval(cantidades, 60000);
         });
 
         async function cantidades() {

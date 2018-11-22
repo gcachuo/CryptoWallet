@@ -2,21 +2,22 @@
     <div class="col-12 col-md-4 offset-md-4">
         <div class="card">
             <div class="card-header">
-                Sign In
+                Iniciar Sesión
             </div>
             <div class="card-body">
-                <form data-action="users/signIn" data-redirect="dashboard">
+                <form class="m-2" data-action="users/signIn" data-redirect="dashboard">
                     <div class="form-group">
-                        <label for="txtEmail">Email address</label>
-                        <input type="email" class="form-control" name="email" id="txtEmail" placeholder="Enter email">
+                        <label for="txtEmail">Correo electrónico</label>
+                        <input required type="email" class="form-control" name="email" id="txtEmail" placeholder="Correo electrónico">
                     </div>
                     <div class="form-group">
-                        <label for="txtPassword">Password</label>
-                        <input type="password" class="form-control" name="password" id="txtPassword"
-                               placeholder="Password">
+                        <label for="txtPassword">Contraseña</label>
+                        <input required type="password" class="form-control" name="password" id="txtPassword"
+                               placeholder="Contraseña">
                     </div>
-                    <button type="submit" class="btn btn-primary">Login</button>
+                    <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
                 </form>
+                <button onclick="Project.navigate('forgot-password')" type="button" class="btn btn-light btn-sm">Olvide mi contraseña</button>
             </div>
         </div>
     </div>

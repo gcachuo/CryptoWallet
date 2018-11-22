@@ -4,6 +4,9 @@ const Project = {
             const $this = $(event.currentTarget);
             event.preventDefault();
             Project.request($this.data('action'), $this.serializeArray(), 'POST').done(data => {
+                if (typeof data.response === 'string') {
+                    alert(data.response);
+                }
                 Project.navigate($this.data('redirect'), data);
             });
         });
@@ -34,8 +37,7 @@ const Project = {
                             console.error(result);
                             break;
                     }
-                }
-                else if (response.responseText) {
+                } else if (response.responseText) {
                     console.error(`${Project.url} ${response.responseText}`);
                 }
                 alert('An error ocurred.');

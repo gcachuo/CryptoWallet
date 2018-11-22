@@ -61,4 +61,16 @@ sql;
 
         return compact('amounts');
     }
+
+    function forgotPassword()
+    {
+        $password_usuario = password_hash($_POST['password'], CRYPT_BLOWFISH);
+        $correo_usuario = ($_POST['email']);
+
+        $sql = <<<sql
+update usuarios set password_usuario='$password_usuario' where correo_usuario='$correo_usuario';
+sql;
+        db_query($sql);
+        return 'Contraseña reestablecida';
+    }
 }
