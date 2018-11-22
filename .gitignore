@@ -4,3 +4,4 @@
 /plugins/
 /webpack/node_modules/
 /api/.idea/
+/api/vendor/
