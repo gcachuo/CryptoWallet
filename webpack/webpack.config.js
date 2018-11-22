@@ -5,7 +5,7 @@ module.exports = {
     output: {
         path: __dirname + "/../www/assets/dist/",
         filename: 'index.js',
-        publicPath: '/assets/dist/'
+        publicPath: '/cryptowallet/assets/dist/'
     },
     module: {
         rules: [
