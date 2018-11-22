@@ -51,13 +51,21 @@ sql;
 select
   nombre_moneda moneda,
   sum(costo_usuario_moneda)              costo,
-  round(sum(cantidad_usuario_moneda), 8) cantidad
+  round(sum(cantidad_usuario_moneda), 8) cantidad,
+  concat(ut.id_moneda,'_',par_moneda) book
 from usuarios_transacciones ut
 inner join monedas m on ut.id_moneda = m.id_moneda
 where id_usuario = '$user_id'
 group by ut.id_moneda;
 sql;
         $amounts = db_all_results($sql);
+
+        $bitso = new BitsoAPI\bitso('', '');
+
+        foreach ($amounts as $key => $amount) {
+            $ticker=$bitso->ticker(["book"=>$amounts[$key]['book']]);
+            $amounts[$key]['precio'] = $ticker->payload->ask;
+        }
 
         return compact('amounts');
     }
