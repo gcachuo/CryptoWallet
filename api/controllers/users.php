@@ -95,7 +95,8 @@ sql;
 
         $sql = <<<sql
 select
-  nombre_usuario,
+  u.id_usuario id,
+  nombre_usuario nombre,
   nombre_moneda                          moneda,
   sum(costo_usuario_moneda)              costo,
   round(sum(cantidad_usuario_moneda), 8) cantidad,
@@ -122,6 +123,21 @@ sql;
             $clients[$key]['promedio'] = $client['costo'] / $client['cantidad'];
         }
 
-        return compact('clients');
+        $temp_clients = [];
+        foreach ($clients as $key => $client) {
+            $temp_clients[$client['id']] = [
+                'nombre' => $client['nombre'],
+                'costo' => (isset_get($temp_clients[$client['id']]['costo'], 0) + $client['costo']),
+                'total' => (isset_get($temp_clients[$client['id']]['total'], 0) + $client['total'])
+            ];
+        }
+        $clients = array_values($temp_clients);
+
+        $wallet = 0;
+        foreach ($this->fetchAmounts()['amounts'] as $self) {
+            $wallet += $self['total'];
+        }
+
+        return compact('clients', 'wallet');
     }
 }

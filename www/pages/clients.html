@@ -1,10 +1,81 @@
 {{#response}}
-    response
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2 mb-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    Totales
+                    <span class="loading"><i class="fas fa-spin fa-spinner"></i></span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">Cartera</label>
+                            <input readonly class="form-control" type="text" id="txtTotalCartera">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">Clientes</label>
+                            <input readonly class="form-control" type="text" id="txtTotalClientes">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    Clientes
+                    <span class="loading"><i class="fas fa-spin fa-spinner"></i></span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="tableClients">
+                            <thead>
+                            <tr>
+                                <th class="all">Nombre</th>
+                                <th>Costo</th>
+                                <th class="all">Total</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/dist/js/clients.js"></script>
 {{/response}}
 {{^response}}
+    <div class="w-100" style="text-align: center">
+        <i class="fa fa-spin fa-spinner fa-3x"></i>
+    </div>
     <script>
-        Project.request('users/fetchClients', {user: JSON.parse(localStorage.getItem('user'))}, 'POST').done(data => {
-            Project.navigate('clients', data);
+        Project.Users.fetchClients().done(data => {
+            Project.navigate('clients', data).done(() => {
+                const $table = $("#tableClients");
+                $table.find('tbody').html('');
+                const totales = {
+                    cartera: data.response.wallet,
+                    clientes: 0
+                };
+                $.each(data.response.clients, function (key, client) {
+                    totales.clientes += client.total;
+                    client.costo = numeral(client.costo).format('$0,0.00');
+                    client.total = numeral(client.total).format('$0,0.00');
+                    $table.find('tbody').append(`
+<tr>
+    <td>${client.nombre}</td>
+    <td>${client.costo}</td>
+    <td>${client.total}</td>
+</tr>
+                    `);
+                });
+                $("#txtTotalCartera").val(numeral(totales.cartera).format('$0,0.00'));
+                $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
+            });
         });
     </script>
 {{/response}}

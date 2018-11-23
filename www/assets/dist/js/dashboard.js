@@ -8,12 +8,13 @@ async function cantidades() {
     const $loading = $(".loading");
     const $table = $("#tableCoins");
     $loading.show();
+    $("button").prop('disabled', true);
     const totales = {
         costo: 0,
         actual: 0
     };
     const amounts = await Project.Users.fetchAmounts();
-    $("#tableCoins").find('tbody').html('');
+    $table.find('tbody').html('');
     amounts.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
@@ -52,4 +53,6 @@ async function cantidades() {
         searching: false,
         order: false
     });
+
+    $("button").prop('disabled', false);
 }

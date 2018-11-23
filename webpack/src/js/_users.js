@@ -5,10 +5,12 @@ Project.Users = {
         }, 'POST');
         return data.response.amounts;
     },
+    fetchClients: function () {
+        return Project.request('users/fetchClients', {user: JSON.parse(localStorage.getItem('user'))}, 'POST');
+    },
     signOut: function () {
         localStorage.removeItem('user');
         Project.navigate('sign-in');
         $("body > header").hide();
-        clearInterval(Project.refreshInterval);
     }
 };
