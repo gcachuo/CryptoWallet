@@ -65,6 +65,9 @@ sql;
         foreach ($amounts as $key => $amount) {
             $ticker=$bitso->ticker(["book"=>$amounts[$key]['book']]);
             $amounts[$key]['precio'] = $ticker->payload->ask;
+            $amounts[$key]['total']=$amount['cantidad']*$amounts[$key]['precio'];
+            $amounts[$key]['porcentaje']=($amounts[$key]['total']-$amount['costo'])/$amount['costo'];
+            $amounts[$key]['promedio']=$amount['costo']/$amount['cantidad'];
         }
 
         return compact('amounts');
