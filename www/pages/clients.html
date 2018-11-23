@@ -1,0 +1,10 @@
+{{#response}}
+    response
+{{/response}}
+{{^response}}
+    <script>
+        Project.request('users/fetchClients', {user: JSON.parse(localStorage.getItem('user'))}, 'POST').done(data => {
+            Project.navigate('clients', data);
+        });
+    </script>
+{{/response}}

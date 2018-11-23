@@ -43,6 +43,18 @@ sql;
         return compact('user');
     }
 
+    function forgotPassword()
+    {
+        $password_usuario = password_hash($_POST['password'], CRYPT_BLOWFISH);
+        $correo_usuario = ($_POST['email']);
+
+        $sql = <<<sql
+update usuarios set password_usuario='$password_usuario' where correo_usuario='$correo_usuario';
+sql;
+        db_query($sql);
+        return 'Contraseña reestablecida';
+    }
+
     function fetchAmounts()
     {
         $user_id = decrypt($_POST['user']['id']);
@@ -62,26 +74,54 @@ sql;
 
         $bitso = new BitsoAPI\bitso('', '');
 
+        $prices = [];
         foreach ($amounts as $key => $amount) {
-            $ticker=$bitso->ticker(["book"=>$amounts[$key]['book']]);
-            $amounts[$key]['precio'] = $ticker->payload->ask;
-            $amounts[$key]['total']=$amount['cantidad']*$amounts[$key]['precio'];
-            $amounts[$key]['porcentaje']=($amounts[$key]['total']-$amount['costo'])/$amount['costo'];
-            $amounts[$key]['promedio']=$amount['costo']/$amount['cantidad'];
+            if (empty($prices[$amount['book']])) {
+                $ticker = $bitso->ticker(["book" => $amount['book']]);
+                $prices[$amount['book']] = $ticker->payload->ask;
+            }
+            $amounts[$key]['precio'] = $prices[$amount['book']];
+            $amounts[$key]['total'] = $amount['cantidad'] * $amounts[$key]['precio'];
+            $amounts[$key]['porcentaje'] = ($amounts[$key]['total'] - $amount['costo']) / $amount['costo'];
+            $amounts[$key]['promedio'] = $amount['costo'] / $amount['cantidad'];
         }
 
         return compact('amounts');
     }
 
-    function forgotPassword()
+    function fetchClients()
     {
-        $password_usuario = password_hash($_POST['password'], CRYPT_BLOWFISH);
-        $correo_usuario = ($_POST['email']);
+        $user_id = decrypt($_POST['user']['id']);
 
         $sql = <<<sql
-update usuarios set password_usuario='$password_usuario' where correo_usuario='$correo_usuario';
+select
+  nombre_usuario,
+  nombre_moneda                          moneda,
+  sum(costo_usuario_moneda)              costo,
+  round(sum(cantidad_usuario_moneda), 8) cantidad,
+  concat(ut.id_moneda, '_', par_moneda)  book
+from usuarios u
+       inner join usuarios_transacciones ut on u.id_usuario = ut.id_usuario
+       inner join monedas m on ut.id_moneda = m.id_moneda
+where id_cliente = '$user_id'
+group by u.id_usuario,m.id_moneda;
 sql;
-        db_query($sql);
-        return 'Contraseña reestablecida';
+        $clients = db_all_results($sql);
+
+        $bitso = new BitsoAPI\bitso('', '');
+
+        $prices = [];
+        foreach ($clients as $key => $client) {
+            if (empty($prices[$client['book']])) {
+                $ticker = $bitso->ticker(["book" => $client['book']]);
+                $prices[$client['book']] = $ticker->payload->ask;
+            }
+            $clients[$key]['precio'] = $prices[$client['book']];
+            $clients[$key]['total'] = $client['cantidad'] * $clients[$key]['precio'];
+            $clients[$key]['porcentaje'] = $client['costo'] != 0 ? ($clients[$key]['total'] - $client['costo']) / $client['costo'] : 0;
+            $clients[$key]['promedio'] = $client['costo'] / $client['cantidad'];
+        }
+
+        return compact('clients');
     }
 }
