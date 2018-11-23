@@ -61,6 +61,7 @@
 
         async function cantidades() {
             const $loading = $(".loading");
+            const $table = $("#tableCoins");
             $loading.show();
             const totales = {
                 costo: 0,
@@ -81,7 +82,7 @@
                 coin.total = numeral(coin.total).format('$0,0.00');
                 coin.porcentaje = numeral(coin.porcentaje).format('0,0.00%');
                 coin.cantidad = numeral(coin.cantidad).format('0.00000000');
-                $("#tableCoins").find('tbody').append(`
+                $table.find('tbody').append(`
 <tr>
     <td>${coin.moneda}</td>
     <td>${coin.cantidad}</td>
@@ -99,8 +100,11 @@
 
             console.log('finish: ' + Date().toString());
             $loading.hide();
-            $("#tableCoins").dataTable({
-                responsive: true
+            $table.dataTable({
+                destroy: true,
+                responsive: true,
+                paginate: false,
+                searching: false
             });
         }
     </script>
