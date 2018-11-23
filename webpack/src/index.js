@@ -1,8 +1,10 @@
-require('jquery');
+$ = JQuery = require('jquery');
 require('bootstrap');
 
 Mustache = require('mustache');
 numeral = require('numeral');
+dt = require('datatables.net');
+responsive = require('datatables.net-responsive');
 
 require('./js/cordova');
 

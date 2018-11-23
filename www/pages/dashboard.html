@@ -36,12 +36,12 @@
                     <div class="table-responsive">
                         <table class="table" id="tableCoins">
                             <thead>
-                            <th>Moneda</th>
-                            <th>Cantidad</th>
+                            <th class="all">Moneda</th>
+                            <th class="all">Cantidad</th>
                             <th>Precio</th>
                             <th>Promedio</th>
                             <th>Costo</th>
-                            <th>Actual</th>
+                            <th class="all">Actual</th>
                             <th>%</th>
                             </thead>
                             <tbody>
@@ -68,7 +68,7 @@
             };
             const amounts = await Project.Users.fetchAmounts();
             $("#tableCoins").find('tbody').html('');
-            amounts.sort(function(a, b) {
+            amounts.sort(function (a, b) {
                 return b['porcentaje'] - a['porcentaje'];
             });
             $.each(amounts, function (key, coin) {
@@ -99,6 +99,9 @@
 
             console.log('finish: ' + Date().toString());
             $loading.hide();
+            $("#tableCoins").dataTable({
+                responsive: true
+            });
         }
     </script>
 {{/response}}

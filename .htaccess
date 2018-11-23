@@ -1,5 +1,6 @@
 RewriteEngine on
 
+RewriteCond %{REQUEST_URI} cryptowallet
 RewriteBase /cryptowallet/
 RewriteRule new/(.*) $1 [NC,L]
 
