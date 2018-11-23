@@ -1,6 +1,6 @@
 RewriteEngine on
 
-RewriteBase /CryptoWallet/
+RewriteBase /cryptowallet/
 RewriteRule new/(.*) $1 [NC,L]
 
 RewriteBase /
