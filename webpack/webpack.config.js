@@ -1,5 +1,6 @@
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
     entry: "./src/",
     output: {
@@ -19,7 +20,8 @@ module.exports = {
         ]
     },
     plugins: [
-        new ExtractTextPlugin("index.css")
+        new ExtractTextPlugin("index.css"),
+        new CopyWebpackPlugin([{ from: 'src/js/pages', to: 'js' }])
     ],
     node: {
         fs: "empty"

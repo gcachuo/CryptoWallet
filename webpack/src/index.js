@@ -11,7 +11,7 @@ require('./js/cordova');
 
 Project = require('./js/project');
 require('./js/main');
-require('./js/users');
+require('./js/_users');
 
 require('@fortawesome/fontawesome-free/scss/fontawesome.scss');
 require('@fortawesome/fontawesome-free/scss/solid.scss');

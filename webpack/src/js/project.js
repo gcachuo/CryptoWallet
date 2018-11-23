@@ -17,6 +17,7 @@ const Project = {
             $(".app").html(rendered);
             Project.init();
             Project.slideout.close();
+            delete Project.refreshInterval;
         }, 'html');
     },
     request: function (uri, data, method) {
