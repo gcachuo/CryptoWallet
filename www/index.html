@@ -18,8 +18,11 @@
         <div>Cryptowallet</div>
     </header>
     <ul class="list-group">
+        <li class="list-group-item clientes">
+            <button onclick="Project.navigate('dashboard')" class="btn btn-light btn-block">Cartera</button>
+        </li>
         <li class="list-group-item clientes" style="display: none;">
-            <button class="btn btn-light btn-block">Clientes</button>
+            <button onclick="Project.navigate('clients')" class="btn btn-light btn-block">Clientes</button>
         </li>
     </ul>
 </nav>
@@ -27,7 +30,7 @@
     <header class="navbar navbar-light">
         <button class="toggle-button btn btn-sm btn-light material-icons">menu</button>
         <span>
-        <button class="btn btn-sm" onclick="Project.Users.signOut()">Cerrar Sesión</button>
+        <button class="btn btn-sm" onclick="Project.Users.signOut()"><i class="small material-icons">lock</i> Cerrar Sesión</button>
     </span>
     </header>
     <div class="app container-fluid p-4">

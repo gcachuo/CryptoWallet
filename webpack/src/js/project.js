@@ -16,6 +16,7 @@ const Project = {
             const rendered = Mustache.render(template, data || {});
             $(".app").html(rendered);
             Project.init();
+            Project.slideout.close();
         }, 'html');
     },
     request: function (uri, data, method) {
