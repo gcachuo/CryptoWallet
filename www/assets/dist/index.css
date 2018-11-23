@@ -14,7 +14,7 @@
   font-family: 'Font Awesome 5 Free';
   font-weight: 900; }
 body {
-  background-color: rgba(0, 0, 0, 0.1);
+  background-color: rgba(0, 0, 0, 0.1) !important;
   overflow: hidden; }
 
 body > header.navbar {
