@@ -5,6 +5,7 @@ Mustache = require('mustache');
 numeral = require('numeral');
 dt = require('datatables.net');
 responsive = require('datatables.net-responsive');
+Slideout = require('slideout');
 
 require('./js/cordova');
 
@@ -15,4 +16,5 @@ require('./js/users');
 require('@fortawesome/fontawesome-free/scss/fontawesome.scss');
 require('@fortawesome/fontawesome-free/scss/solid.scss');
 require('bootstrap/scss/bootstrap.scss');
+require('./scss/slideout.scss');
 require('./scss/main.scss');
