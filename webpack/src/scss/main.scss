@@ -1,5 +1,6 @@
 body {
   background-color: rgba(0, 0, 0, 0.1);
+  overflow: hidden;
 }
 
 body > header.navbar {
@@ -8,6 +9,12 @@ body > header.navbar {
   box-shadow: 0 1px 10px grey;
   border-radius: 0 0 10px 10px;
   background-color: white;
+  z-index: 1;
+}
+
+.app {
+  overflow: auto;
+  height: calc(100vh - 55px);
 }
 
 .loading {
