@@ -14,11 +14,11 @@
 
 <body>
 <nav id="menu">
-    <header  class="navbar navbar-light">
+    <header class="navbar navbar-light">
         <div>Cryptowallet</div>
     </header>
-    <ul class="list-group">
-        <li class="list-group-item clientes">
+    <ul class="list-group main" style="display: none;">
+        <li class="list-group-item dashboard">
             <button onclick="Project.navigate('dashboard')" class="btn btn-light btn-block">Cartera</button>
         </li>
         <li class="list-group-item clientes" style="display: none;">
@@ -39,5 +39,10 @@
 </main>
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="assets/dist/index.js"></script>
+<script>
+    $(function () {
+        Project.navigate(Project.getCookie('page') || 'dashboard');
+    })
+</script>
 </body>
 </html>

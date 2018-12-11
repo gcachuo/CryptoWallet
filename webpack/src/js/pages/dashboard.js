@@ -1,5 +1,4 @@
 $(function () {
-    $("body > main > header").css('display', 'flex');
     cantidades();
     Project.refreshInterval = setInterval(cantidades, 60000);
 });

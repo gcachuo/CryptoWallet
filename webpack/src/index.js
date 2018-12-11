@@ -10,7 +10,6 @@ Slideout = require('slideout');
 require('./js/cordova');
 
 Project = require('./js/project');
-require('./js/main');
 require('./js/_users');
 
 require('@fortawesome/fontawesome-free/scss/fontawesome.scss');
