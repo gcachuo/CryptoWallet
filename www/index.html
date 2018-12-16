@@ -39,10 +39,6 @@
 </main>
 <script type="text/javascript" src="cordova.js"></script>
 <script type="text/javascript" src="assets/dist/index.js"></script>
-<script>
-    $(function () {
-        Project.navigate(Project.getCookie('page') || 'dashboard');
-    })
-</script>
+<script>Project.init();</script>
 </body>
 </html>
