@@ -3,7 +3,9 @@
   "version": "0.0.0",
   "displayName": "CryptoWallet",
   "cordova": {
-    "platforms": [],
+    "platforms": [
+      "android"
+    ],
     "plugins": {
       "cordova-plugin-inappbrowser": {},
       "cordova-plugin-file": {},
@@ -13,6 +15,7 @@
   "dependencies": {
     "cordova-browser": "^5.0.4",
     "cordova-plugin-dialogs": "^2.0.1",
-    "cordova-plugin-inappbrowser": "~1.7.1"
+    "cordova-plugin-inappbrowser": "~1.7.1",
+    "cordova-android": "^7.1.4"
   }
 }
