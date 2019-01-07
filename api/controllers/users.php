@@ -114,8 +114,12 @@ sql;
         $prices = [];
         foreach ($clients as $key => $client) {
             if (empty($prices[$client['book']])) {
-                $ticker = $bitso->ticker(["book" => $client['book']]);
-                $prices[$client['book']] = $ticker->payload->ask;
+                try {
+                    $ticker = $bitso->ticker(["book" => $client['book']]);
+                    $prices[$client['book']] = $ticker->payload->ask;
+                } catch (\BitsoAPI\bitsoException $exception) {
+                    $prices[$client['book']] = 0;
+                }
             }
             $clients[$key]['precio'] = $prices[$client['book']];
             $clients[$key]['total'] = $client['cantidad'] * $clients[$key]['precio'];
