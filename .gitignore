@@ -1,2 +1,7 @@
 /.idea/
-/script_errors*.log
+/node_modules/
+/platforms/
+/plugins/
+/webpack/node_modules/
+/api/.idea/
+/api/vendor/

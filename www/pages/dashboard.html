@@ -1,0 +1,72 @@
+{{^response}}
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2 mb-3">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    Totales
+                    <span class="loading"><i class="fas fa-spin fa-spinner"></i></span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">Costo</label>
+                            <input readonly class="form-control" type="text" id="txtTotalCosto">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">Actual</label>
+                            <input readonly class="form-control" type="text" id="txtTotalActual">
+                        </div>
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">G/P</label>
+                            <input readonly class="form-control" type="text" id="txtTotalGP">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header d-flex justify-content-between">
+                    Monedas
+                    <span class="loading"><i class="fas fa-spin fa-spinner"></i></span>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table" id="tableCoins">
+                            <thead>
+                            <tr>
+                                <th class="all">Moneda</th>
+                                <th class="all">Cantidad</th>
+                                <th>Precio</th>
+                                <th>Promedio</th>
+                                <th>Costo</th>
+                                <th class="all">Actual</th>
+                                <th>%</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="assets/dist/js/dashboard.js"></script>
+{{/response}}
+{{#response}}
+    {{#user}}
+        <script>
+            const user = {
+                id: '{{id}}',
+                nombre: '{{nombre}}',
+                correo: '{{correo}}',
+                perfil: '{{perfil}}'
+            };
+            localStorage.setItem('user', JSON.stringify(user));
+            Project.navigate('dashboard');
+        </script>
+    {{/user}}
+{{/response}}

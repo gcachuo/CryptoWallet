@@ -1,0 +1,14 @@
+RewriteEngine on
+
+RewriteCond %{REQUEST_URI} !/api
+RewriteCond %{REQUEST_URI} !^/cryptowallet/www
+RewriteCond %{REQUEST_URI} !build/browser/www
+# Rewrite all those to insert /www
+RewriteRule ^(.*)$ www/$1 [NC,L]
+
+RewriteBase /cryptowallet/
+
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L]
+
+RewriteRule api\/(.[^\/]*)\/(.[^\/?]*)[?]?(.[^\/]*)?$ api/index?controller=$1&action=$2&%{QUERY_STRING} [NC,L]

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="format-detection" content="telephone=no"/>
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta name="viewport"
+          content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width"/>
+    <link rel="icon" href="assets/dist/img/logo.png">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="assets/dist/index.css">
+    <title>Cryptowallet</title>
+</head>
+
+<body>
+<nav id="menu">
+    <header  class="navbar navbar-light">
+        <div>Cryptowallet</div>
+    </header>
+    <ul class="list-group">
+        <li class="list-group-item clientes">
+            <button onclick="Project.navigate('dashboard')" class="btn btn-light btn-block">Cartera</button>
+        </li>
+        <li class="list-group-item clientes" style="display: none;">
+            <button onclick="Project.navigate('clients')" class="btn btn-light btn-block">Clientes</button>
+        </li>
+    </ul>
+</nav>
+<main id="panel">
+    <header class="navbar navbar-light">
+        <button class="toggle-button btn btn-sm btn-light material-icons">menu</button>
+        <span>
+        <button class="btn btn-sm" onclick="Project.Users.signOut()"><i class="small material-icons">lock</i> Cerrar Sesión</button>
+    </span>
+    </header>
+    <div class="app container-fluid p-4">
+
+    </div>
+</main>
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="assets/dist/index.js"></script>
+</body>
+</html>
