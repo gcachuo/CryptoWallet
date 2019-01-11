@@ -127,8 +127,8 @@ sql;
             }
             $clients[$key]['precio'] = $prices[$client['book']];
             $clients[$key]['total'] = $client['cantidad'] * $clients[$key]['precio'];
-            $clients[$key]['porcentaje'] = $client['costo'] != 0 ? ($clients[$key]['total'] - $client['costo']) / $client['costo'] : 0;
-            $clients[$key]['promedio'] = $client['costo'] / $client['cantidad'];
+            $clients[$key]['porcentaje'] = (float)$client['costo'] ? ($clients[$key]['total'] - $client['costo']) / $client['costo'] : 0;
+            $clients[$key]['promedio'] = (float)$client['cantidad'] ? $client['cantidad'] / $client['cantidad'] : 0;
         }
 
         $temp_clients = [];
