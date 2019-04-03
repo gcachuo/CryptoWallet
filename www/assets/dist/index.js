@@ -306,7 +306,7 @@ eval("/*\n * Licensed to the Apache Software Foundation (ASF) under one\n * or m
 /*! no static exports found */
 /***/ (function(module, exports) {
 
-eval("$(function () {\n    Project.host = localStorage.getItem('host') || 'http://gcachuo.ml/cryptowallet/';\n    Project.url = Project.host + 'api/';\n    Project.init();\n\n    if (!localStorage.getItem('user')) {\n        Project.navigate('sign-in');\n    } else {\n        Project.navigate('dashboard');\n        const user = JSON.parse(localStorage.getItem('user'));\n        if (user.perfil === '0') {\n            $(\".clientes\").show();\n        }\n    }\n\n    Project.slideout = new Slideout({\n        'panel': $(\"#panel\").get(0),\n        'menu': $(\"#menu\").get(0),\n        'padding': 256,\n        'tolerance': 70\n    });\n    $(\".toggle-button\").on('click', function () {\n        Project.slideout.toggle()\n    });\n});\n\n//# sourceURL=webpack:///./src/js/main.js?");
+eval("$(function () {\n    Project.host = localStorage.getItem('host') || 'https://gcachuo.ml/cryptowallet/';\n    Project.url = Project.host + 'api/';\n    Project.init();\n\n    if (!localStorage.getItem('user')) {\n        Project.navigate('sign-in');\n    } else {\n        Project.navigate('dashboard');\n        const user = JSON.parse(localStorage.getItem('user'));\n        if (user.perfil === '0') {\n            $(\".clientes\").show();\n        }\n    }\n\n    Project.slideout = new Slideout({\n        'panel': $(\"#panel\").get(0),\n        'menu': $(\"#menu\").get(0),\n        'padding': 256,\n        'tolerance': 70\n    });\n    $(\".toggle-button\").on('click', function () {\n        Project.slideout.toggle()\n    });\n});\n\n//# sourceURL=webpack:///./src/js/main.js?");
 
 /***/ }),
 

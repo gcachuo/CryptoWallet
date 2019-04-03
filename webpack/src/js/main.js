@@ -1,5 +1,5 @@
 $(function () {
-    Project.host = localStorage.getItem('host') || 'http://gcachuo.ml/cryptowallet/';
+    Project.host = localStorage.getItem('host') || 'https://gcachuo.ml/cryptowallet/';
     Project.url = Project.host + 'api/';
     Project.init();
 
