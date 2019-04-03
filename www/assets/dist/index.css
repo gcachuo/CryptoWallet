@@ -2,6 +2,90 @@
  * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
  * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
  */
+@font-face {
+  font-family: 'Font Awesome 5 Free';
+  font-style: normal;
+  font-weight: 900;
+  src: url(fonts/fa-solid-900.eot);
+  src: url(fonts/fa-solid-900.eot?#iefix) format("embedded-opentype"), url(fonts/fa-solid-900.woff2) format("woff2"), url(fonts/fa-solid-900.woff) format("woff"), url(fonts/fa-solid-900.ttf) format("truetype"), url(img/fa-solid-900.svg#fontawesome) format("svg"); }
+
+.fa,
+.fas {
+  font-family: 'Font Awesome 5 Free';
+  font-weight: 900; }
+body {
+  width: 100%;
+  height: 100%; }
+
+.slideout-menu {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  width: 256px;
+  min-height: 100vh;
+  -webkit-overflow-scrolling: touch;
+  z-index: 0;
+  display: none; }
+
+.slideout-menu-left {
+  left: 0; }
+
+.slideout-menu-right {
+  right: 0; }
+
+.slideout-panel {
+  position: relative;
+  z-index: 1;
+  will-change: transform;
+  background-color: #FFF;
+  /* A background-color is required */
+  min-height: 100vh; }
+
+.slideout-open,
+.slideout-open body,
+.slideout-open .slideout-panel {
+  overflow: hidden; }
+
+.slideout-open .slideout-menu {
+  display: block; }
+
+@media screen and (min-width: 780px) {
+  .slideout-panel {
+    margin-left: 256px; }
+  .slideout-menu {
+    display: block; }
+  .btn-hamburger {
+    display: none; }
+  .toggle-button {
+    visibility: hidden; } }
+body {
+  background-color: rgba(0, 0, 0, 0.1) !important;
+  overflow: hidden; }
+
+body > main > header.navbar {
+  display: none;
+  border-bottom: 1px black solid;
+  box-shadow: 8px 1px 10px grey;
+  background-color: white;
+  z-index: 1; }
+
+body > nav > header.navbar {
+  padding: 11px;
+  border-bottom: 1px black solid;
+  box-shadow: 0 1px 10px grey;
+  background-color: white;
+  z-index: 1; }
+
+.app {
+  overflow: auto;
+  height: calc(100vh - 55px); }
+
+.loading {
+  display: none; }
+/*!
+ * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
+ * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
+ */
 .fa,
 .fas,
 .far,
@@ -3962,21 +4046,6 @@ readers do not read off random characters that represent icons */
   overflow: visible;
   position: static;
   width: auto; }
-/*!
- * Font Awesome Free 5.5.0 by @fontawesome - https://fontawesome.com
- * License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License)
- */
-@font-face {
-  font-family: 'Font Awesome 5 Free';
-  font-style: normal;
-  font-weight: 900;
-  src: url(fonts/fa-solid-900.eot);
-  src: url(fonts/fa-solid-900.eot?#iefix) format("embedded-opentype"), url(fonts/fa-solid-900.woff2) format("woff2"), url(fonts/fa-solid-900.woff) format("woff"), url(fonts/fa-solid-900.ttf) format("truetype"), url(img/fa-solid-900.svg#fontawesome) format("svg"); }
-
-.fa,
-.fas {
-  font-family: 'Font Awesome 5 Free';
-  font-weight: 900; }
 /*!
  * Bootstrap v4.1.3 (https://getbootstrap.com/)
  * Copyright 2011-2018 The Bootstrap Authors
@@ -10290,72 +10359,3 @@ a.text-dark:hover, a.text-dark:focus {
   .table .thead-dark th {
     color: inherit;
     border-color: #dee2e6; } }
-body {
-  width: 100%;
-  height: 100%; }
-
-.slideout-menu {
-  position: fixed;
-  top: 0;
-  bottom: 0;
-  width: 256px;
-  min-height: 100vh;
-  -webkit-overflow-scrolling: touch;
-  z-index: 0;
-  display: none; }
-
-.slideout-menu-left {
-  left: 0; }
-
-.slideout-menu-right {
-  right: 0; }
-
-.slideout-panel {
-  position: relative;
-  z-index: 1;
-  will-change: transform;
-  background-color: #FFF;
-  /* A background-color is required */
-  min-height: 100vh; }
-
-.slideout-open,
-.slideout-open body,
-.slideout-open .slideout-panel {
-  overflow: hidden; }
-
-.slideout-open .slideout-menu {
-  display: block; }
-
-@media screen and (min-width: 780px) {
-  .slideout-panel {
-    margin-left: 256px; }
-  .slideout-menu {
-    display: block; }
-  .btn-hamburger {
-    display: none; }
-  .toggle-button {
-    visibility: hidden; } }
-body {
-  background-color: rgba(0, 0, 0, 0.1) !important;
-  overflow: hidden; }
-
-body > main > header.navbar {
-  display: none;
-  border-bottom: 1px black solid;
-  box-shadow: 8px 1px 10px grey;
-  background-color: white;
-  z-index: 1; }
-
-body > nav > header.navbar {
-  padding: 11px;
-  border-bottom: 1px black solid;
-  box-shadow: 0 1px 10px grey;
-  background-color: white;
-  z-index: 1; }
-
-.app {
-  overflow: auto;
-  height: calc(100vh - 55px); }
-
-.loading {
-  display: none; }

@@ -1,4 +1,4 @@
-const host = 'http://gcachuo.ml/cryptowallet/';
+const host = 'https://gcachuo.ml/cryptowallet/';
 const api = 'api/';
 const init = function () {
     Project.navigate(Project.getCookie('page') || 'dashboard');
