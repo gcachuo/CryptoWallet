@@ -84,10 +84,12 @@ sql;
                     $prices[$amount['book']] = 0;
                 }
             }
+            $amount['costo'] = (float)$amount['costo'] > 0 ? (float)$amount['costo'] : 0.01;
+
             $amounts[$key]['precio'] = $prices[$amount['book']];
             $amounts[$key]['total'] = $amount['cantidad'] * $amounts[$key]['precio'];
             $amounts[$key]['porcentaje'] = (float)$amount['costo'] ? ($amounts[$key]['total'] - $amount['costo']) / $amount['costo'] : 0;
-            $amounts[$key]['promedio'] = (float)$amount['cantidad'] ? $amount['costo'] / $amount['cantidad'] : 0;
+            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] ? $amount['costo'] / $amount['cantidad'] : 0);
         }
 
         return compact('amounts');
