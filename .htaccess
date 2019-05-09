@@ -1,5 +1,9 @@
 RewriteEngine on
 
+#RewriteCond %{HTTP_HOST} ^gcachuo.ml$
+#RewriteCond %{HTTPS} off
+#RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
 RewriteCond %{REQUEST_URI} cryptowallet
 RewriteBase /cryptowallet/
 RewriteRule new/(.*) $1 [NC,L]
