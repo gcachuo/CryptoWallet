@@ -4,8 +4,8 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "864b1ffcfa8cebb84a5c92b4557822a0",
-    "content-hash": "2894ac15e3b47d0a95f9f70210360630",
+    "hash": "c40fadca422f2fc624b4ddc9c271ca42",
+    "content-hash": "15a801aca2c4da5ccedd60e9a4735b06",
     "packages": [
         {
             "name": "bitso/bitso-php",
@@ -59,6 +59,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "^1.6",
+        "ext-mysqli": "^0.0.0"
+    },
     "platform-dev": []
 }

@@ -16,6 +16,7 @@ require "vendor/autoload.php";
 setcookie('XDEBUG_SESSION', 'PHPSTORM');
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
+mysqli_report(MYSQLI_REPORT_ALL ^ (MYSQLI_REPORT_INDEX));
 spl_autoload_register('auto_loader');
 set_error_handler('error_handler');
 register_shutdown_function('shutdown_function');
@@ -32,7 +33,7 @@ try {
         $response = null;
     } else {
         $controller = new $controller();
-        $response = $controller->$action();
+        $response = method_exists($controller, $action) ? $controller->$action() : null;
     }
 } catch (Exception $exception) {
     $errno = $exception->getCode() ?: 400;
