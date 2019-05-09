@@ -32,7 +32,7 @@ try {
         $response = null;
     } else {
         $controller = new $controller();
-        $response = $controller->$action();
+        $response = method_exists($controller, $action) ? $controller->$action() : null;
     }
 } catch (Exception $exception) {
     $errno = $exception->getCode() ?: 400;

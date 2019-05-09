@@ -1,5 +1,6 @@
 {
   "require": {
-    "bitso/bitso-php": "*"
+    "bitso/bitso-php": "*",
+    "ext-json": "^1.6"
   }
 }
