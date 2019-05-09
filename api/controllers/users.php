@@ -10,8 +10,8 @@ class users
 {
     function signIn()
     {
-        $email = $_POST['email'];
-        $password = $_POST['password'];
+        $email = isset_get($_POST['email']);
+        $password = isset_get($_POST['password']);
 
         if (!$email || !$password) {
             set_error("Fill all the fields.");
@@ -45,8 +45,12 @@ sql;
 
     function forgotPassword()
     {
-        $password_usuario = password_hash($_POST['password'], CRYPT_BLOWFISH);
-        $correo_usuario = ($_POST['email']);
+        $password_usuario = password_hash(isset_get($_POST['password']), CRYPT_BLOWFISH);
+        $correo_usuario = isset_get($_POST['email']);
+
+        if (!$correo_usuario || !$password_usuario) {
+            set_error("Fill all the fields.");
+        }
 
         $sql = <<<sql
 update usuarios set password_usuario='$password_usuario' where correo_usuario='$correo_usuario';
@@ -57,7 +61,7 @@ sql;
 
     function fetchAmounts()
     {
-        $user_id = decrypt($_POST['user']['id']);
+        $user_id = decrypt(isset_get($_POST['user']['id']));
 
         $sql = <<<sql
 select
@@ -97,7 +101,7 @@ sql;
 
     function fetchClients()
     {
-        $user_id = decrypt($_POST['user']['id']);
+        $user_id = decrypt(isset_get($_POST['user']['id']));
 
         $sql = <<<sql
 select
