@@ -1,6 +1,7 @@
 {
   "require": {
     "bitso/bitso-php": "*",
-    "ext-json": "^1.6"
+    "ext-json": "^1.6",
+    "ext-mysqli": "^0.0.0"
   }
 }

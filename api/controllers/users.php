@@ -154,4 +154,53 @@ sql;
 
         return compact('clients', 'wallet');
     }
+
+    function addTransaction()
+    {
+        $id_usuario = decrypt(isset_get($_POST['user']['id']));
+        $id_moneda = isset_get($_POST['moneda']);
+        $costo_usuario_moneda = isset_get($_POST['costo'], 0);
+        $cantidad_usuario_moneda = isset_get($_POST['cantidad'], 0);
+
+        if (!$id_usuario || !$id_moneda) {
+            return false;
+        }
+
+        $sql = <<<sql
+INSERT INTO usuarios_transacciones (id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda) VALUES ($id_usuario, '$id_moneda', $costo_usuario_moneda, $cantidad_usuario_moneda);
+sql;
+        db_query($sql);
+
+        return true;
+    }
+
+    function getTransactions()
+    {
+        $id_usuario = decrypt(isset_get($_POST['user']['id']));
+        $id_moneda = isset_get($_POST['moneda']);
+        $operacion = isset_get($_POST['operacion']);
+        if (!$id_usuario) {
+            return false;
+        }
+
+        $sql = <<<sql
+select date(fecha_usuario_transaccion)                           fecha,
+       if(sign(cantidad_usuario_moneda) = -1, 'Venta', 'Compra') operacion,
+       nombre_moneda                                             moneda,
+       cantidad_usuario_moneda                                   cantidad,
+       costo_usuario_moneda                                      costo,
+       round(costo_usuario_moneda / cantidad_usuario_moneda, 2)  precio
+from usuarios_transacciones
+         inner join monedas m on usuarios_transacciones.id_moneda = m.id_moneda
+where id_usuario = 1
+  and if('$id_moneda' <> '', m.id_moneda = '$id_moneda', true)
+  and if('$operacion' <> '', if('$operacion' = 'venta', sign(cantidad_usuario_moneda) = -1, sign(cantidad_usuario_moneda) = 1),
+         true)
+order by fecha_usuario_transaccion desc;
+sql;
+
+        $transactions = db_all_results($sql);
+
+        return compact('transactions');
+    }
 }
