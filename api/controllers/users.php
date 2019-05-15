@@ -84,7 +84,7 @@ sql;
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
-                    $prices[$amount['book']] = $ticker->payload->ask;
+                    $prices[$amount['book']] = round(($ticker->payload->ask + $ticker->payload->bid) / 2);
                 } catch (\BitsoAPI\bitsoException $exception) {
                     $prices[$amount['book']] = 0;
                 }
