@@ -7,7 +7,7 @@
                     <span class="loading"><i class="fas fa-spin fa-spinner"></i></span>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row mb-3">
                         <div class="col-md-4">
                             <label class="col-form-label font-weight-bold">Cartera</label>
                             <input readonly class="form-control" type="text" id="txtTotalCartera">
@@ -16,6 +16,23 @@
                             <label class="col-form-label font-weight-bold">Clientes</label>
                             <input readonly class="form-control" type="text" id="txtTotalClientes">
                         </div>
+                        <div class="col-md-4">
+                            <label class="col-form-label font-weight-bold">Diferencia</label>
+                            <input readonly class="form-control" type="text" id="txtTotalDiferencia">
+                        </div>
+                    </div>
+                    <div class="table-responsive">
+                        <table class="table" id="tableCoins">
+                            <thead>
+                            <tr>
+                                <th>Moneda</th>
+                                <th>Cartera</th>
+                                <th>Clientes</th>
+                                <th>Diferencia</th>
+                            </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
@@ -58,10 +75,15 @@
                 const $table = $("#tableClients");
                 $table.find('tbody').html('');
                 const totales = {
-                    cartera: data.response.wallet,
-                    clientes: 0
+                    cartera: data.response.wallet.total,
+                    clientes: 0,
+                    monedas: {cartera: data.response.wallet.monedas, clientes: {}}
                 };
                 $.each(data.response.clients, function (key, client) {
+                    $.each(client.monedas, function (idMoneda, moneda) {
+                        const cantidad = (totales.monedas.clientes[idMoneda] || 0) + Number(moneda);
+                        totales.monedas.clientes[idMoneda] = Math.round(cantidad * 100000000) / 100000000;
+                    });
                     totales.clientes += client.total;
                     client.costo = numeral(client.costo).format('$0,0.00');
                     client.total = numeral(client.total).format('$0,0.00');
@@ -73,8 +95,21 @@
 </tr>
                     `);
                 });
+                console.log(totales.monedas.clientes);
+                $.each(totales.monedas.clientes, function (moneda, cantidad) {
+                    const diferencia = Math.round((totales.monedas.cartera[moneda] - cantidad) * 100000000) / 100000000;
+                    $("#tableCoins").find('tbody').append(`
+<tr>
+    <td>${moneda}</td>
+    <td>${totales.monedas.cartera[moneda]}</td>
+    <td>${cantidad}</td>
+    <td>${diferencia}</td>
+</tr>
+                    `);
+                });
                 $("#txtTotalCartera").val(numeral(totales.cartera).format('$0,0.00'));
                 $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
+                $("#txtTotalDiferencia").val(numeral(totales.cartera - totales.clientes).format('$0,0.00'));
             });
         });
     </script>
