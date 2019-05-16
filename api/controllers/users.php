@@ -65,6 +65,7 @@ sql;
 
         $sql = <<<sql
 select
+  m.id_moneda idMoneda,
   nombre_moneda moneda,
   sum(costo_usuario_moneda)              costo,
   round(sum(cantidad_usuario_moneda), 8) cantidad,
@@ -83,7 +84,7 @@ sql;
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
-                    $prices[$amount['book']] = $ticker->payload->ask;
+                    $prices[$amount['book']] = round(($ticker->payload->ask + $ticker->payload->bid) / 2,2);
                 } catch (\BitsoAPI\bitsoException $exception) {
                     $prices[$amount['book']] = 0;
                 }
@@ -107,6 +108,7 @@ sql;
 select
   u.id_usuario id,
   nombre_usuario nombre,
+  m.id_moneda                            idMoneda,
   nombre_moneda                          moneda,
   sum(costo_usuario_moneda)              costo,
   round(sum(cantidad_usuario_moneda), 8) cantidad,
@@ -142,14 +144,17 @@ sql;
             $temp_clients[$client['id']] = [
                 'nombre' => $client['nombre'],
                 'costo' => (isset_get($temp_clients[$client['id']]['costo'], 0) + $client['costo']),
-                'total' => (isset_get($temp_clients[$client['id']]['total'], 0) + $client['total'])
+                'total' => (isset_get($temp_clients[$client['id']]['total'], 0) + $client['total']),
+                'monedas' => isset_get($temp_clients[$client['id']]['monedas'], [])
             ];
+            $temp_clients[$client['id']]['monedas'][$client['idMoneda']] = $client['cantidad'];
         }
         $clients = array_values($temp_clients);
 
-        $wallet = 0;
+        $wallet['total'] = 0;
         foreach ($this->fetchAmounts()['amounts'] as $self) {
-            $wallet += $self['total'];
+            $wallet['monedas'][$self['idMoneda']] = $self['cantidad'];
+            $wallet['total'] += $self['total'];
         }
 
         return compact('clients', 'wallet');

@@ -1,21 +1,15 @@
 {
   "name": "com.cachu.cryptowallet",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "displayName": "CryptoWallet",
   "cordova": {
     "platforms": [
-      "android"
-    ],
-    "plugins": {
-      "cordova-plugin-inappbrowser": {},
-      "cordova-plugin-file": {},
-      "cordova-plugin-dialogs": {}
-    }
+      "android",
+      "browser"
+    ]
   },
   "dependencies": {
-    "cordova-android": "^7.1.4",
-    "cordova-browser": "^5.0.4",
-    "cordova-plugin-dialogs": "^2.0.1",
-    "cordova-plugin-inappbrowser": "~1.7.1"
+    "cordova-android": "^8.0.0",
+    "cordova-browser": "^6.0.0"
   }
 }
