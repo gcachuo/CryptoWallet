@@ -1,3 +1,6 @@
+var $loading = $(".loading");
+var draw = 0;
+
 $(function () {
     $("body > main > header").css('display', 'flex');
     const table = cargarTabla();
@@ -5,8 +8,6 @@ $(function () {
         table.ajax.reload()
     }, 60000);
 });
-
-let $loading = $(".loading");
 
 function cargarTabla() {
     $loading.show();
@@ -60,8 +61,6 @@ function cargarTabla() {
         }
     });
 }
-
-let draw = 0;
 
 function dataSrc(result) {
     result.recordsTotal = 10;
