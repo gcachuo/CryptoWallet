@@ -6,7 +6,7 @@ $(function () {
     }, 60000);
 });
 
-const $loading = $(".loading");
+let $loading = $(".loading");
 
 function cargarTabla() {
     $loading.show();
