@@ -84,9 +84,13 @@ sql;
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
-                    $prices[$amount['book']] = round(($ticker->payload->ask + $ticker->payload->bid) / 2,2);
+                    $prices[$amount['book']] = round(($ticker->payload->ask + $ticker->payload->bid) / 2, 2);
                 } catch (\BitsoAPI\bitsoException $exception) {
-                    $prices[$amount['book']] = 0;
+                    $sql = <<<sql
+select precio_moneda precio from precios_monedas where id_moneda='$amount[idMoneda]' order by fecha_precio_moneda desc 
+sql;
+                    $fallback = db_result($sql)['precio'] ?: 0;
+                    $prices[$amount['book']] = (double)$fallback;
                 }
             }
             $amount['costo'] = (float)$amount['costo'] > 0 ? (float)$amount['costo'] : 0.01;
@@ -130,7 +134,11 @@ sql;
                     $ticker = $bitso->ticker(["book" => $client['book']]);
                     $prices[$client['book']] = $ticker->payload->ask;
                 } catch (\BitsoAPI\bitsoException $exception) {
-                    $prices[$client['book']] = 0;
+                    $sql = <<<sql
+select precio_moneda precio from precios_monedas where id_moneda='$client[idMoneda]' order by fecha_precio_moneda desc 
+sql;
+                    $fallback = db_result($sql)['precio'] ?: 0;
+                    $prices[$client['book']] = $fallback;
                 }
             }
             $clients[$key]['precio'] = $prices[$client['book']];
