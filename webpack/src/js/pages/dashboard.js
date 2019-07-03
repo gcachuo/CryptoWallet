@@ -2,14 +2,24 @@ var $loading;
 var draw;
 
 $(function () {
+    localStorage.setItem('sell', JSON.stringify({
+        btc: {threshold: 6000, amount: 100},
+        eth: {threshold: 3000, amount: 100}
+    }));
     $loading = $(".loading");
     draw = 0;
     $("body > main > header").css('display', 'flex');
     const table = cargarTabla();
-    Project.refreshInterval = setInterval(function () {
-        table.ajax.reload()
-    }, 60000);
+    autoSell(table);
+    timer({table});
 });
+
+function timer(param) {
+    Project.refreshInterval = setInterval(function () {
+        param.table.ajax.reload();
+        autoSell(param.table);
+    }, 60000);
+}
 
 function cargarTabla() {
     $loading.show();
@@ -53,7 +63,7 @@ function cargarTabla() {
         order: [[6, 'desc']],
         columnDefs: [],
         ajax: {
-            url: localStorage.getItem('host') + 'api/' + 'users/fetchAmounts',
+            url: Project.host + 'api/users/fetchAmounts',
             data: {
                 draw: draw++,
                 user: JSON.parse(localStorage.getItem('user'))
@@ -70,6 +80,7 @@ function dataSrc(result) {
 
     //console.log(result.response.amounts);
     const data = result.response.amounts;
+    localStorage.setItem('coins', JSON.stringify(data));
     data.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
@@ -88,4 +99,25 @@ function dataSrc(result) {
     console.log('finish: ' + Date().toString());
     $loading.hide();
     return data;
+}
+
+function autoSell(table) {
+    const coins = JSON.parse(localStorage.getItem('coins'));
+    const sell = JSON.parse(localStorage.getItem('sell'));
+    $.each(sell, function (key, val) {
+        const coin = coins.find(function (element) {
+            return element.idMoneda === key;
+        });
+        if (coin.total > (val.threshold + val.amount)) {
+            const total = Math.floor((coin.total - val.threshold) / val.amount) * val.amount;
+            console.info('Selling ' + total + ' ' + coin.idMoneda);
+            Project.request('coins/sellCoin', {
+                coin, total,
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                console.info('Sold ' + total + ' ' + coin.idMoneda);
+                table.ajax.reload();
+            });
+        }
+    });
 }
