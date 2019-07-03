@@ -1,44 +1,102 @@
+var $loading;
+var draw;
+
 $(function () {
+    $loading = $(".loading");
+    draw = 0;
     $("body > main > header").css('display', 'flex');
-    cantidades();
-    Project.refreshInterval = setInterval(cantidades, 60000);
+    const table = cargarTabla();
+    timer({table});
 });
 
-async function cantidades() {
-    const $loading = $(".loading");
-    const $table = $("#tableCoins");
+function timer(param) {
+    Project.refreshInterval = setInterval(function () {
+        param.table.ajax.reload();
+        autoSell(param.table);
+    }, 60000);
+}
+
+function cargarTabla() {
     $loading.show();
-    $("button").prop('disabled', true);
+    const table = $("#tableCoins").DataTable({
+        processing: true,
+        serverSide: true,
+        responsive: true,
+        paginate: false,
+        searching: false,
+        columns: [{data: 'moneda'}, {
+            data: 'cantidad',
+            render: function (data, type, row) {
+                return numeral(data).format('0.00000000');
+            }
+        }, {
+            data: 'precio',
+            render: function (data, type, row) {
+                return numeral(data).format('$0,0.00');
+            }
+        }, {
+            data: 'promedio',
+            render: function (data, type, row) {
+                return numeral(data).format('$0,0.00');
+            }
+        }, {
+            data: 'costo',
+            render: function (data, type, row) {
+                return numeral(data).format('$0,0.00');
+            }
+        }, {
+            data: 'total',
+            render: function (data, type, row) {
+                return numeral(data).format('$0,0.00');
+            }
+        }, {
+            data: 'porcentaje',
+            render: function (data, type, row) {
+                return numeral(data).format('0,0.00%');
+            }
+        }],
+        order: [[6, 'desc']],
+        columnDefs: [],
+        ajax: {
+            url: Project.host + 'api/users/fetchAmounts',
+            data: {
+                draw: draw++,
+                user: JSON.parse(localStorage.getItem('user'))
+            },
+            type: 'POST',
+            dataSrc
+        },
+        initComplete: function () {
+            Project.request('users/fetchCoinLimits', {
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                const sell = data.response.sell;
+                localStorage.setItem('sell', JSON.stringify(sell));
+                autoSell(table);
+            });
+        }
+    });
+    return table;
+}
+
+function dataSrc(result) {
+    result.recordsTotal = 10;
+    result.recordsFiltered = 10;
+
+    //console.log(result.response.amounts);
+    const data = result.response.amounts;
+    localStorage.setItem('coins', JSON.stringify(data));
+
+    data.sort(function (a, b) {
+        return b['porcentaje'] - a['porcentaje'];
+    });
     const totales = {
         costo: 0,
         actual: 0
     };
-    const amounts = await Project.Users.fetchAmounts();
-    $table.find('tbody').html('');
-    amounts.sort(function (a, b) {
-        return b['porcentaje'] - a['porcentaje'];
-    });
-    $.each(amounts, function (key, coin) {
+    $.each(data, function (key, coin) {
         totales.costo += coin.costo * 1;
         totales.actual += coin.total;
-
-        coin.costo = numeral(coin.costo).format('$0,0.00');
-        coin.precio = numeral(coin.precio).format('$0,0.00');
-        coin.promedio = numeral(coin.promedio).format('$0,0.00');
-        coin.total = numeral(coin.total).format('$0,0.00');
-        coin.porcentaje = numeral(coin.porcentaje).format('0,0.00%');
-        coin.cantidad = numeral(coin.cantidad).format('0.00000000');
-        $table.find('tbody').append(`
-<tr>
-    <td>${coin.moneda}</td>
-    <td>${coin.cantidad}</td>
-    <td>${coin.precio}</td>
-    <td>${coin.promedio}</td>
-    <td>${coin.costo}</td>
-    <td>${coin.total}</td>
-    <td>${coin.porcentaje}</td>
-</tr>
-               `);
     });
     $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
     $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
@@ -46,13 +104,28 @@ async function cantidades() {
 
     console.log('finish: ' + Date().toString());
     $loading.hide();
-    $table.dataTable({
-        destroy: true,
-        responsive: true,
-        paginate: false,
-        searching: false,
-        order: false
-    });
+    return data;
+}
 
-    $("button").prop('disabled', false);
+function autoSell(table, sell) {
+    const coins = JSON.parse(localStorage.getItem('coins'));
+    sell = sell || JSON.parse(localStorage.getItem('sell'));
+    $.each(sell, function (key, val) {
+        const coin = coins.find(function (element) {
+            return element.idMoneda === key;
+        });
+        const threshold = val.threshold * 1;
+        const amount = val.amount * 1;
+        if (coin.total > (threshold + amount)) {
+            const total = Math.floor((coin.total - threshold) / amount) * amount;
+            console.info('Selling $' + total + ' ' + coin.idMoneda);
+            Project.request('users/sellCoin', {
+                coin, total,
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                console.info('Sold ' + total + ' ' + coin.idMoneda);
+                table.ajax.reload();
+            });
+        }
+    });
 }
