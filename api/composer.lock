@@ -4,12 +4,12 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "c40fadca422f2fc624b4ddc9c271ca42",
-    "content-hash": "15a801aca2c4da5ccedd60e9a4735b06",
+    "hash": "a52f78cd165007b78087faa068b489c8",
+    "content-hash": "09c76e2546ae96e74eeb06888ea2eb94",
     "packages": [
         {
             "name": "bitso/bitso-php",
-            "version": "v1.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/bitsoex/bitso-php.git",
@@ -56,7 +56,9 @@
     "packages-dev": [],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "bitso/bitso-php": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

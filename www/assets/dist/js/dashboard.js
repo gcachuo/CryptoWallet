@@ -1,7 +1,9 @@
-var $loading = $(".loading");
-var draw = 0;
+var $loading;
+var draw;
 
 $(function () {
+    $loading = $(".loading");
+    draw = 0;
     $("body > main > header").css('display', 'flex');
     const table = cargarTabla();
     Project.refreshInterval = setInterval(function () {
@@ -53,7 +55,7 @@ function cargarTabla() {
         ajax: {
             url: localStorage.getItem('host') + 'api/' + 'users/fetchAmounts',
             data: {
-                draw: draw,
+                draw: draw++,
                 user: JSON.parse(localStorage.getItem('user'))
             },
             type: 'POST',
