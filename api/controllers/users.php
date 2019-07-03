@@ -234,6 +234,7 @@ sql;
 
         $bitso = new BitsoAPI\bitso($api_key, $api_secret);
         $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
+        sleep(10);
         $orders = $bitso->lookup_order([$place_order->payload->oid]);
         foreach ($orders->payload as $order) {
             $sql = <<<sql
@@ -246,5 +247,22 @@ sql;
             db_query($sql);
         }
         return true;
+    }
+
+    function fetchCoinLimits()
+    {
+        $user_id = decrypt(isset_get($_POST['user']['id']));
+        $sql = <<<sql
+select id_moneda,limite,cantidad from usuarios_monedas_limites where id_usuario=$user_id;
+sql;
+        $dbresults = db_all_results($sql);
+        $sell = [];
+        foreach ($dbresults as $result) {
+            $sell[$result['id_moneda']] = [
+                'threshold' => $result['limite'],
+                'amount' => $result['cantidad']
+            ];
+        }
+        return compact('sell');
     }
 }

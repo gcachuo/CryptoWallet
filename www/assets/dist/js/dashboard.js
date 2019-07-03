@@ -2,10 +2,12 @@ var $loading;
 var draw;
 
 $(function () {
-    localStorage.setItem('sell', JSON.stringify({
-        btc: {threshold: 6000, amount: 100},
-        eth: {threshold: 3000, amount: 100}
-    }));
+    Project.request('users/fetchCoinLimits', {
+        user: JSON.parse(localStorage.getItem('user'))
+    }, 'POST').done(data => {
+        const sell = data.response.sell;
+        localStorage.setItem('sell', JSON.stringify(sell));
+    });
     $loading = $(".loading");
     draw = 0;
     $("body > main > header").css('display', 'flex');
@@ -108,9 +110,11 @@ function autoSell(table) {
         const coin = coins.find(function (element) {
             return element.idMoneda === key;
         });
-        if (coin.total > (val.threshold + val.amount)) {
-            const total = Math.floor((coin.total - val.threshold) / val.amount) * val.amount;
-            console.info('Selling ' + total + ' ' + coin.idMoneda);
+        const threshold = val.threshold * 1;
+        const amount = val.amount * 1;
+        if (coin.total > (threshold + amount)) {
+            const total = Math.floor((coin.total - threshold) / amount) * amount;
+            console.info('Selling $' + total + ' ' + coin.idMoneda);
             Project.request('users/sellCoin', {
                 coin, total,
                 user: JSON.parse(localStorage.getItem('user'))
