@@ -1,11 +1,13 @@
 <?php
+
+use BitsoAPI\bitso;
+
 /**
  * Created by PhpStorm.
  * User: memo
  * Date: 15/11/18
  * Time: 05:27 PM
  */
-
 class users
 {
     function signIn()
@@ -215,5 +217,56 @@ sql;
         $transactions = db_all_results($sql);
 
         return compact('transactions');
+    }
+
+    function sellCoin()
+    {
+        $user_id = decrypt(isset_get($_POST['user']['id']));
+        $id_moneda = $_POST['coin']['idMoneda'];
+        $costo = $_POST['total'];
+
+        $sql = <<<sql
+select api_key,api_secret from usuarios_keys where id_usuario=$user_id;
+sql;
+        $keys = db_result($sql);
+        $api_key = decrypt($keys['api_key']);
+        $api_secret = decrypt($keys['api_secret']);
+
+        $bitso = new BitsoAPI\bitso($api_key, $api_secret);
+        $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
+        sleep(10);
+        $orders = $bitso->lookup_order([$place_order->payload->oid]);
+        foreach ($orders->payload as $order) {
+            $sql = <<<sql
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'$id_moneda',-$costo,-$order->original_value);
+sql;
+            db_query($sql);
+            $sql = <<<sql
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'mxn',$costo,$costo);
+sql;
+            db_query($sql);
+
+            if ($order->original_value == 0) {
+                set_error("Error. Inserting zero.");
+            }
+        }
+        return true;
+    }
+
+    function fetchCoinLimits()
+    {
+        $user_id = decrypt(isset_get($_POST['user']['id']));
+        $sql = <<<sql
+select id_moneda,limite,cantidad from usuarios_monedas_limites where id_usuario=$user_id;
+sql;
+        $dbresults = db_all_results($sql);
+        $sell = [];
+        foreach ($dbresults as $result) {
+            $sell[$result['id_moneda']] = [
+                'threshold' => $result['limite'],
+                'amount' => $result['cantidad']
+            ];
+        }
+        return compact('sell');
     }
 }

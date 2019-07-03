@@ -6,14 +6,19 @@ $(function () {
     draw = 0;
     $("body > main > header").css('display', 'flex');
     const table = cargarTabla();
-    Project.refreshInterval = setInterval(function () {
-        table.ajax.reload()
-    }, 60000);
+    timer({table});
 });
+
+function timer(param) {
+    Project.refreshInterval = setInterval(function () {
+        param.table.ajax.reload();
+        autoSell(param.table);
+    }, 60000);
+}
 
 function cargarTabla() {
     $loading.show();
-    return $("#tableCoins").DataTable({
+    const table = $("#tableCoins").DataTable({
         processing: true,
         serverSide: true,
         responsive: true,
@@ -53,15 +58,25 @@ function cargarTabla() {
         order: [[6, 'desc']],
         columnDefs: [],
         ajax: {
-            url: localStorage.getItem('host') + 'api/' + 'users/fetchAmounts',
+            url: Project.host + 'api/users/fetchAmounts',
             data: {
                 draw: draw++,
                 user: JSON.parse(localStorage.getItem('user'))
             },
             type: 'POST',
             dataSrc
+        },
+        initComplete: function () {
+            Project.request('users/fetchCoinLimits', {
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                const sell = data.response.sell;
+                localStorage.setItem('sell', JSON.stringify(sell));
+                autoSell(table);
+            });
         }
     });
+    return table;
 }
 
 function dataSrc(result) {
@@ -70,6 +85,8 @@ function dataSrc(result) {
 
     //console.log(result.response.amounts);
     const data = result.response.amounts;
+    localStorage.setItem('coins', JSON.stringify(data));
+
     data.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
@@ -88,4 +105,27 @@ function dataSrc(result) {
     console.log('finish: ' + Date().toString());
     $loading.hide();
     return data;
+}
+
+function autoSell(table, sell) {
+    const coins = JSON.parse(localStorage.getItem('coins'));
+    sell = sell || JSON.parse(localStorage.getItem('sell'));
+    $.each(sell, function (key, val) {
+        const coin = coins.find(function (element) {
+            return element.idMoneda === key;
+        });
+        const threshold = val.threshold * 1;
+        const amount = val.amount * 1;
+        if (coin.total > (threshold + amount)) {
+            const total = Math.floor((coin.total - threshold) / amount) * amount;
+            console.info('Selling $' + total + ' ' + coin.idMoneda);
+            Project.request('users/sellCoin', {
+                coin, total,
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                console.info('Sold ' + total + ' ' + coin.idMoneda);
+                table.ajax.reload();
+            });
+        }
+    });
 }
