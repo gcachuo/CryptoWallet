@@ -245,6 +245,10 @@ sql;
 insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'mxn',$costo,$costo);
 sql;
             db_query($sql);
+
+            if ($order->original_value == 0) {
+                set_error("Error. Inserting zero.");
+            }
         }
         return true;
     }
