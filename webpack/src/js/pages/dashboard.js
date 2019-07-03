@@ -2,17 +2,10 @@ var $loading;
 var draw;
 
 $(function () {
-    Project.request('users/fetchCoinLimits', {
-        user: JSON.parse(localStorage.getItem('user'))
-    }, 'POST').done(data => {
-        const sell = data.response.sell;
-        localStorage.setItem('sell', JSON.stringify(sell));
-    });
     $loading = $(".loading");
     draw = 0;
     $("body > main > header").css('display', 'flex');
     const table = cargarTabla();
-    autoSell(table);
     timer({table});
 });
 
@@ -25,7 +18,7 @@ function timer(param) {
 
 function cargarTabla() {
     $loading.show();
-    return $("#tableCoins").DataTable({
+    const table = $("#tableCoins").DataTable({
         processing: true,
         serverSide: true,
         responsive: true,
@@ -72,8 +65,18 @@ function cargarTabla() {
             },
             type: 'POST',
             dataSrc
+        },
+        initComplete: function () {
+            Project.request('users/fetchCoinLimits', {
+                user: JSON.parse(localStorage.getItem('user'))
+            }, 'POST').done(data => {
+                const sell = data.response.sell;
+                localStorage.setItem('sell', JSON.stringify(sell));
+                autoSell(table);
+            });
         }
     });
+    return table;
 }
 
 function dataSrc(result) {
@@ -83,6 +86,7 @@ function dataSrc(result) {
     //console.log(result.response.amounts);
     const data = result.response.amounts;
     localStorage.setItem('coins', JSON.stringify(data));
+
     data.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
@@ -103,9 +107,9 @@ function dataSrc(result) {
     return data;
 }
 
-function autoSell(table) {
+function autoSell(table, sell) {
     const coins = JSON.parse(localStorage.getItem('coins'));
-    const sell = JSON.parse(localStorage.getItem('sell'));
+    sell = sell || JSON.parse(localStorage.getItem('sell'));
     $.each(sell, function (key, val) {
         const coin = coins.find(function (element) {
             return element.idMoneda === key;
