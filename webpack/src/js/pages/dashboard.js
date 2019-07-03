@@ -111,7 +111,7 @@ function autoSell(table) {
         if (coin.total > (val.threshold + val.amount)) {
             const total = Math.floor((coin.total - val.threshold) / val.amount) * val.amount;
             console.info('Selling ' + total + ' ' + coin.idMoneda);
-            Project.request('coins/sellCoin', {
+            Project.request('users/sellCoin', {
                 coin, total,
                 user: JSON.parse(localStorage.getItem('user'))
             }, 'POST').done(data => {
