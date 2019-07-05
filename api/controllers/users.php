@@ -226,6 +226,17 @@ sql;
         $costo = $_POST['total'];
 
         $sql = <<<sql
+select fecha_usuario_transaccion old,'2019-07-05 09:08:12' new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,'2019-07-05 09:08:13') diff from usuarios_transacciones
+where id_usuario=1 and id_moneda='mana' order by id_usuario_transaccion desc
+limit 1;
+sql;
+        $diff = db_result($sql);
+        if ($diff['diff'] == 0) {
+            error_log('Duplicated transaction.');
+            exit;
+        }
+
+        $sql = <<<sql
 select api_key,api_secret from usuarios_keys where id_usuario=$user_id;
 sql;
         $keys = db_result($sql);
