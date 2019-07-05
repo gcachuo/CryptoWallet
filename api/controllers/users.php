@@ -224,10 +224,11 @@ sql;
         $user_id = decrypt(isset_get($_POST['user']['id']));
         $id_moneda = $_POST['coin']['idMoneda'];
         $costo = $_POST['total'];
+        $fecha = date('Y-m-d H:i:s');
 
         $sql = <<<sql
-select fecha_usuario_transaccion old,'2019-07-05 09:08:12' new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,'2019-07-05 09:08:13') diff from usuarios_transacciones
-where id_usuario=1 and id_moneda='mana' order by id_usuario_transaccion desc
+select fecha_usuario_transaccion old,'$fecha' new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,'$fecha') diff from usuarios_transacciones
+where id_usuario=$user_id and id_moneda='$id_moneda' order by id_usuario_transaccion desc
 limit 1;
 sql;
         $diff = db_result($sql);
