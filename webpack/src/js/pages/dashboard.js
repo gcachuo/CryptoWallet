@@ -84,27 +84,27 @@ function dataSrc(result) {
     result.recordsFiltered = 10;
 
     //console.log(result.response.amounts);
-    const data = amounts;
-    localStorage.setItem('coins', JSON.stringify(data));
+    localStorage.setItem('coins', JSON.stringify(amounts));
 
-    data.sort(function (a, b) {
+    amounts.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
     const totales = {
         costo: 0,
         actual: 0
     };
-    $.each(data, function (key, coin) {
-        totales.costo += coin.costo * 1;
-        totales.actual += coin.total;
+    $.each(amounts, function (key, coin) {
+        totales.costo += +coin.costo;
+        totales.actual += +coin.total;
     });
+    console.log(totales);
     $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
     $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
     $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
 
     console.log('finish: ' + Date().toString());
     $loading.hide();
-    return data;
+    return amounts;
 }
 
 function autoSell(table, sell) {
