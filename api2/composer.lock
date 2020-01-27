@@ -1,10 +1,11 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "16c00a1db53ff2d566d9c3fcb2536228",
+    "hash": "a52f78cd165007b78087faa068b489c8",
+    "content-hash": "09c76e2546ae96e74eeb06888ea2eb94",
     "packages": [
         {
             "name": "bitso/bitso-php",
@@ -49,7 +50,7 @@
                 "bitso",
                 "php"
             ],
-            "time": "2018-09-12T15:58:35+00:00"
+            "time": "2018-09-12 15:58:35"
         }
     ],
     "packages-dev": [],
@@ -60,6 +61,9 @@
     },
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "ext-json": "^1.6",
+        "ext-mysqli": "^0.0.0"
+    },
     "platform-dev": []
 }

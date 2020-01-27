@@ -1,5 +1,7 @@
 {
     "require": {
-        "bitso/bitso-php": "dev-master"
+        "bitso/bitso-php": "dev-master",
+      "ext-json": "*",
+      "ext-openssl": "*"
     }
 }
