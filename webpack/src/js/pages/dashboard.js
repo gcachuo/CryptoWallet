@@ -80,11 +80,12 @@ function cargarTabla() {
 }
 
 function dataSrc(result) {
+    const {status, code, response: {message, data: {amounts}}, error} = result;
     result.recordsTotal = 10;
     result.recordsFiltered = 10;
 
     //console.log(result.response.amounts);
-    const data = result.response.amounts;
+    const data = amounts;
     localStorage.setItem('coins', JSON.stringify(data));
 
     data.sort(function (a, b) {
