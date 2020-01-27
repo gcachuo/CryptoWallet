@@ -69,8 +69,7 @@ function cargarTabla() {
         initComplete: function () {
             Project.request('users/fetchCoinLimits', {
                 user: JSON.parse(localStorage.getItem('user'))
-            }, 'POST').done(data => {
-                const sell = data.response.sell;
+            }, 'POST').done(({status, code, response: {message, data: {sell}}, error}) => {
                 localStorage.setItem('sell', JSON.stringify(sell));
                 autoSell(table);
             });

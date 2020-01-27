@@ -8,7 +8,6 @@
     "buildp": "yarn clean && webpack --mode production",
     "webpack": "rm -f package-lock.json && yarn upgrade && yarn build",
     "cordova": "cd .. && rm package.json && rm -rf platforms plugins && cordova prepare && cordova build browser",
-    "postinstall": "yarn webpack && yarn cordova",
     "release": "yarn run version && yarn install && cd .. && ./answer_script.sh | ./release-app.sh",
     "version": "version=$(git branch | grep .*release\\/ | sed 's/* release\\///g') && cd .. && yarn version --new-version $version  && ./update-version.sh",
     "ios": "find ./../platforms/ios/ -name '*.png' -exec convert '{}' -alpha off '{}' \\;"
