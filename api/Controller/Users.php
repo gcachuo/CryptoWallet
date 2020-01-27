@@ -8,6 +8,7 @@ use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
 use Controller;
 use Model\Precios_Monedas;
+use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
 use System;
 
@@ -17,12 +18,30 @@ class Users extends Controller
     {
         parent::__construct([
             'POST' => [
-                'fetchAmounts' => 'fetchAmounts'
+                'fetchAmounts' => 'fetchAmounts',
+                'fetchCoinLimits' => 'fetchCoinLimits',
             ]
         ]);
     }
 
-    function fetchAmounts()
+    protected function fetchCoinLimits()
+    {
+        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+
+        $Usuarios_Monedas_Limites = new Usuarios_Monedas_Limites();
+        $dbresults = $Usuarios_Monedas_Limites->selectLimits($user_id);
+
+        $sell = [];
+        foreach ($dbresults as $result) {
+            $sell[$result['id_moneda']] = [
+                'threshold' => $result['limite'],
+                'amount' => $result['cantidad']
+            ];
+        }
+        return compact('sell');
+    }
+
+    protected function fetchAmounts()
     {
         $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
 
