@@ -1,15 +1,1 @@
-{
-  "name": "com.cachu.cryptowallet",
-  "version": "0.1.0",
-  "displayName": "CryptoWallet",
-  "cordova": {
-    "platforms": [
-      "android",
-      "browser"
-    ]
-  },
-  "dependencies": {
-    "cordova-android": "^8.0.0",
-    "cordova-browser": "^6.0.0"
-  }
-}
+{"name":"com.cachu.cryptowallet","version":"0.1.0","displayName":"CryptoWallet","cordova":{"platforms":["android","browser"]},"dependencies":{"cordova-android":"^8.0.0","cordova-browser":"^6.0.0"}}

@@ -8,7 +8,6 @@
     "buildp": "yarn clean && webpack --mode production",
     "webpack": "rm -f package-lock.json && yarn upgrade && yarn build",
     "cordova": "cd .. && rm package.json && rm -rf platforms plugins && cordova prepare && cordova build browser",
-    "postinstall": "yarn webpack && yarn cordova",
     "release": "yarn run version && yarn install && cd .. && ./answer_script.sh | ./release-app.sh",
     "version": "version=$(git branch | grep .*release\\/ | sed 's/* release\\///g') && cd .. && yarn version --new-version $version  && ./update-version.sh",
     "ios": "find ./../platforms/ios/ -name '*.png' -exec convert '{}' -alpha off '{}' \\;"
@@ -23,7 +22,8 @@
     "numeral": "^2.0.6",
     "platform": "^1.3.5",
     "popper.js": "^1.14.5",
-    "slideout": "^1.0.1"
+    "slideout": "^1.0.1",
+    "toastr": "^2.1.4"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.5.0",
@@ -35,7 +35,7 @@
     "node-sass": "^4.10.0",
     "sass-loader": "^7.1.0",
     "style-loader": "^0.22.1",
-    "webpack": "^4.26.0",
+    "webpack": "^4.41.5",
     "webpack-cli": "^3.1.2"
   }
 }

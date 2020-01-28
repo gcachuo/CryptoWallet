@@ -69,8 +69,7 @@ function cargarTabla() {
         initComplete: function () {
             Project.request('users/fetchCoinLimits', {
                 user: JSON.parse(localStorage.getItem('user'))
-            }, 'POST').done(data => {
-                const sell = data.response.sell;
+            }, 'POST').done(({status, code, response: {message, data: {sell}}, error}) => {
                 localStorage.setItem('sell', JSON.stringify(sell));
                 autoSell(table);
             });
@@ -80,31 +79,32 @@ function cargarTabla() {
 }
 
 function dataSrc(result) {
+    const {status, code, response: {message, data: {amounts}}, error} = result;
     result.recordsTotal = 10;
     result.recordsFiltered = 10;
 
     //console.log(result.response.amounts);
-    const data = result.response.amounts;
-    localStorage.setItem('coins', JSON.stringify(data));
+    localStorage.setItem('coins', JSON.stringify(amounts));
 
-    data.sort(function (a, b) {
+    amounts.sort(function (a, b) {
         return b['porcentaje'] - a['porcentaje'];
     });
     const totales = {
         costo: 0,
         actual: 0
     };
-    $.each(data, function (key, coin) {
-        totales.costo += coin.costo * 1;
-        totales.actual += coin.total;
+    $.each(amounts, function (key, coin) {
+        totales.costo += +coin.costo;
+        totales.actual += +coin.total;
     });
+
     $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
     $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
     $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
 
     console.log('finish: ' + Date().toString());
     $loading.hide();
-    return data;
+    return amounts;
 }
 
 function autoSell(table, sell) {
@@ -114,8 +114,8 @@ function autoSell(table, sell) {
         const coin = coins.find(function (element) {
             return element.idMoneda === key;
         });
-        const threshold = val.threshold * 1;
-        const amount = val.amount * 1;
+        const threshold = +val.threshold;
+        const amount = +val.amount;
         if (coin.total > (threshold + amount)) {
             const total = Math.floor((coin.total - threshold) / amount) * amount;
             console.info('Selling $' + total + ' ' + coin.idMoneda);

@@ -4,3 +4,6 @@
 [submodule "vendor/mpdf/mpdf"]
 	path = vendor/mpdf/mpdf
 	url = https://github.com/mpdf/mpdf.git
+[submodule "api/Lib"]
+	path = api/Lib
+	url = https://github.com/gcachuo/SimpleAPI

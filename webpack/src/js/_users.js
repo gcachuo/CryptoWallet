@@ -1,9 +1,9 @@
 Project.Users = {
     fetchAmounts: async function () {
-        const data = await Project.request('users/fetchAmounts', {
+        const {status, code, response: {message, data: {amounts}}, error} = await Project.request('users/fetchAmounts', {
             user: JSON.parse(localStorage.getItem('user'))
         }, 'POST');
-        return data.response.amounts;
+        return amounts;
     },
     fetchClients: function () {
         return Project.request('users/fetchClients', {user: JSON.parse(localStorage.getItem('user'))}, 'POST');
