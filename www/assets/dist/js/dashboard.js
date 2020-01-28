@@ -97,7 +97,7 @@ function dataSrc(result) {
         totales.costo += +coin.costo;
         totales.actual += +coin.total;
     });
-    console.log(totales);
+
     $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
     $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
     $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
