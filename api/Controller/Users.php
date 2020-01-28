@@ -28,8 +28,57 @@ class Users extends Controller
                 'fetchCoinLimits' => 'fetchCoinLimits',
                 'sellCoin' => 'sellCoin',
                 'signIn' => 'signIn',
+                'fetchClients' => 'fetchClients',
             ]
         ]);
+    }
+
+    protected function fetchClients()
+    {
+        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+
+        $Usuarios = new Usuarios();
+        $clients = $Usuarios->selectClients($user_id);
+
+        $bitso = new bitso('', '');
+
+        $Precios_Monedas = new Precios_Monedas();
+        $prices = [];
+        foreach ($clients as $key => $client) {
+            if (empty($prices[$client['book']])) {
+                try {
+                    $ticker = $bitso->ticker(["book" => $client['book']]);
+                    $prices[$client['book']] = $ticker->payload->ask;
+                } catch (bitsoException $exception) {
+                    $fallback = $Precios_Monedas->selectFallbackPrice($client);
+                    $prices[$client['book']] = $fallback;
+                }
+            }
+            $clients[$key]['precio'] = $prices[$client['book']];
+            $clients[$key]['total'] = $client['cantidad'] * $clients[$key]['precio'];
+            $clients[$key]['porcentaje'] = (float)$client['costo'] ? ($clients[$key]['total'] - $client['costo']) / $client['costo'] : 0;
+            $clients[$key]['promedio'] = (float)$client['cantidad'] ? $client['cantidad'] / $client['cantidad'] : 0;
+        }
+
+        $temp_clients = [];
+        foreach ($clients as $key => $client) {
+            $temp_clients[$client['id']] = [
+                'nombre' => $client['nombre'],
+                'costo' => (System::isset_get($temp_clients[$client['id']]['costo'], 0) + $client['costo']),
+                'total' => (System::isset_get($temp_clients[$client['id']]['total'], 0) + $client['total']),
+                'monedas' => System::isset_get($temp_clients[$client['id']]['monedas'], [])
+            ];
+            $temp_clients[$client['id']]['monedas'][$client['idMoneda']] = $client['cantidad'];
+        }
+        $clients = array_values($temp_clients);
+
+        $wallet['total'] = 0;
+        foreach ($this->fetchAmounts()['amounts'] as $self) {
+            $wallet['monedas'][$self['idMoneda']] = $self['cantidad'];
+            $wallet['total'] += $self['total'];
+        }
+
+        return compact('clients', 'wallet');
     }
 
     protected function signIn()
