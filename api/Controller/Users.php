@@ -7,6 +7,9 @@ namespace Controller;
 use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
 use Controller;
+use Helper\BitsoOrder;
+use Helper\BitsoOrderPayload;
+use Helper\BitsoOrders;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Precios_Monedas;
@@ -63,17 +66,19 @@ class Users extends Controller
         }
 
         $Bitso = new \Helper\Bitso($user_id);
+        /** @var BitsoOrder $orders */
+        /** @var BitsoOrder $place_order */
         ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
             JsonResponse::sendResponse(['message' => 'Error placing order.'], HTTPStatusCodes::ServiceUnavailable);
         }
-
+        /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
             $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
 
-            if ($order->original_value == 0) {
+            if ($order->original_amount == 0) {
                 JsonResponse::sendResponse(['message' => 'Error. Inserting zero.']);
             }
         }

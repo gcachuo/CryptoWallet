@@ -4,6 +4,8 @@
 namespace Model;
 
 
+use Helper\BitsoOrderPayload;
+
 class Usuarios_Transacciones
 {
     function selectAmounts($user_id)
@@ -36,6 +38,12 @@ sql;
         return $mysql->fetch_single($mysql->prepare($sql, ['ssis', $fecha, $fecha, $user_id, $id_moneda]));
     }
 
+    /**
+     * @param $user_id
+     * @param $id_moneda
+     * @param $costo
+     * @param BitsoOrderPayload $order
+     */
     function insertOrder($user_id, $id_moneda, $costo, $order)
     {
         $sql = <<<sql
