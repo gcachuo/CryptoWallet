@@ -28,11 +28,25 @@ sql;
     function selectDiff($fecha, $user_id, $id_moneda)
     {
         $sql = <<<sql
-select fecha_usuario_transaccion old,'$fecha' new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,'$fecha') diff from usuarios_transacciones
-where id_usuario=$user_id and id_moneda='$id_moneda' order by id_usuario_transaccion desc
+select fecha_usuario_transaccion old,? new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,?) diff from usuarios_transacciones
+where id_usuario=? and id_moneda=? order by id_usuario_transaccion desc
 limit 1;
 sql;
         $mysql = new MySQL();
-        $mysql->prepare($sql, ['sis', $fecha, $user_id, $id_moneda]);
+        return $mysql->fetch_single($mysql->prepare($sql, ['ssis', $fecha, $fecha, $user_id, $id_moneda]));
+    }
+
+    function insertOrder($user_id, $id_moneda, $costo, $order)
+    {
+        $sql = <<<sql
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'$id_moneda',-$costo,-$order->original_value);
+sql;
+        $mysql=new MySQL();
+        $mysql->query($sql);
+
+        $sql = <<<sql
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'mxn',$costo,$costo);
+sql;
+        $mysql->query($sql);
     }
 }

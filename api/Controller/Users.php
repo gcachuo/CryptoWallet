@@ -7,7 +7,10 @@ namespace Controller;
 use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
 use Controller;
+use HTTPStatusCodes;
+use JsonResponse;
 use Model\Precios_Monedas;
+use Model\Usuarios_Keys;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
 use System;
@@ -31,36 +34,34 @@ class Users extends Controller
         $costo = $_POST['total'];
         $fecha = date('Y-m-d H:i:s');
 
-        
+        $Usuarios_Transacciones = new Usuarios_Transacciones();
+        $diff = $Usuarios_Transacciones->selectDiff($fecha, $user_id, $id_moneda);
 
         if ($diff['diff'] == 0) {
-            error_log('Duplicated transaction.');
-            exit;
+            JsonResponse::sendResponse(['message' => 'Duplicated transaction.']);
         }
 
-        $sql = <<<sql
-select api_key,api_secret from usuarios_keys where id_usuario=$user_id;
-sql;
-        $keys = db_result($sql);
-        $api_key = decrypt($keys['api_key']);
-        $api_secret = decrypt($keys['api_secret']);
+        $Usuarios_Keys = new Usuarios_Keys();
+        $keys = $Usuarios_Keys->selectKeys($user_id);
 
-        $bitso = new BitsoAPI\bitso($api_key, $api_secret);
+        $api_key = System::decrypt($keys['api_key']);
+        $api_secret = System::decrypt($keys['api_secret']);
+
+        $bitso = new bitso($api_key, $api_secret);
         $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
         sleep(10);
         $orders = $bitso->lookup_order([$place_order->payload->oid]);
+
+        if (empty($orders->payload)) {
+            $bitso->cancel_order(['order_id' => '']);
+            JsonResponse::sendResponse(['message' => 'Error placing order.'], HTTPStatusCodes::ServiceUnavailable);
+        }
+
         foreach ($orders->payload as $order) {
-            $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'$id_moneda',-$costo,-$order->original_value);
-sql;
-            db_query($sql);
-            $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'mxn',$costo,$costo);
-sql;
-            db_query($sql);
+            $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
 
             if ($order->original_value == 0) {
-                set_error("Error. Inserting zero.");
+                JsonResponse::sendResponse(['message' => 'Error. Inserting zero.']);
             }
         }
         return true;
