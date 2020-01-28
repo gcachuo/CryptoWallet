@@ -39,14 +39,14 @@ sql;
     function insertOrder($user_id, $id_moneda, $costo, $order)
     {
         $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'$id_moneda',-$costo,-$order->original_value);
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES (?,?,?,?);
 sql;
-        $mysql=new MySQL();
-        $mysql->query($sql);
+        $mysql = new MySQL();
+        $mysql->prepare($sql, ['isdd', $user_id, $id_moneda, -$costo, -$order->original_amount]);
 
         $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES ($user_id,'mxn',$costo,$costo);
+insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES (?,'mxn',?,?);
 sql;
-        $mysql->query($sql);
+        $mysql->prepare($sql, ['idd', $user_id, $costo, $costo]);
     }
 }
