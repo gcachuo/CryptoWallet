@@ -23,6 +23,7 @@ class Users extends Controller
             'POST' => [
                 'fetchAmounts' => 'fetchAmounts',
                 'fetchCoinLimits' => 'fetchCoinLimits',
+                'sellCoin' => 'sellCoin',
             ]
         ]);
     }
