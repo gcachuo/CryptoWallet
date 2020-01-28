@@ -4,6 +4,9 @@
 namespace Helper;
 
 
+use BitsoAPI\bitsoException;
+use HTTPStatusCodes;
+use JsonResponse;
 use Model\Usuarios_Keys;
 use System;
 
@@ -30,11 +33,15 @@ class Bitso
 
     public function placeOrder($id_moneda, $costo)
     {
-        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
-        sleep(10);
-        $orders = $bitso->lookup_order([$place_order->payload->oid]);
-        return compact('place_order', 'orders');
+        try {
+            $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+            $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
+            sleep(10);
+            $orders = $bitso->lookup_order([$place_order->payload->oid]);
+            return compact('place_order', 'orders');
+        } catch (bitsoException $exception) {
+            JsonResponse::sendResponse(['message' => $exception->getMessage(), 'error' => $exception], HTTPStatusCodes::ServiceUnavailable);
+        }
     }
 
     public function cancelOrder($oid)

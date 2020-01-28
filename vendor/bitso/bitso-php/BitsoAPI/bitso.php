@@ -55,7 +55,7 @@ class bitso
 
     private function makeNonce()
     {
-        $nonce = round(microtime(true) * 1000) * 3;
+        $nonce = number_format(round(microtime(true) * 100000), 0, '.', '');
         return $nonce;
     }
 
