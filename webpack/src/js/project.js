@@ -3,11 +3,11 @@ const Project = {
         $("form").on('submit', event => {
             const $this = $(event.currentTarget);
             event.preventDefault();
-            Project.request($this.data('action'), $this.serializeArray(), 'POST').done(data => {
-                if (typeof data.response === 'string') {
-                    toastr.info(data.response);
+            Project.request($this.data('action'), $this.serializeArray(), 'POST').done(({status, code, response: {message, data}, error}) => {
+                if (typeof data === 'string') {
+                    toastr.info(data);
                 }
-                Project.navigate($this.data('redirect'), data);
+                Project.navigate($this.data('redirect'), {response:data});
             });
         });
     },

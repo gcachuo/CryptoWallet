@@ -10,6 +10,7 @@ use Controller;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Precios_Monedas;
+use Model\Usuarios;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
 use System;
@@ -23,8 +24,28 @@ class Users extends Controller
                 'fetchAmounts' => 'fetchAmounts',
                 'fetchCoinLimits' => 'fetchCoinLimits',
                 'sellCoin' => 'sellCoin',
+                'signIn' => 'signIn',
             ]
         ]);
+    }
+
+    protected function signIn()
+    {
+        System::check_value_empty($_POST, ['email', 'password'], 'Missing  Data.');
+        ['email' => $email, 'password' => $password] = $_POST;
+
+        $Usuarios = new Usuarios();
+        $hash = $Usuarios->selectPassword($email);
+
+        if (!password_verify($password, $hash)) {
+            JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
+        }
+
+        $user = $Usuarios->selectUser($email);
+        $Usuarios->updateLastLogin($user['id']);
+        $user['id'] = System::encrypt($user['id']);
+
+        return compact('user');
     }
 
     protected function sellCoin()
