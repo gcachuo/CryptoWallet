@@ -10,7 +10,6 @@ use Controller;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Precios_Monedas;
-use Model\Usuarios_Keys;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
 use System;
@@ -42,19 +41,11 @@ class Users extends Controller
             JsonResponse::sendResponse(['message' => 'Duplicated transaction.']);
         }
 
-        $Usuarios_Keys = new Usuarios_Keys();
-        $keys = $Usuarios_Keys->selectKeys($user_id);
-
-        $api_key = System::decrypt($keys['api_key']);
-        $api_secret = System::decrypt($keys['api_secret']);
-
-        $bitso = new bitso($api_key, $api_secret);
-        $place_order = $bitso->place_order(['book' => "{$id_moneda}_mxn", 'side' => 'sell', 'type' => 'market', 'minor' => $costo]);
-        sleep(10);
-        $orders = $bitso->lookup_order([$place_order->payload->oid]);
+        $Bitso = new \Helper\Bitso($user_id);
+        ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
 
         if (empty($orders->payload)) {
-            $bitso->cancel_order(['order_id' => '']);
+            $Bitso->cancelOrder($place_order->payload->oid);
             JsonResponse::sendResponse(['message' => 'Error placing order.'], HTTPStatusCodes::ServiceUnavailable);
         }
 
