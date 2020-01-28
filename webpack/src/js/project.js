@@ -5,7 +5,7 @@ const Project = {
             event.preventDefault();
             Project.request($this.data('action'), $this.serializeArray(), 'POST').done(data => {
                 if (typeof data.response === 'string') {
-                    alert(data.response);
+                    toastr.info(data.response);
                 }
                 Project.navigate($this.data('redirect'), data);
             });
@@ -27,22 +27,25 @@ const Project = {
             data: data,
             error: response => {
                 if (response.responseJSON) {
-                    const result = response.responseJSON;
-                    switch (result.code) {
-                        case 500:
-                            console.error(result.error.message);
+                    const {status, code, response: {message}, error} = response.responseJSON;
+                    switch (true) {
+                        case code >= 500:
+                            toastr.error('An error ocurred.');
+                            console.error(response.responseJSON);
                             break;
-                        case 400:
-                            alert(result.error.message);
+                        case code >= 400:
+                            toastr.warning(message);
+                            console.warn(message);
                             return;
                         default:
-                            console.error(result);
+                            toastr.error('An error ocurred.');
+                            console.error(response.responseJSON);
                             break;
                     }
                 } else if (response.responseText) {
+                    toastr.error('An error ocurred.');
                     console.error(`${Project.url} ${response.responseText}`);
                 }
-                alert('An error ocurred.');
             }
         });
     }

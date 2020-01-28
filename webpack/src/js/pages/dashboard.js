@@ -114,8 +114,8 @@ function autoSell(table, sell) {
         const coin = coins.find(function (element) {
             return element.idMoneda === key;
         });
-        const threshold = val.threshold * 1;
-        const amount = val.amount * 1;
+        const threshold = +val.threshold;
+        const amount = +val.amount;
         if (coin.total > (threshold + amount)) {
             const total = Math.floor((coin.total - threshold) / amount) * amount;
             console.info('Selling $' + total + ' ' + coin.idMoneda);
