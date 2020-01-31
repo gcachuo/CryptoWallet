@@ -9,4 +9,7 @@
 	url = https://github.com/gcachuo/SimpleAPI
 [submodule "web/core"]
 	path = web/core
-	url = https://github.com/gcachuo/SimpleWeb
+	url = https://github.com/gcachuo/SimpleApi
+[submodule "core"]
+	path = core
+	url = https://github.com/gcachuo/SimpleApi
