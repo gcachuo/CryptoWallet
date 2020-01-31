@@ -1,0 +1,10 @@
+{
+  "project": "CryptoWallet",
+  "theme": "themes/flatkit/html/",
+  "entry": "index.html",
+  "default": "dashboard",
+  "basename": "/cryptowallet/new/web/",
+  "modules": [
+
+  ]
+}
