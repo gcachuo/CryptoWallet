@@ -7,6 +7,6 @@
 [submodule "api/Lib"]
 	path = api/Lib
 	url = https://github.com/gcachuo/SimpleAPI
-[submodule "web/Lib"]
-	path = web/Lib
+[submodule "web/core"]
+	path = web/core
 	url = https://github.com/gcachuo/SimpleWeb
