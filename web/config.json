@@ -2,8 +2,17 @@
   "project": "CryptoWallet",
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
-  "default": "dashboard",
+  "default": "cartera",
   "modules": [
-
+    {
+      "name": "Cartera",
+      "icon": "account_balance_wallet",
+      "href": "cartera"
+    },
+    {
+      "name": "Clientes",
+      "icon": "people",
+      "href": "clientes"
+    }
   ]
 }
