@@ -1,8 +1,9 @@
+const totales = {
+    costo: 0,
+    actual: 0,
+};
+
 $(function () {
-    const totales = {
-        costo: 0,
-        actual: 0,
-    };
     const table = $("table").DataTable({
         pageLength: 25,
         scrollX: false,
@@ -112,10 +113,20 @@ $(function () {
                 previous: "Anterior"
             },
         },
-        initComplete: () => {
-            $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
-            $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
-            $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
-        }
+        initComplete
     });
+    setInterval(function () {
+        table.ajax.reload(initComplete, false);
+    }, 60000);
 });
+
+function initComplete() {
+    $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
+    $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
+    $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
+
+    totales.costo = 0;
+    totales.actual = 0;
+
+    console.info('finish: ' + Date().toString());
+}
