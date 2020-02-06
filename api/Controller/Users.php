@@ -153,7 +153,8 @@ class Users extends Controller
 
     protected function fetchAmounts()
     {
-        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+        $user_id = System::isset_get($_POST['user']['id']);
+        $user_id = System::decrypt($user_id);
 
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $amounts = $Usuarios_Transacciones->selectAmounts($user_id);

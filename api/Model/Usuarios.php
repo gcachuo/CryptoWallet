@@ -6,6 +6,26 @@ namespace Model;
 
 class Usuarios
 {
+    public function __construct()
+    {
+        $mysql = new MySQL();
+        $mysql->create_table('usuarios', [
+            new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true, null, true, true),
+            new TableColumn('id_cliente', ColumnTypes::BIGINT, 20, false),
+            new TableColumn('perfil_usuario', ColumnTypes::INTEGER, 11, false, 1),
+            new TableColumn('nombre_usuario', ColumnTypes::VARCHAR, 100, true),
+            new TableColumn('correo_usuario', ColumnTypes::VARCHAR, 100, true),
+            new TableColumn('password_usuario', ColumnTypes::VARCHAR, 255, true),
+            new TableColumn('last_login_usuario', ColumnTypes::DATETIME, 0, false),
+        ],<<<sql
+alter table usuarios
+	add constraint usuarios_usuarios_id_usuario_fk
+		foreign key (id_cliente) references usuarios (id_usuario)
+			on update cascade on delete set null;
+create unique index usuarios_correo_usuario_uindex on usuarios (correo_usuario);
+sql
+);
+    }
 
     public function selectPassword($email)
     {
