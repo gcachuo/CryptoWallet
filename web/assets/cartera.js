@@ -21,8 +21,12 @@ $(function () {
         order: [[6, 'desc']],
         columnDefs: (() => {
             const columns = [
-                {title: 'Moneda', data: 'moneda'},
                 {
+                    responsivePriority: 1,
+                    title: 'Moneda', data: 'moneda'
+                },
+                {
+                    responsivePriority: 2,
                     title: 'Cantidad', data: 'cantidad',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -32,6 +36,7 @@ $(function () {
                     }
                 },
                 {
+                    responsivePriority: 3,
                     title: 'Precio', data: 'precio',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -41,6 +46,7 @@ $(function () {
                     }
                 },
                 {
+                    responsivePriority: 4,
                     title: 'Promedio', data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -50,6 +56,7 @@ $(function () {
                     }
                 },
                 {
+                    responsivePriority: 1,
                     title: 'Costo', data: 'costo',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -59,6 +66,7 @@ $(function () {
                     }
                 },
                 {
+                    responsivePriority: 2,
                     title: 'Actual', data: 'total',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -68,6 +76,7 @@ $(function () {
                     }
                 },
                 {
+                    responsivePriority: 4,
                     title: '%', data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
