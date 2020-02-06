@@ -1,4 +1,8 @@
 $(function () {
+    const totales = {
+        costo: 0,
+        actual: 0,
+    };
     const table = $("table").DataTable({
         pageLength: 25,
         scrollX: false,
@@ -62,6 +66,7 @@ $(function () {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
                         }
+                        totales.costo += +data;
                         return data;
                     }
                 },
@@ -72,6 +77,7 @@ $(function () {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
                         }
+                        totales.actual += +data;
                         return data;
                     }
                 },
@@ -97,7 +103,8 @@ $(function () {
             emptyTable: "No hay registros que consultar",
             lengthMenu: "Mostrar _MENU_ registros por pagina",
             info: "Mostrando pagina _PAGE_ de _PAGES_",
-            loadingRecords: "Cargando...",
+            loadingRecords: "<i class='fa fa-spin fa-spinner'></i>",
+            processing: "",
             paginate: {
                 first: "Primero",
                 last: "Ultimo",
@@ -106,7 +113,9 @@ $(function () {
             },
         },
         initComplete: () => {
-
+            $("#txtTotalCosto").val(numeral(totales.costo).format('$0,0.00'));
+            $("#txtTotalActual").val(numeral(totales.actual).format('$0,0.00'));
+            $("#txtTotalGP").val(numeral(totales.actual - totales.costo).format('$0,0.00'));
         }
     });
 });
