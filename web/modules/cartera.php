@@ -24,4 +24,4 @@
         <table class="table"></table>
     </div>
 </div>
-<script src="assets/cartera.js"></script>
+<script src="assets/js/cartera.js"></script>

@@ -31,4 +31,4 @@
         <table id="tabla-clientes" class="table"></table>
     </div>
 </div>
-<script src="assets/clientes.js"></script>
+<script src="assets/js/clientes.js"></script>
