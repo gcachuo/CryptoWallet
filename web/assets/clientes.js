@@ -1,4 +1,4 @@
-let table;
+let table, totales;
 $(function () {
     table = $("table").DataTable({
         order: [[2, 'desc']],
@@ -6,6 +6,18 @@ $(function () {
             type: 'POST',
             url: 'api/users/fetchClients',
             dataSrc: ({status, code, response: {message, data: {clients, wallet}}, error}) => {
+                totales = {
+                    cartera: wallet.total,
+                    clientes: 0,
+                    monedas: {cartera: wallet.monedas, clientes: {}}
+                };
+                $.each(clients, function (key, client) {
+                    $.each(client.monedas, function (idMoneda, moneda) {
+                        const cantidad = (totales.monedas.clientes[idMoneda] || 0) + Number(moneda);
+                        totales.monedas.clientes[idMoneda] = Math.round(cantidad * 100000000) / 100000000;
+                    });
+                    totales.clientes += +client.total;
+                });
                 return clients;
             },
             data: {
@@ -20,6 +32,7 @@ $(function () {
         responsive: true,
         paginate: false,
         searching: false,
+        initComplete,
 
         language: {
             search: "Buscar:",
@@ -71,3 +84,9 @@ $(function () {
         })(),
     });
 });
+
+function initComplete() {
+    $("#txtTotalCartera").val(numeral(totales.cartera).format('$0,0.00'));
+    $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
+    $("#txtTotalDiferencia").val(numeral(totales.cartera - totales.clientes).format('$0,0.00'));
+}

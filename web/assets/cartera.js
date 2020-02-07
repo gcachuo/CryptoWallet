@@ -28,7 +28,6 @@ $(function () {
         responsive: true,
         paginate: false,
         searching: false,
-
         initComplete,
 
         language: {
