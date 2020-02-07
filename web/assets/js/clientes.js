@@ -1,5 +1,9 @@
 let tableClients, tableCoins, totales;
 $(function () {
+    if (!JSON.parse(localStorage.getItem('user'))) {
+        location.href = 'login';
+        return;
+    }
     tableClients = $("#tabla-clientes").DataTable({
         order: [[2, 'desc']],
         ajax: {

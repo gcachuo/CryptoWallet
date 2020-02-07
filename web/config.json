@@ -5,6 +5,12 @@
   "default": "cartera",
   "modules": [
     {
+      "name": "Login",
+      "icon": "",
+      "href": "login",
+      "file": "signin.html"
+    },
+    {
       "name": "Cartera",
       "icon": "account_balance_wallet",
       "href": "cartera"
