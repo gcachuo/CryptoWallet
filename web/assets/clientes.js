@@ -1,6 +1,6 @@
-let table, totales;
+let tableClients, tableCoins, totales;
 $(function () {
-    table = $("#tabla-clientes").DataTable({
+    tableClients = $("#tabla-clientes").DataTable({
         order: [[2, 'desc']],
         ajax: {
             type: 'POST',
@@ -89,4 +89,43 @@ function initComplete() {
     $("#txtTotalCartera").val(numeral(totales.cartera).format('$0,0.00'));
     $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
     $("#txtTotalDiferencia").val(numeral(totales.cartera - totales.clientes).format('$0,0.00'));
+
+    console.log(totales.monedas.clientes);
+    tableCoins = $("#tabla-monedas").DataTable({
+        data: totales.monedas.clientes,
+
+        pageLength: 25,
+        scrollX: false,
+        processing: true,
+        serverSide: false,
+        responsive: true,
+        paginate: false,
+        searching: false,
+
+        columnDefs: (() => {
+            const columns = [
+                {
+                    responsivePriority: 1,
+                    title: 'Moneda', data: 'moneda'
+                },
+                {
+                    responsivePriority: 1,
+                    title: 'Cartera', data: 'cartera'
+                },
+                {
+                    responsivePriority: 1,
+                    title: 'Clientes', data: 'clientes'
+                },
+                {
+                    responsivePriority: 1,
+                    title: 'Diferencia', data: 'diferencia'
+                },
+            ];
+            columns.map((column, index) => {
+                column['targets'] = index;
+                return column;
+            });
+            return columns;
+        })(),
+    });
 }
