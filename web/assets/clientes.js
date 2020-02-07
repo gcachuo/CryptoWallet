@@ -1,6 +1,6 @@
 let table, totales;
 $(function () {
-    table = $("table").DataTable({
+    table = $("#tabla-clientes").DataTable({
         order: [[2, 'desc']],
         ajax: {
             type: 'POST',

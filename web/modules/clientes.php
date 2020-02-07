@@ -18,10 +18,17 @@
             </div>
         </div>
     </div>
-</div><div class="card">
+</div>
+<div class="card">
+    <div class="card-header">Monedas</div>
+    <div class="card-body padding table-responsive">
+        <table id="tabla-monedas" class="table"></table>
+    </div>
+</div>
+<div class="card">
     <div class="card-header">Clientes</div>
     <div class="card-body padding table-responsive">
-        <table class="table"></table>
+        <table id="tabla-clientes" class="table"></table>
     </div>
 </div>
 <script src="assets/clientes.js"></script>
