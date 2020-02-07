@@ -66,7 +66,7 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 3,
+                    responsivePriority: 1,
                     title: 'Precio', data: 'precio',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -86,7 +86,7 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 1,
+                    responsivePriority: 2,
                     title: 'Costo', data: 'costo',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -97,7 +97,7 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 2,
+                    responsivePriority: 1,
                     title: 'Actual', data: 'total',
                     render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
