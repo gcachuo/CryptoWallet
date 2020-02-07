@@ -74,20 +74,20 @@ $(function () {
                 {
                     responsivePriority: 2,
                     title: 'Actual', data: 'total',
-                    render: (data, type) => {
+                    render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
-                            return numeral(data).format('$0,0.00');
+                            return `<span class="text-${porcentaje > 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
                         totales.actual += +data;
                         return data;
                     }
                 },
                 {
-                    responsivePriority: 4,
+                    responsivePriority: 3,
                     title: '%', data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
-                            return numeral(data).format('0,0.00%');
+                            return `<span class="text-${data > 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
                         }
                         return data;
                     }
