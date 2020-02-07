@@ -7,13 +7,7 @@ let coins, table;
 
 $(function () {
     table = $("table").DataTable({
-        pageLength: 25,
-        scrollX: false,
-        processing: true,
-        serverSide: false,
-        responsive: true,
-        paginate: false,
-        searching: false,
+        order: [[6, 'desc']],
 
         ajax: {
             type: 'POST',
@@ -26,7 +20,32 @@ $(function () {
                 user: JSON.parse(localStorage.getItem('user'))
             }
         },
-        order: [[6, 'desc']],
+
+        pageLength: 25,
+        scrollX: false,
+        processing: true,
+        serverSide: false,
+        responsive: true,
+        paginate: false,
+        searching: false,
+
+        initComplete,
+
+        language: {
+            search: "Buscar:",
+            emptyTable: "No hay registros que consultar",
+            lengthMenu: "Mostrar _MENU_ registros por pagina",
+            info: "Mostrando pagina _PAGE_ de _PAGES_",
+            loadingRecords: "...",
+            processing: "<i class='fa fa-spin fa-spinner'></i>",
+            paginate: {
+                first: "Primero",
+                last: "Ultimo",
+                next: "Siguiente",
+                previous: "Anterior"
+            },
+        },
+
         columnDefs: (() => {
             const columns = [
                 {
@@ -102,21 +121,6 @@ $(function () {
             });
             return columns;
         })(),
-        language: {
-            search: "Buscar:",
-            emptyTable: "No hay registros que consultar",
-            lengthMenu: "Mostrar _MENU_ registros por pagina",
-            info: "Mostrando pagina _PAGE_ de _PAGES_",
-            loadingRecords: "...",
-            processing: "<i class='fa fa-spin fa-spinner'></i>",
-            paginate: {
-                first: "Primero",
-                last: "Ultimo",
-                next: "Siguiente",
-                previous: "Anterior"
-            },
-        },
-        initComplete
     });
     setInterval(function () {
         table.ajax.reload(initComplete, false);

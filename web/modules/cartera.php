@@ -20,7 +20,7 @@
     </div>
 </div>
 <div class="card">
-    <div class="padding table-responsive">
+    <div class="card-body padding table-responsive">
         <table class="table"></table>
     </div>
 </div>
