@@ -79,7 +79,7 @@ $(function () {
                     title: 'Actual', data: 'total',
                     render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
-                            return `<span class="text-${porcentaje > 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
+                            return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
                         totales.actual += +data;
                         return data;
@@ -90,7 +90,7 @@ $(function () {
                     title: '%', data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
-                            return `<span class="text-${data > 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
+                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
                         }
                         return data;
                     }
@@ -107,8 +107,8 @@ $(function () {
             emptyTable: "No hay registros que consultar",
             lengthMenu: "Mostrar _MENU_ registros por pagina",
             info: "Mostrando pagina _PAGE_ de _PAGES_",
-            loadingRecords: "<i class='fa fa-spin fa-spinner'></i>",
-            processing: "",
+            loadingRecords: "...",
+            processing: "<i class='fa fa-spin fa-spinner'></i>",
             paginate: {
                 first: "Primero",
                 last: "Ultimo",
@@ -131,7 +131,7 @@ function initComplete() {
     totales.costo = 0;
     totales.actual = 0;
 
-    $.post('users/fetchCoinLimits', {
+    $.post('api/users/fetchCoinLimits', {
         user: JSON.parse(localStorage.getItem('user'))
     }).done(({status, code, response: {message, data: {sell}}, error}) => {
         autoSell(sell);
@@ -149,13 +149,36 @@ function autoSell(sell) {
         const amount = +val.amount;
         if (coin.total > (threshold + amount)) {
             const total = Math.floor((coin.total - threshold) / amount) * amount;
+            toastr.info('Selling $' + total + ' ' + coin.idMoneda);
             console.info('Selling $' + total + ' ' + coin.idMoneda);
-            $.post('users/sellCoin', {
+            $.post('api/users/sellCoin', {
                 coin, total,
                 user: JSON.parse(localStorage.getItem('user'))
             }).done(() => {
+                toastr.success('Sold ' + total + ' ' + coin.idMoneda);
                 console.info('Sold ' + total + ' ' + coin.idMoneda);
                 table.ajax.reload();
+            }).fail(response => {
+                if (response.responseJSON) {
+                    const {status, code, response: {message, error: {type, message: error_message, file, line}}} = response.responseJSON;
+                    switch (true) {
+                        case code >= 500:
+                            toastr.error('An error ocurred.');
+                            console.error(error_message, response.responseJSON);
+                            break;
+                        case code >= 400:
+                            toastr.warning(message);
+                            console.warn(message);
+                            return;
+                        default:
+                            toastr.error('An error ocurred.');
+                            console.error(response.responseJSON);
+                            break;
+                    }
+                } else if (response.responseText) {
+                    toastr.error('An error ocurred.');
+                    console.error(`${response.responseText}`);
+                }
             });
         }
     });
