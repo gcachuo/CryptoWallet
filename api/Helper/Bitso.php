@@ -72,8 +72,8 @@ abstract class BitsoOrderPayload
     public $time_in_force;
 }
 
-abstract class BitsoOrder
+/*abstract class BitsoOrder
 {
     public bool $success;
     public BitsoOrderPayload $payload;
-}
+}*/

@@ -7,3 +7,9 @@
 [submodule "api/Lib"]
 	path = api/Lib
 	url = https://github.com/gcachuo/SimpleAPI
+[submodule "web/core"]
+	path = web/core
+	url = https://github.com/gcachuo/SimpleApi
+[submodule "web/themes/flatkit"]
+	path = web/themes/flatkit
+	url = https://gitlab.com/kchu-software/themes/flatkit-template.git

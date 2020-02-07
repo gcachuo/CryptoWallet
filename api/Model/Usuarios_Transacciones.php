@@ -8,6 +8,33 @@ use Helper\BitsoOrderPayload;
 
 class Usuarios_Transacciones
 {
+    public function __construct()
+    {
+        new Usuarios();
+        new Monedas();
+
+        $mysql = new MySQL();
+        $mysql->create_table('usuarios_transacciones', [
+            new TableColumn('id_usuario_transaccion', ColumnTypes::BIGINT, 20, true, null, true, true),
+            new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true),
+            new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
+            new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
+            new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
+            new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
+        ], <<<sql
+alter table usuarios_transacciones
+	add constraint usuarios_transacciones_monedas_id_moneda_fk
+		foreign key (id_moneda) references monedas (id_moneda)
+			on update cascade on delete cascade;
+
+alter table usuarios_transacciones
+	add constraint usuarios_transacciones_usuarios_id_usuario_fk
+		foreign key (id_usuario) references usuarios (id_usuario)
+			on update cascade on delete cascade;
+sql
+        );
+    }
+
     function selectAmounts($user_id)
     {
         $sql = <<<sql
