@@ -1,7 +1,9 @@
 {
-    "require": {
-        "bitso/bitso-php": "dev-master",
-      "ext-json": "*",
-      "ext-openssl": "*"
-    }
+  "require": {
+    "bitso/bitso-php": "dev-master",
+    "ext-json": "*",
+    "ext-openssl": "*",
+    "ext-dom": "*",
+    "ext-libxml": "*"
+  }
 }
