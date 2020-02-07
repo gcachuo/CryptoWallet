@@ -90,9 +90,14 @@ function initComplete() {
     $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
     $("#txtTotalDiferencia").val(numeral(totales.cartera - totales.clientes).format('$0,0.00'));
 
-    console.log(totales.monedas.clientes);
+    const data = [];
+    $.each(totales.monedas.clientes, (moneda, clientes) => {
+        const diferencia = Math.round((totales.monedas.cartera[moneda] - clientes) * 100000000) / 100000000;
+        const cartera = totales.monedas.cartera[moneda];
+        data.push({moneda, cartera, clientes, diferencia});
+    });
     tableCoins = $("#tabla-monedas").DataTable({
-        data: totales.monedas.clientes,
+        data,
 
         pageLength: 25,
         scrollX: false,
@@ -106,19 +111,40 @@ function initComplete() {
             const columns = [
                 {
                     responsivePriority: 1,
-                    title: 'Moneda', data: 'moneda'
+                    title: 'Moneda', data: 'moneda',
+                    render: (data, type) => {
+                        return data.toUpperCase();
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Cartera', data: 'cartera'
+                    title: 'Cartera', data: 'cartera',
+                    render: (data, type) => {
+                        if (type === 'display') {
+                            return numeral(data).format('0.00000000');
+                        }
+                        return data;
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Clientes', data: 'clientes'
+                    title: 'Clientes', data: 'clientes',
+                    render: (data, type) => {
+                        if (type === 'display') {
+                            return numeral(data).format('0.00000000');
+                        }
+                        return data;
+                    }
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Diferencia', data: 'diferencia'
+                    title: 'Diferencia', data: 'diferencia',
+                    render: (data, type) => {
+                        if (type === 'display') {
+                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
+                        }
+                        return data;
+                    }
                 },
             ];
             columns.map((column, index) => {
