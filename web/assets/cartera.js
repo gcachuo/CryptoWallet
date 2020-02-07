@@ -3,8 +3,10 @@ const totales = {
     actual: 0,
 };
 
+let coins, table;
+
 $(function () {
-    const table = $("table").DataTable({
+    table = $("table").DataTable({
         pageLength: 25,
         scrollX: false,
         processing: true,
@@ -17,6 +19,7 @@ $(function () {
             type: 'POST',
             url: 'api/users/fetchAmounts',
             dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
+                coins = amounts;
                 return amounts;
             },
             data: {
@@ -128,5 +131,32 @@ function initComplete() {
     totales.costo = 0;
     totales.actual = 0;
 
+    $.post('users/fetchCoinLimits', {
+        user: JSON.parse(localStorage.getItem('user'))
+    }).done(({status, code, response: {message, data: {sell}}, error}) => {
+        autoSell(sell);
+    });
+
     console.info('finish: ' + Date().toString());
+}
+
+function autoSell(sell) {
+    $.each(sell, function (key, val) {
+        const coin = coins.find(function (element) {
+            return element.idMoneda === key;
+        });
+        const threshold = +val.threshold;
+        const amount = +val.amount;
+        if (coin.total > (threshold + amount)) {
+            const total = Math.floor((coin.total - threshold) / amount) * amount;
+            console.info('Selling $' + total + ' ' + coin.idMoneda);
+            $.post('users/sellCoin', {
+                coin, total,
+                user: JSON.parse(localStorage.getItem('user'))
+            }).done(() => {
+                console.info('Sold ' + total + ' ' + coin.idMoneda);
+                table.ajax.reload();
+            });
+        }
+    });
 }
