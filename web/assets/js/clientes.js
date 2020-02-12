@@ -11,16 +11,23 @@ $(function () {
             url: 'api/users/fetchClients',
             dataSrc: ({status, code, response: {message, data: {clients, wallet}}, error}) => {
                 totales = {
-                    cartera: wallet.total,
-                    clientes: 0,
-                    monedas: {cartera: wallet.monedas, clientes: {}}
+                    actual: {
+                        cartera: wallet.total,
+                        clientes: 0,
+                    },
+                    monedas: {cartera: wallet.monedas, clientes: {}},
+                    costo: {
+                        cartera: wallet.cost,
+                        clientes: 0,
+                    },
                 };
                 $.each(clients, function (key, client) {
                     $.each(client.monedas, function (idMoneda, moneda) {
                         const cantidad = (totales.monedas.clientes[idMoneda] || 0) + Number(moneda);
                         totales.monedas.clientes[idMoneda] = Math.round(cantidad * 100000000) / 100000000;
                     });
-                    totales.clientes += +client.total;
+                    totales.actual.clientes += +client.total;
+                    totales.costo.clientes += +client.costo;
                 });
                 return clients;
             },
@@ -90,9 +97,19 @@ $(function () {
 });
 
 function initComplete() {
-    $("#txtTotalCartera").val(numeral(totales.cartera).format('$0,0.00'));
-    $("#txtTotalClientes").val(numeral(totales.clientes).format('$0,0.00'));
-    $("#txtTotalDiferencia").val(numeral(totales.cartera - totales.clientes).format('$0,0.00'));
+    const actualDiferencia = totales.actual.cartera - totales.actual.clientes;
+    const costoDiferencia = totales.costo.cartera - totales.costo.clientes;
+    const GP = actualDiferencia - costoDiferencia;
+
+    $("#txtActualCartera").val(numeral(totales.actual.cartera).format('$0,0.00'));
+    $("#txtActualClientes").val(numeral(totales.actual.clientes).format('$0,0.00'));
+    $("#txtActualDiferencia").val(numeral(actualDiferencia).format('$0,0.00'));
+
+    $("#txtCostoCartera").val(numeral(totales.costo.cartera).format('$0,0.00'));
+    $("#txtCostoClientes").val(numeral(totales.costo.clientes).format('$0,0.00'));
+    $("#txtCostoDiferencia").val(numeral(costoDiferencia).format('$0,0.00'));
+
+    $("#txtGP").val(numeral(GP).format('$0,0.00'));
 
     const data = [];
     $.each(totales.monedas.clientes, (moneda, clientes) => {

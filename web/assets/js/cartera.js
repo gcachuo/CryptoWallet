@@ -66,7 +66,7 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 3,
+                    responsivePriority: 1,
                     title: 'Precio', data: 'precio',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -86,7 +86,7 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 1,
+                    responsivePriority: 2,
                     title: 'Costo', data: 'costo',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -97,13 +97,24 @@ $(function () {
                     }
                 },
                 {
-                    responsivePriority: 2,
+                    responsivePriority: 1,
                     title: 'Actual', data: 'total',
                     render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
                         totales.actual += +data;
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 3,
+                    title: 'G/P',
+                    render: (data, type, {total: actual, costo, porcentaje}) => {
+                        data = actual - costo;
+                        if (type === 'display') {
+                            return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
+                        }
                         return data;
                     }
                 },
