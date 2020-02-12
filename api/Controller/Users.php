@@ -73,9 +73,11 @@ class Users extends Controller
         $clients = array_values($temp_clients);
 
         $wallet['total'] = 0;
+        $wallet['cost'] = 0;
         foreach ($this->fetchAmounts()['amounts'] as $self) {
             $wallet['monedas'][$self['idMoneda']] = $self['cantidad'];
             $wallet['total'] += $self['total'];
+            $wallet['cost'] += $self['costo'];
         }
 
         return compact('clients', 'wallet');
