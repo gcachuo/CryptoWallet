@@ -2,5 +2,6 @@
 /vendor/
 /Config/database.prod.json
 /Config/database.dev.json
-*.log
+/Logs/*.log
+/Logs/*.sql
 /offline
