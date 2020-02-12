@@ -109,6 +109,17 @@ $(function () {
                 },
                 {
                     responsivePriority: 3,
+                    title: 'G/P',
+                    render: (data, type, {total: actual, costo, porcentaje}) => {
+                        data = actual - costo;
+                        if (type === 'display') {
+                            return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 3,
                     title: '%', data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
