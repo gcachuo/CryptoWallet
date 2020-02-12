@@ -97,10 +97,19 @@ $(function () {
 });
 
 function initComplete() {
+    const actualDiferencia = totales.actual.cartera - totales.actual.clientes;
+    const costoDiferencia = totales.costo.cartera - totales.costo.clientes;
+    const GP = actualDiferencia - costoDiferencia;
+
     $("#txtActualCartera").val(numeral(totales.actual.cartera).format('$0,0.00'));
     $("#txtActualClientes").val(numeral(totales.actual.clientes).format('$0,0.00'));
-    $("#txtActualDiferencia").val(numeral(totales.actual.cartera - totales.actual.clientes).format('$0,0.00'));
-    console.log(+totales.costo.cartera, +totales.costo.clientes, totales.costo.cartera - totales.costo.clientes);
+    $("#txtActualDiferencia").val(numeral(actualDiferencia).format('$0,0.00'));
+
+    $("#txtCostoCartera").val(numeral(totales.costo.cartera).format('$0,0.00'));
+    $("#txtCostoClientes").val(numeral(totales.costo.clientes).format('$0,0.00'));
+    $("#txtCostoDiferencia").val(numeral(costoDiferencia).format('$0,0.00'));
+
+    $("#txtGP").val(numeral(GP).format('$0,0.00'));
 
     const data = [];
     $.each(totales.monedas.clientes, (moneda, clientes) => {
