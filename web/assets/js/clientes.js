@@ -97,9 +97,13 @@ $(function () {
 });
 
 function initComplete() {
+    totales.utilidad = {
+        cartera: totales.actual.cartera - totales.costo.cartera,
+        clientes: totales.actual.clientes - totales.costo.clientes,
+    };
     const actualDiferencia = totales.actual.cartera - totales.actual.clientes;
     const costoDiferencia = totales.costo.cartera - totales.costo.clientes;
-    const GP = actualDiferencia - costoDiferencia;
+    const utilidadDiferencia = totales.utilidad.cartera - totales.utilidad.clientes;
 
     $("#txtActualCartera").val(numeral(totales.actual.cartera).format('$0,0.00'));
     $("#txtActualClientes").val(numeral(totales.actual.clientes).format('$0,0.00'));
@@ -109,7 +113,9 @@ function initComplete() {
     $("#txtCostoClientes").val(numeral(totales.costo.clientes).format('$0,0.00'));
     $("#txtCostoDiferencia").val(numeral(costoDiferencia).format('$0,0.00'));
 
-    $("#txtGP").val(numeral(GP).format('$0,0.00'));
+    $("#txtUtilidadCartera").val(numeral(totales.utilidad.cartera).format('$0,0.00'));
+    $("#txtUtilidadClientes").val(numeral(totales.utilidad.clientes).format('$0,0.00'));
+    $("#txtUtilidadDiferencia").val(numeral(utilidadDiferencia).format('$0,0.00'));
 
     const data = [];
     $.each(totales.monedas.clientes, (moneda, clientes) => {
