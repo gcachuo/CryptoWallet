@@ -4,6 +4,7 @@
     "ext-json": "*",
     "ext-openssl": "*",
     "ext-dom": "*",
-    "ext-libxml": "*"
+    "ext-libxml": "*",
+    "ext-mysqli": "*"
   }
 }
