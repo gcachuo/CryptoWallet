@@ -16,6 +16,7 @@ $(function () {
                         clientes: 0,
                     },
                     monedas: {cartera: wallet.monedas, clientes: {}},
+                    valor: {cartera: wallet.valor, clientes: {}, total: 0},
                     costo: {
                         cartera: wallet.cost,
                         clientes: 0,
@@ -24,7 +25,9 @@ $(function () {
                 $.each(clients, function (key, client) {
                     $.each(client.monedas, function (idMoneda, moneda) {
                         const cantidad = (totales.monedas.clientes[idMoneda] || 0) + Number(moneda);
+                        const valor = (totales.valor.clientes[idMoneda] || 0) + Number(client.valor[idMoneda]);
                         totales.monedas.clientes[idMoneda] = Math.round(cantidad * 100000000) / 100000000;
+                        totales.valor.clientes[idMoneda] = valor;
                     });
                     totales.actual.clientes += +client.total;
                     totales.costo.clientes += +client.costo;
@@ -121,7 +124,8 @@ function initComplete() {
     $.each(totales.monedas.cartera, (moneda, cartera) => {
         const clientes = totales.monedas.clientes[moneda] || 0;
         const diferencia = Math.round((cartera - clientes) * 100000000) / 100000000;
-        data.push({moneda, cartera, clientes, diferencia});
+        const valor = ((totales.valor.cartera[moneda] || 0) - (totales.valor.clientes[moneda] || 0));
+        data.push({moneda, cartera, clientes, diferencia, valor});
     });
     tableCoins = $("#tabla-monedas").DataTable({
         data,
@@ -146,9 +150,9 @@ function initComplete() {
                 {
                     responsivePriority: 1,
                     title: 'Cartera', data: 'cartera',
-                    render: (data, type) => {
+                    render: (data, type, {moneda}) => {
                         if (type === 'display') {
-                            return numeral(data).format('0.00000000');
+                            return `<span title="${numeral(totales.valor.cartera[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
                         }
                         return data;
                     }
@@ -156,9 +160,9 @@ function initComplete() {
                 {
                     responsivePriority: 1,
                     title: 'Clientes', data: 'clientes',
-                    render: (data, type) => {
+                    render: (data, type, {moneda}) => {
                         if (type === 'display') {
-                            return numeral(data).format('0.00000000');
+                            return `<span title="${numeral(totales.valor.clientes[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
                         }
                         return data;
                     }
@@ -175,11 +179,12 @@ function initComplete() {
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Valor', data: 'diferencia',
+                    title: 'Valor', data: 'valor',
                     render: (data, type) => {
                         if (type === 'display') {
-                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
+                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
+                        totales.valor.total += data;
                         return data;
                     }
                 },
@@ -190,5 +195,9 @@ function initComplete() {
             });
             return columns;
         })(),
+
+        initComplete: () => {
+            console.log(totales.valor.total);
+        }
     });
 }

@@ -66,15 +66,18 @@ class Users extends Controller
                 'nombre' => $client['nombre'],
                 'costo' => (System::isset_get($temp_clients[$client['id']]['costo'], 0) + $client['costo']),
                 'total' => (System::isset_get($temp_clients[$client['id']]['total'], 0) + $client['total']),
-                'monedas' => System::isset_get($temp_clients[$client['id']]['monedas'], [])
+                'monedas' => System::isset_get($temp_clients[$client['id']]['monedas'], []),
+                'valor' => System::isset_get($temp_clients[$client['id']]['valor'], [])
             ];
             $temp_clients[$client['id']]['monedas'][$client['idMoneda']] = $client['cantidad'];
+            $temp_clients[$client['id']]['valor'][$client['idMoneda']] = $client['total'];
         }
         $clients = array_values($temp_clients);
 
         $wallet['total'] = 0;
         $wallet['cost'] = 0;
         foreach ($this->fetchAmounts()['amounts'] as $self) {
+            $wallet['valor'][$self['idMoneda']] = $self['total'];
             $wallet['monedas'][$self['idMoneda']] = $self['cantidad'];
             $wallet['total'] += $self['total'];
             $wallet['cost'] += $self['costo'];
