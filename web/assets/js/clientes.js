@@ -118,9 +118,9 @@ function initComplete() {
     $("#txtUtilidadDiferencia").val(numeral(utilidadDiferencia).format('$0,0.00'));
 
     const data = [];
-    $.each(totales.monedas.clientes, (moneda, clientes) => {
-        const diferencia = Math.round((totales.monedas.cartera[moneda] - clientes) * 100000000) / 100000000;
-        const cartera = totales.monedas.cartera[moneda];
+    $.each(totales.monedas.cartera, (moneda, cartera) => {
+        const clientes = totales.monedas.clientes[moneda] || 0;
+        const diferencia = Math.round((cartera - clientes) * 100000000) / 100000000;
         data.push({moneda, cartera, clientes, diferencia});
     });
     tableCoins = $("#tabla-monedas").DataTable({
@@ -166,6 +166,16 @@ function initComplete() {
                 {
                     responsivePriority: 1,
                     title: 'Diferencia', data: 'diferencia',
+                    render: (data, type) => {
+                        if (type === 'display') {
+                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 1,
+                    title: 'Valor', data: 'diferencia',
                     render: (data, type) => {
                         if (type === 'display') {
                             return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
