@@ -1,6 +1,6 @@
 RewriteEngine on
 
-RewriteRule ^$ /cryptowallet/web/ [L]
+#Redirect 307 ./web/
 
 #RewriteCond %{HTTP_HOST} ^gcachuo.ml$
 #RewriteCond %{HTTPS} off
