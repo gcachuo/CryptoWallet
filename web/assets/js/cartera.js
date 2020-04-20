@@ -109,7 +109,7 @@ $(function () {
                 },
                 {
                     responsivePriority: 3,
-                    title: 'G/P',
+                    title: 'Utilidad',
                     render: (data, type, {total: actual, costo, porcentaje}) => {
                         data = actual - costo;
                         if (type === 'display') {

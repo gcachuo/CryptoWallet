@@ -13,7 +13,7 @@
                 <input readonly="" class="form-control" type="text" id="txtTotalActual"/>
             </div>
             <div class="col-md-4">
-                <label class="col-form-label font-weight-bold">G/P</label>
+                <label class="col-form-label font-weight-bold">Utilidad</label>
                 <input readonly="" class="form-control" type="text" id="txtTotalGP"/>
             </div>
         </div>

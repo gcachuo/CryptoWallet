@@ -1,12 +1,20 @@
 <?php
 ?>
 <div class="card">
-    <div class="card-header">G/P</div>
+    <div class="card-header">Utilidad</div>
     <div class="card-body padding">
         <div class="row">
-            <div class="offset-md-4 col-md-4">
-                <label for="txtGP" class="col-form-label font-weight-bold">G/P</label>
-                <input readonly="" class="form-control" type="text" id="txtGP"/>
+            <div class="col-md-4">
+                <label for="txtActualCartera" class="col-form-label font-weight-bold">Cartera</label>
+                <input readonly="" class="form-control" type="text" id="txtUtilidadCartera"/>
+            </div>
+            <div class="col-md-4">
+                <label for="txtActualClientes" class="col-form-label font-weight-bold">Clientes</label>
+                <input readonly="" class="form-control" type="text" id="txtUtilidadClientes"/>
+            </div>
+            <div class="col-md-4">
+                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Propio</label>
+                <input readonly="" class="form-control" type="text" id="txtUtilidadDiferencia"/>
             </div>
         </div>
     </div>
@@ -24,7 +32,7 @@
                 <input readonly="" class="form-control" type="text" id="txtActualClientes"/>
             </div>
             <div class="col-md-4">
-                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Diferencia</label>
+                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Propio</label>
                 <input readonly="" class="form-control" type="text" id="txtActualDiferencia"/>
             </div>
         </div>
@@ -43,7 +51,7 @@
                 <input readonly="" class="form-control" type="text" id="txtCostoClientes"/>
             </div>
             <div class="col-md-4">
-                <label for="txtCostoDiferencia" class="col-form-label font-weight-bold">Diferencia</label>
+                <label for="txtCostoDiferencia" class="col-form-label font-weight-bold">Propio</label>
                 <input readonly="" class="form-control" type="text" id="txtCostoDiferencia"/>
             </div>
         </div>
