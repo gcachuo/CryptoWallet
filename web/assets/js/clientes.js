@@ -102,7 +102,7 @@ $(function () {
 function initComplete() {
     totales.utilidad = {
         cartera: totales.actual.cartera - totales.costo.cartera,
-        clientes: totales.actual.clientes - totales.costo.clientes,
+        clientes: totales.actual.clientes - totales.costo.cartera,
     };
     const actualDiferencia = totales.actual.cartera - totales.actual.clientes;
     const costoDiferencia = totales.costo.cartera - totales.costo.clientes;

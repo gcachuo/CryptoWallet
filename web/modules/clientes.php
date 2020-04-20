@@ -13,7 +13,7 @@
                 <input readonly="" class="form-control" type="text" id="txtUtilidadClientes"/>
             </div>
             <div class="col-md-4">
-                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Diferencia</label>
+                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Propio</label>
                 <input readonly="" class="form-control" type="text" id="txtUtilidadDiferencia"/>
             </div>
         </div>
@@ -32,7 +32,7 @@
                 <input readonly="" class="form-control" type="text" id="txtActualClientes"/>
             </div>
             <div class="col-md-4">
-                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Diferencia</label>
+                <label for="txtActualDiferencia" class="col-form-label font-weight-bold">Propio</label>
                 <input readonly="" class="form-control" type="text" id="txtActualDiferencia"/>
             </div>
         </div>
@@ -51,7 +51,7 @@
                 <input readonly="" class="form-control" type="text" id="txtCostoClientes"/>
             </div>
             <div class="col-md-4">
-                <label for="txtCostoDiferencia" class="col-form-label font-weight-bold">Diferencia</label>
+                <label for="txtCostoDiferencia" class="col-form-label font-weight-bold">Propio</label>
                 <input readonly="" class="form-control" type="text" id="txtCostoDiferencia"/>
             </div>
         </div>
