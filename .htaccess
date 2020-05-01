@@ -1,2 +1,2 @@
 RewriteEngine on
-RewriteRule ^ /web/
+#RewriteRule ^ /web/

@@ -1,5 +1,6 @@
 {
   "project": {
+    "name": "CryptoWallet",
     "code": "cryptowallet"
   },
   "database": {
@@ -7,5 +8,9 @@
     "username": "",
     "passwd": "",
     "dbname": ""
+  },
+  "email": {
+    "username": "",
+    "password": ""
   }
 }
