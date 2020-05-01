@@ -16,6 +16,7 @@ use Model\Precios_Monedas;
 use Model\Usuarios;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
+use PHPUnit\Util\Json;
 use System;
 
 class Users extends Controller
@@ -45,6 +46,12 @@ class Users extends Controller
         ['name' => $name, 'email' => $email, 'password' => $password] = $_POST;
 
         $Usuarios = new Usuarios();
+        $user = $Usuarios->selectUser($email);
+
+        if ($user) {
+            JsonResponse::sendResponse(['message' => 'Ya existe un usuario con este correo.']);
+        }
+
         $Usuarios->insertUsuario($name, $email, $password);
 
         $user = $Usuarios->selectUser($email);
