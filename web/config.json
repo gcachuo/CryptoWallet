@@ -10,6 +10,12 @@
       "href": "login",
       "file": "signin.html"
     },
+    "signup": {
+      "name": "Signup",
+      "icon": "",
+      "href": "signup",
+      "file": "signup.html"
+    },
     "cartera": {
       "name": "Cartera",
       "icon": "account_balance_wallet",
