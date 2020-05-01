@@ -34,10 +34,10 @@ class Users extends Controller
         ]);
     }
 
-    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad)
+    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad, string $tipo = 'ingreso')
     {
         $Usuarios_Transacciones = new Usuarios_Transacciones();
-        $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad);
+        $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad, $tipo === 'ingreso');
     }
 
     protected function signUp()

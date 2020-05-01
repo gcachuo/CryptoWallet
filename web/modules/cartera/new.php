@@ -10,10 +10,17 @@ $monedas = $Monedas->selectMonedas();
 <form class="container" method="post" action="cartera/ajax/save.php">
     <input type="hidden" name="id_usuario">
     <div class="form-group">
-        <select name="id_moneda" class="form-control">
+        <select name="tipo" class="form-control" required>
+            <option value="">Seleccione Tipo</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="retiro">Retiro</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <select name="id_moneda" class="form-control" required>
+            <option value="">Seleccione Moneda</option>
             <?php foreach ($monedas as $moneda): ?>
-                <option <?= $moneda['id_moneda'] == 'btc' ? 'selected' : '' ?>
-                        value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre_moneda'] ?></option>
+                <option value="<?= $moneda['id_moneda'] ?>"><?= $moneda['nombre_moneda'] ?></option>
             <?php endforeach; ?>
         </select>
     </div>
