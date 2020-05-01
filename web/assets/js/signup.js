@@ -14,7 +14,7 @@ $(function () {
                 switch (true) {
                     case code >= 500:
                         toastr.error('An error ocurred.');
-                        console.error(error_message, response.responseJSON);
+                        console.error(message, response.responseJSON);
                         break;
                     case code >= 400:
                         toastr.warning(message);

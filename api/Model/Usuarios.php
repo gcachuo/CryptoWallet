@@ -8,6 +8,8 @@ class Usuarios
 {
     public function __construct()
     {
+        new Usuarios_Transacciones();
+        new Monedas();
         $mysql = new MySQL();
         $mysql->create_table('usuarios', [
             new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true, null, true, true),
@@ -17,20 +19,20 @@ class Usuarios
             new TableColumn('correo_usuario', ColumnTypes::VARCHAR, 100, true),
             new TableColumn('password_usuario', ColumnTypes::VARCHAR, 255, true),
             new TableColumn('last_login_usuario', ColumnTypes::DATETIME, 0, false),
-        ],<<<sql
-alter table usuarios
-	add constraint usuarios_usuarios_id_usuario_fk
-		foreign key (id_cliente) references usuarios (id_usuario)
-			on update cascade on delete set null;
-create unique index usuarios_correo_usuario_uindex on usuarios (correo_usuario);
+        ], <<<sql
+ALTER TABLE usuarios
+	ADD CONSTRAINT usuarios_usuarios_id_usuario_fk
+		FOREIGN KEY (id_cliente) REFERENCES usuarios (id_usuario)
+			ON UPDATE CASCADE ON DELETE SET NULL;
+CREATE UNIQUE INDEX usuarios_correo_usuario_uindex ON usuarios (correo_usuario);
 sql
-);
+        );
     }
 
     public function selectPassword($email)
     {
         $sql = <<<sql
-select password_usuario password from usuarios where correo_usuario=?
+SELECT password_usuario password FROM usuarios WHERE correo_usuario=?
 sql;
         $mysql = new MySQL();
         return $mysql->fetch_single($mysql->prepare($sql, ['s', $email]))['password'];
@@ -39,9 +41,9 @@ sql;
     function selectUser($email)
     {
         $sql = <<<sql
-select id_usuario id, nombre_usuario nombre, correo_usuario correo, perfil_usuario perfil
-from usuarios
-where correo_usuario=?
+SELECT id_usuario id, nombre_usuario nombre, correo_usuario correo, perfil_usuario perfil
+FROM usuarios
+WHERE correo_usuario=?
 sql;
         $mysql = new MySQL();
         return $mysql->fetch_single($mysql->prepare($sql, ['s', $email]));
@@ -50,7 +52,7 @@ sql;
     public function updateLastLogin($user_id)
     {
         $sql = <<<sql
-update usuarios set last_login_usuario=NOW() where id_usuario=?
+UPDATE usuarios SET last_login_usuario=NOW() WHERE id_usuario=?
 sql;
         $mysql = new MySQL();
         $mysql->prepare($sql, ['i', $user_id]);
@@ -59,7 +61,7 @@ sql;
     function selectClients($user_id)
     {
         $sql = <<<sql
-select
+SELECT
   u.id_usuario id,
   nombre_usuario nombre,
   m.id_moneda                            idMoneda,
@@ -67,13 +69,27 @@ select
   sum(costo_usuario_moneda)              costo,
   round(sum(cantidad_usuario_moneda), 8) cantidad,
   concat(ut.id_moneda, '_', par_moneda)  book
-from usuarios u
-       inner join usuarios_transacciones ut on u.id_usuario = ut.id_usuario
-       inner join monedas m on ut.id_moneda = m.id_moneda
-where id_cliente = ?
-group by u.id_usuario,m.id_moneda;
+FROM usuarios u
+       INNER JOIN usuarios_transacciones ut ON u.id_usuario = ut.id_usuario
+       INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
+WHERE id_cliente = ?
+GROUP BY u.id_usuario,m.id_moneda;
 sql;
         $mysql = new MySQL();
         return $mysql->fetch_all($mysql->prepare($sql, ['i', $user_id]));
+    }
+
+    public function insertUsuario($name, $email, $password)
+    {
+        $sql = <<<sql
+INSERT INTO usuarios(nombre_usuario, correo_usuario, password_usuario)
+VALUES (:name, :email, :password);
+sql;
+        $mysql = new MySQL();
+        $mysql->prepare2($sql, [
+            ':name' => $name,
+            ':email' => $email,
+            ':password' => password_hash($password, CRYPT_BLOWFISH)
+        ]);
     }
 }

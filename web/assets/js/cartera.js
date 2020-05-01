@@ -15,7 +15,7 @@ $(function () {
 
         ajax: {
             type: 'POST',
-            url: 'api/users/fetchAmounts',
+            url: '/api/users/fetchAmounts',
             dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
                 coins = amounts;
                 return amounts;
