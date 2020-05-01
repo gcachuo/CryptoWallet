@@ -8,6 +8,7 @@ $Monedas = new Monedas();
 $monedas = $Monedas->selectMonedas();
 ?>
 <form class="container" method="post" action="cartera/ajax/save.php">
+    <input type="hidden" name="id_usuario">
     <div class="form-group">
         <select name="id_moneda" class="form-control">
             <?php foreach ($monedas as $moneda): ?>
@@ -17,10 +18,11 @@ $monedas = $Monedas->selectMonedas();
         </select>
     </div>
     <div class="form-group">
-        <input type="number" placeholder="Costo (MXN)" class="form-control" min="0" step="0.01" required>
+        <input type="number" name="costo" placeholder="Costo (MXN)" class="form-control" min="0" step="0.01" required>
     </div>
     <div class="form-group">
-        <input type="number" placeholder="Cantidad" class="form-control" min="0" step="0.00000001" required>
+        <input type="number" name="cantidad" placeholder="Cantidad" class="form-control" min="0" step="0.00000001"
+               required>
     </div>
     <button class="btn btn-primary">Guardar</button>
 </form>

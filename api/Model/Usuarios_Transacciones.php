@@ -20,15 +20,15 @@ class Usuarios_Transacciones
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
             new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
         ], <<<sql
-alter table usuarios_transacciones
-	add constraint usuarios_transacciones_monedas_id_moneda_fk
-		foreign key (id_moneda) references monedas (id_moneda)
-			on update cascade on delete cascade;
+ALTER TABLE usuarios_transacciones
+	ADD CONSTRAINT usuarios_transacciones_monedas_id_moneda_fk
+		FOREIGN KEY (id_moneda) REFERENCES monedas (id_moneda)
+			ON UPDATE CASCADE ON DELETE CASCADE;
 
-alter table usuarios_transacciones
-	add constraint usuarios_transacciones_usuarios_id_usuario_fk
-		foreign key (id_usuario) references usuarios (id_usuario)
-			on update cascade on delete cascade;
+ALTER TABLE usuarios_transacciones
+	ADD CONSTRAINT usuarios_transacciones_usuarios_id_usuario_fk
+		FOREIGN KEY (id_usuario) REFERENCES usuarios (id_usuario)
+			ON UPDATE CASCADE ON DELETE CASCADE;
 sql
         );
     }
@@ -36,16 +36,16 @@ sql
     function selectAmounts($user_id)
     {
         $sql = <<<sql
-select
+SELECT
   m.id_moneda idMoneda,
   nombre_moneda moneda,
   sum(costo_usuario_moneda)              costo,
   round(sum(cantidad_usuario_moneda), 8) cantidad,
   concat(ut.id_moneda,'_',par_moneda) book
-from usuarios_transacciones ut
-inner join monedas m on ut.id_moneda = m.id_moneda
-where id_usuario = ?
-group by ut.id_moneda;
+FROM usuarios_transacciones ut
+INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
+WHERE id_usuario = ?
+GROUP BY ut.id_moneda;
 sql;
 
         $mysql = new MySQL();
@@ -55,12 +55,32 @@ sql;
     function selectDiff($fecha, $user_id, $id_moneda)
     {
         $sql = <<<sql
-select fecha_usuario_transaccion old,? new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,?) diff from usuarios_transacciones
-where id_usuario=? and id_moneda=? order by id_usuario_transaccion desc
-limit 1;
+SELECT fecha_usuario_transaccion old,? new,TIMESTAMPDIFF(MINUTE,fecha_usuario_transaccion,?) diff FROM usuarios_transacciones
+WHERE id_usuario=? AND id_moneda=? ORDER BY id_usuario_transaccion DESC
+LIMIT 1;
 sql;
         $mysql = new MySQL();
         return $mysql->fetch_single($mysql->prepare($sql, ['ssis', $fecha, $fecha, $user_id, $id_moneda]));
+    }
+
+    function insertTrade($user_id, $id_moneda, $costo, $cantidad, $income = true)
+    {
+        if (!$income) {
+            $costo = -$costo;
+            $cantidad = -$cantidad;
+        }
+
+        $sql = <<<sql
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
+VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
+sql;
+        $mysql = new MySQL();
+        $mysql->prepare2($sql, [
+            ':id_usuario' => $user_id,
+            ':id_moneda' => $id_moneda,
+            ':costo_usuario_moneda' => $costo,
+            ':cantidad_usuario_moneda' => $cantidad
+        ]);
     }
 
     /**
@@ -72,14 +92,25 @@ sql;
     function insertOrder($user_id, $id_moneda, $costo, $order)
     {
         $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES (?,?,?,?);
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
+VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
 sql;
         $mysql = new MySQL();
-        $mysql->prepare($sql, ['isdd', $user_id, $id_moneda, -$costo, -$order->original_amount]);
+        $mysql->prepare2($sql, [
+            ':id_usuario' => $user_id,
+            ':id_moneda' => $id_moneda,
+            ':costo_usuario_moneda' => -$costo,
+            ':cantidad_usuario_moneda' => -$order->original_amount
+        ]);
 
         $sql = <<<sql
-insert into usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda,cantidad_usuario_moneda) VALUES (?,'mxn',?,?);
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
+VALUES (:id_usuario, 'mxn', :costo_usuario_moneda, :cantidad_usuario_moneda);
 sql;
-        $mysql->prepare($sql, ['idd', $user_id, $costo, $costo]);
+        $mysql->prepare2($sql, [
+            ':id_usuario' => $user_id,
+            ':costo_usuario_moneda' => $costo,
+            ':cantidad_usuario_moneda' => $costo
+        ]);
     }
 }

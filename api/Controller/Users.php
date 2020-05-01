@@ -34,6 +34,12 @@ class Users extends Controller
         ]);
     }
 
+    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad)
+    {
+        $Usuarios_Transacciones = new Usuarios_Transacciones();
+        $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad);
+    }
+
     protected function signUp()
     {
         ['name' => $name, 'email' => $email, 'password' => $password] = $_POST;
