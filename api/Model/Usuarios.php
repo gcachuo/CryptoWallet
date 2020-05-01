@@ -82,7 +82,9 @@ sql;
     {
         $sql = <<<sql
 INSERT INTO usuarios(nombre_usuario, correo_usuario, password_usuario)
-VALUES (:name, :email, :password);
+VALUES (:name, :email, :password)
+ON DUPLICATE KEY UPDATE nombre_usuario=:name,
+                        password_usuario=:password;
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql, [
