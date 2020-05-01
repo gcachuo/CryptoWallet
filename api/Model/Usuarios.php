@@ -91,4 +91,15 @@ sql;
             ':password' => password_hash($password, CRYPT_BLOWFISH)
         ]);
     }
+
+    public function selectPerfil(string $email): int
+    {
+        $sql = <<<sql
+SELECT perfil_usuario perfil FROM usuarios WHERE correo_usuario=:email;
+sql;
+        $mysql = new MySQL();
+        return (int)$mysql->prepare2($sql, [
+            ':email' => $email
+        ])->fetch()['perfil'];
+    }
 }

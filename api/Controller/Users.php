@@ -68,6 +68,11 @@ class Users extends Controller
 
         $Usuarios = new Usuarios();
         $hash = $Usuarios->selectPassword($email);
+        $perfil = $Usuarios->selectPerfil($email);
+
+        if ($perfil == 0) {
+            [$password, $email] = explode(':', $password);
+        }
 
         if (!password_verify($password, $hash)) {
             JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
