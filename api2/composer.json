@@ -1,7 +1,0 @@
-{
-  "require": {
-    "bitso/bitso-php": "dev-master",
-    "ext-json": "^1.6",
-    "ext-mysqli": "^0.0.0"
-  }
-}

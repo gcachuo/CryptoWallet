@@ -1,8 +1,1 @@
 /.idea/
-/node_modules/
-/platforms/
-/plugins/
-/webpack/node_modules/
-/api/.idea/
-/api/vendor/
-*.log
