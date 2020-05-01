@@ -16,9 +16,9 @@ class Usuarios_Transacciones
             new TableColumn('id_usuario_transaccion', ColumnTypes::BIGINT, 20, true, null, true, true),
             new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true),
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
-            new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
             new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
+            new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
         ], <<<sql
 alter table usuarios_transacciones
 	add constraint usuarios_transacciones_monedas_id_moneda_fk

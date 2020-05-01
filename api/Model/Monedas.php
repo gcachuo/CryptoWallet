@@ -19,4 +19,13 @@ sql
             . $mysql->from_file('Monedas')
         );
     }
+
+    function selectMonedas()
+    {
+        $sql = <<<sql
+SELECT * FROM monedas;
+sql;
+        $mysql = new MySQL();
+        return $mysql->prepare2($sql)->fetchAll();
+    }
 }
