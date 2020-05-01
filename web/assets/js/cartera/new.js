@@ -4,6 +4,7 @@ $(function () {
             return;
         } else {
             const user = JSON.parse(localStorage.getItem('user'));
+            $("[name='id_usuario']").val(user.id);
         }
     }
 );

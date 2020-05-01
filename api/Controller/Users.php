@@ -28,9 +28,49 @@ class Users extends Controller
                 'fetchCoinLimits' => 'fetchCoinLimits',
                 'sellCoin' => 'sellCoin',
                 'signIn' => 'signIn',
+                'signUp' => 'signUp',
                 'fetchClients' => 'fetchClients',
             ]
         ]);
+    }
+
+    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad, string $tipo = 'ingreso')
+    {
+        $Usuarios_Transacciones = new Usuarios_Transacciones();
+        $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad, $tipo === 'ingreso');
+    }
+
+    protected function signUp()
+    {
+        ['name' => $name, 'email' => $email, 'password' => $password] = $_POST;
+
+        $Usuarios = new Usuarios();
+        $Usuarios->insertUsuario($name, $email, $password);
+
+        $user = $Usuarios->selectUser($email);
+        $Usuarios->updateLastLogin($user['id']);
+        $user['id'] = System::encrypt($user['id']);
+
+        return compact('user');
+    }
+
+    protected function signIn()
+    {
+        System::check_value_empty($_POST, ['email', 'password'], 'Missing  Data.');
+        ['email' => $email, 'password' => $password] = $_POST;
+
+        $Usuarios = new Usuarios();
+        $hash = $Usuarios->selectPassword($email);
+
+        if (!password_verify($password, $hash)) {
+            JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
+        }
+
+        $user = $Usuarios->selectUser($email);
+        $Usuarios->updateLastLogin($user['id']);
+        $user['id'] = System::encrypt($user['id']);
+
+        return compact('user');
     }
 
     protected function fetchClients()
@@ -84,25 +124,6 @@ class Users extends Controller
         }
 
         return compact('clients', 'wallet');
-    }
-
-    protected function signIn()
-    {
-        System::check_value_empty($_POST, ['email', 'password'], 'Missing  Data.');
-        ['email' => $email, 'password' => $password] = $_POST;
-
-        $Usuarios = new Usuarios();
-        $hash = $Usuarios->selectPassword($email);
-
-        if (!password_verify($password, $hash)) {
-            JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
-        }
-
-        $user = $Usuarios->selectUser($email);
-        $Usuarios->updateLastLogin($user['id']);
-        $user['id'] = System::encrypt($user['id']);
-
-        return compact('user');
     }
 
     protected function sellCoin()

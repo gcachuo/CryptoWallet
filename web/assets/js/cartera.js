@@ -15,7 +15,7 @@ $(function () {
 
         ajax: {
             type: 'POST',
-            url: 'api/users/fetchAmounts',
+            url: '/api/users/fetchAmounts',
             dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
                 coins = amounts;
                 return amounts;
@@ -149,7 +149,7 @@ function initComplete() {
     totales.costo = 0;
     totales.actual = 0;
 
-    $.post('api/users/fetchCoinLimits', {
+    $.post('../api/users/fetchCoinLimits', {
         user: JSON.parse(localStorage.getItem('user'))
     }).done(({status, code, response: {message, data: {sell}}, error}) => {
         autoSell(sell);
