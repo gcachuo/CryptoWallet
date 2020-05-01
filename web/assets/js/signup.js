@@ -5,7 +5,7 @@ $(function () {
 
         var data = $(e.currentTarget).serializeArray();
 
-        $.post("/api/users/signUp", data).done(({status, code, response: {message, data: {user}}, error}) => {
+        $.post("../api/users/signUp", data).done(({status, code, response: {message, data: {user}}, error}) => {
             localStorage.setItem('user', JSON.stringify(user));
             location.href = 'cartera';
         }).fail(response => {

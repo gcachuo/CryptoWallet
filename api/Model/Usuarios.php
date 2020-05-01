@@ -9,7 +9,6 @@ class Usuarios
     public function __construct()
     {
         new Usuarios_Transacciones();
-        new Monedas();
         $mysql = new MySQL();
         $mysql->create_table('usuarios', [
             new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true, null, true, true),

@@ -1,0 +1,16 @@
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('bat', 'mxn', 'BAT');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('bch', 'mxn', 'Bitcoin Cash');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('bnb', 'mxn', 'Binance Coin');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('bsv', 'mxn', 'Bitcoin SV');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('btc', 'mxn', 'Bitcoin');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('enj', 'mxn', 'Enjin');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('eth', 'mxn', 'Ethereum');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('gas', 'mxn', 'NeoGas');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('gnt', 'mxn', 'Golem');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('ltc', 'mxn', 'Litecoin');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('mana', 'mxn', 'Mana');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('mxn', 'mxn', 'Peso');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('nano', 'mxn', 'Nano');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('neo', 'mxn', 'NEO');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('tusd', 'mxn', 'True USD');
+INSERT INTO monedas (id_moneda, par_moneda, nombre_moneda) VALUES ('xrp', 'mxn', 'Ripple');

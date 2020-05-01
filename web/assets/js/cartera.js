@@ -149,7 +149,7 @@ function initComplete() {
     totales.costo = 0;
     totales.actual = 0;
 
-    $.post('/api/users/fetchCoinLimits', {
+    $.post('../api/users/fetchCoinLimits', {
         user: JSON.parse(localStorage.getItem('user'))
     }).done(({status, code, response: {message, data: {sell}}, error}) => {
         autoSell(sell);
