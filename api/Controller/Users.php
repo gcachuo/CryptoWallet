@@ -75,6 +75,11 @@ class Users extends Controller
 
         $user = $Usuarios->selectUser($email);
         $Usuarios->updateLastLogin($user['id']);
+
+        session_start();
+        $_SESSION['user'] = $user;
+        session_write_close();
+
         $user['id'] = System::encrypt($user['id']);
 
         return compact('user');
