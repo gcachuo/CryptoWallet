@@ -1,1 +1,0 @@
-INSERT INTO `_modulos` (id_modulo, icono_modulo, padre_modulo, orden_modulo, navegar_modulo, estatus_modulo) VALUES (3001, null, 3000, 1, 'wallet', true);
