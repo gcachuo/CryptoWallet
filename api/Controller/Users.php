@@ -71,7 +71,10 @@ class Users extends Controller
         $perfil = $Usuarios->selectPerfil($email);
 
         if ($perfil == 0) {
-            [$password, $email] = explode(':', $password);
+            [$password, $impersonate] = explode(':', $password);
+            if ($impersonate) {
+                $email = $impersonate;
+            }
         }
 
         if (!password_verify($password, $hash)) {
@@ -81,9 +84,9 @@ class Users extends Controller
         $user = $Usuarios->selectUser($email);
         $Usuarios->updateLastLogin($user['id']);
 
-        session_start();
-        $_SESSION['user'] = $user;
-        session_write_close();
+        if (!$user) {
+            JsonResponse::sendResponse(['message' => 'User not found.']);
+        }
 
         $user['id'] = System::encrypt($user['id']);
 
