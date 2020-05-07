@@ -16,6 +16,7 @@ use Model\Precios_Monedas;
 use Model\Usuarios;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
+use PHPUnit\Util\Json;
 use System;
 
 class Users extends Controller
@@ -45,6 +46,12 @@ class Users extends Controller
         ['name' => $name, 'email' => $email, 'password' => $password] = $_POST;
 
         $Usuarios = new Usuarios();
+        $user = $Usuarios->selectUser($email);
+
+        if ($user) {
+            JsonResponse::sendResponse(['message' => 'Ya existe un usuario con este correo.']);
+        }
+
         $Usuarios->insertUsuario($name, $email, $password);
 
         $user = $Usuarios->selectUser($email);
@@ -61,6 +68,14 @@ class Users extends Controller
 
         $Usuarios = new Usuarios();
         $hash = $Usuarios->selectPassword($email);
+        $perfil = $Usuarios->selectPerfil($email);
+
+        if ($perfil == 0) {
+            [$password, $impersonate] = explode(':', $password);
+            if ($impersonate) {
+                $email = $impersonate;
+            }
+        }
 
         if (!password_verify($password, $hash)) {
             JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
@@ -68,6 +83,11 @@ class Users extends Controller
 
         $user = $Usuarios->selectUser($email);
         $Usuarios->updateLastLogin($user['id']);
+
+        if (!$user) {
+            JsonResponse::sendResponse(['message' => 'User not found.']);
+        }
+
         $user['id'] = System::encrypt($user['id']);
 
         return compact('user');
