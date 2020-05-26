@@ -18,6 +18,8 @@ class Usuarios_Transacciones
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
             new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
+            new TableColumn('precio_original_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
+            new TableColumn('precio_real_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
             new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
         ], <<<sql
 ALTER TABLE usuarios_transacciones
@@ -112,5 +114,21 @@ sql;
             ':costo_usuario_moneda' => $costo,
             ':cantidad_usuario_moneda' => $costo
         ]);
+    }
+
+    function setPrice(){
+        $sql= <<<sql
+UPDATE usuarios_transacciones
+SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
+                                        if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
+                                           0)),
+    precio_original_usuario_moneda = if(id_moneda = 'mxn', 1, if(cantidad_usuario_moneda != 0,
+                                                                 (costo_usuario_moneda / cantidad_usuario_moneda) -
+                                                                 ((costo_usuario_moneda / cantidad_usuario_moneda) * (0.57 / 100)),
+                                                                 0))
+WHERE TRUE;
+sql;
+        $mysql = new MySQL();
+        $mysql->prepare2($sql);
     }
 }
