@@ -129,6 +129,9 @@ function initComplete() {
     });
     tableCoins = $("#tabla-monedas").DataTable({
         data,
+        ajax: {
+            url: '',
+        },
 
         pageLength: 25,
         scrollX: false,

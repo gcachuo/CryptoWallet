@@ -121,14 +121,14 @@ sql;
             ':cantidad_usuario_moneda' => $costo
         ]);
 
-        $sql = <<<sql
+       /* $sql = <<<sql
 UPDATE usuarios_monedas_limites set limite=limite-:costo_usuario_moneda where id_moneda=:id_moneda and id_usuario=:id_usuario
 sql;
         $mysql->prepare2($sql, [
             ':id_moneda' => $id_moneda,
             ':id_usuario' => $user_id,
             ':costo_usuario_moneda' => $costo
-        ]);
+        ]);*/
     }
 
     function setPrice()
