@@ -78,14 +78,14 @@ class Users extends Controller
         }
 
         if (!password_verify($password, $hash)) {
-            JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
+            JsonResponse::sendResponse('El usuario o la contraseña son incorrectos.');
         }
 
         $user = $Usuarios->selectUser($email);
         $Usuarios->updateLastLogin($user['id']);
 
         if (!$user) {
-            JsonResponse::sendResponse(['message' => 'User not found.']);
+            JsonResponse::sendResponse('User not found.');
         }
 
         $user['id'] = System::encrypt($user['id']);
@@ -157,7 +157,7 @@ class Users extends Controller
         $diff = $Usuarios_Transacciones->selectDiff($fecha, $user_id, $id_moneda);
 
         if ($diff['diff'] == 0) {
-            JsonResponse::sendResponse(['message' => 'Duplicated transaction.']);
+            JsonResponse::sendResponse('Duplicated transaction.');
         }
 
         $Bitso = new \Helper\Bitso($user_id);
@@ -167,14 +167,14 @@ class Users extends Controller
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
-            JsonResponse::sendResponse(['message' => 'Error placing order.'], HTTPStatusCodes::ServiceUnavailable);
+            JsonResponse::sendResponse('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
             $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
 
-            if ($order->original_amount == 0) {
-                JsonResponse::sendResponse(['message' => 'Error. Inserting zero.']);
+            if ($order->original_value == 0) {
+                JsonResponse::sendResponse('Error. Inserting zero.');
             }
         }
         return true;

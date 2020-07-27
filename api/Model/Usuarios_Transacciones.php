@@ -4,6 +4,7 @@
 namespace Model;
 
 
+use BitsoAPI\bitso;
 use Helper\BitsoOrderPayload;
 
 class Usuarios_Transacciones
@@ -91,8 +92,13 @@ sql;
      * @param $costo
      * @param BitsoOrderPayload $order
      */
-    function insertOrder($user_id, $id_moneda, $costo, $order)
+    function insertOrder($user_id, $id_moneda, $costo, &$order)
     {
+        if (empty($order->original_amount)) {
+            $bitso = new bitso('', '');
+            $ticker = $bitso->ticker(["book" => $order->book]);
+            $order->original_amount = $order->original_value / $ticker->payload->ask;
+        }
         $sql = <<<sql
 INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
 VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
@@ -116,8 +122,9 @@ sql;
         ]);
     }
 
-    function setPrice(){
-        $sql= <<<sql
+    function setPrice()
+    {
+        $sql = <<<sql
 UPDATE usuarios_transacciones
 SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
                                         if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,

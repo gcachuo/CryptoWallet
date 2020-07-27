@@ -8,7 +8,7 @@ $(function () {
         order: [[2, 'desc']],
         ajax: {
             type: 'POST',
-            url: '../api/users/fetchClients',
+            url: 'users/fetchClients',
             dataSrc: ({status, code, response: {message, data: {clients, wallet}}, error}) => {
                 totales = {
                     actual: {

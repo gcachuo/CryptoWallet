@@ -3,6 +3,9 @@
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
   "default": "cartera",
+  "error": {
+
+  },
   "modules": {
     "login": {
       "name": "Login",
