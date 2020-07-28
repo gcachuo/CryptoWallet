@@ -138,7 +138,7 @@ UPDATE usuarios_transacciones
 SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
                                         if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
                                            0))
-WHERE TRUE;
+WHERE precio_real_usuario_moneda is null;
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql);
