@@ -9,7 +9,10 @@ $(function () {
         ajax: {
             type: 'POST',
             url: 'users/fetchClients',
-            dataSrc: ({status, code, response: {message, data: {clients, wallet}}, error}) => {
+            data: {
+                user: JSON.parse(localStorage.getItem('user'))
+            },
+            dataSrc: ({response: {data: {clients, wallet}}}) => {
                 totales = {
                     actual: {
                         cartera: wallet.total,
@@ -33,69 +36,42 @@ $(function () {
                     totales.costo.clientes += +client.costo;
                 });
                 return clients;
-            },
-            data: {
-                user: JSON.parse(localStorage.getItem('user'))
             }
         },
 
-        pageLength: 25,
         scrollX: false,
         processing: true,
         serverSide: false,
-        responsive: true,
         paginate: false,
         searching: false,
         initComplete,
 
-        language: {
-            search: "Buscar:",
-            emptyTable: "No hay registros que consultar",
-            lengthMenu: "Mostrar _MENU_ registros por pagina",
-            info: "Mostrando pagina _PAGE_ de _PAGES_",
-            loadingRecords: "...",
-            processing: "<i class='fa fa-spin fa-spinner'></i>",
-            paginate: {
-                first: "Primero",
-                last: "Ultimo",
-                next: "Siguiente",
-                previous: "Anterior"
+        columnDefs: global.dt.columnDefs([
+            {
+                responsivePriority: 1,
+                title: 'Nombre', data: 'nombre'
             },
-        },
-
-        columnDefs: (() => {
-            const columns = [
-                {
-                    responsivePriority: 1,
-                    title: 'Nombre', data: 'nombre'
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Costo', data: 'costo',
-                    render: (data, type) => {
-                        if (type === 'display') {
-                            return numeral(data).format('$0,0.00');
-                        }
-                        return data;
+            {
+                responsivePriority: 1,
+                title: 'Costo', data: 'costo',
+                render: (data, type) => {
+                    if (type === 'display') {
+                        return numeral(data).format('$0,0.00');
                     }
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Total', data: 'total',
-                    render: (data, type) => {
-                        if (type === 'display') {
-                            return numeral(data).format('$0,0.00');
-                        }
-                        return data;
+                    return data;
+                }
+            },
+            {
+                responsivePriority: 1,
+                title: 'Total', data: 'total',
+                render: (data, type) => {
+                    if (type === 'display') {
+                        return numeral(data).format('$0,0.00');
                     }
-                },
-            ];
-            columns.map((column, index) => {
-                column['targets'] = index;
-                return column;
-            });
-            return columns;
-        })(),
+                    return data;
+                }
+            },
+        ]),
     });
 });
 
@@ -130,75 +106,64 @@ function initComplete() {
     tableCoins = $("#tabla-monedas").DataTable({
         data,
 
+        order: [[5, 'desc']],
+
         ajax: null,
-        pageLength: 25,
         scrollX: false,
         processing: true,
         serverSide: false,
-        responsive: true,
         paginate: false,
         searching: false,
 
-        columnDefs: (() => {
-            const columns = [
-                {
-                    responsivePriority: 1,
-                    title: 'Moneda', data: 'moneda',
-                    render: (data, type) => {
-                        return data.toUpperCase();
+        columnDefs: global.dt.columnDefs([
+            {
+                responsivePriority: 1,
+                title: 'Moneda', data: 'moneda',
+                render: (data, type) => {
+                    return data.toUpperCase();
+                }
+            },
+            {
+                responsivePriority: 1,
+                title: 'Cartera', data: 'cartera',
+                render: (data, type, {moneda}) => {
+                    if (type === 'display') {
+                        return `<span title="${numeral(totales.valor.cartera[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
                     }
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Cartera', data: 'cartera',
-                    render: (data, type, {moneda}) => {
-                        if (type === 'display') {
-                            return `<span title="${numeral(totales.valor.cartera[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
-                        }
-                        return data;
+                    return data;
+                }
+            },
+            {
+                responsivePriority: 1,
+                title: 'Clientes', data: 'clientes',
+                render: (data, type, {moneda}) => {
+                    if (type === 'display') {
+                        return `<span title="${numeral(totales.valor.clientes[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
                     }
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Clientes', data: 'clientes',
-                    render: (data, type, {moneda}) => {
-                        if (type === 'display') {
-                            return `<span title="${numeral(totales.valor.clientes[moneda]).format('$0,0.00')}">` + numeral(data).format('0.00000000') + `</span>`;
-                        }
-                        return data;
+                    return data;
+                }
+            },
+            {
+                responsivePriority: 1,
+                title: 'Diferencia', data: 'diferencia',
+                render: (data, type) => {
+                    if (type === 'display') {
+                        return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
                     }
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Diferencia', data: 'diferencia',
-                    render: (data, type) => {
-                        if (type === 'display') {
-                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0.00000000') + '</span>';
-                        }
-                        return data;
+                    return data;
+                }
+            },
+            {
+                responsivePriority: 1,
+                title: 'Valor', data: 'valor',
+                render: (data, type) => {
+                    if (type === 'display') {
+                        return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                     }
-                },
-                {
-                    responsivePriority: 1,
-                    title: 'Valor', data: 'valor',
-                    render: (data, type) => {
-                        if (type === 'display') {
-                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
-                        }
-                        totales.valor.total += data;
-                        return data;
-                    }
-                },
-            ];
-            columns.map((column, index) => {
-                column['targets'] = index;
-                return column;
-            });
-            return columns;
-        })(),
-
-        initComplete: () => {
-            console.log(totales.valor.total);
-        }
+                    totales.valor.total += data;
+                    return data;
+                }
+            },
+        ])
     });
 }
