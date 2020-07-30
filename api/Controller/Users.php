@@ -49,7 +49,7 @@ class Users extends Controller
         $user = $Usuarios->selectUser($email);
 
         if ($user) {
-            JsonResponse::sendResponse(['message' => 'Ya existe un usuario con este correo.']);
+            JsonResponse::sendResponse('Ya existe un usuario con este correo.');
         }
 
         $Usuarios->insertUsuario($name, $email, $password);
