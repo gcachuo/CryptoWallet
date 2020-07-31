@@ -81,7 +81,7 @@ sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
             ':id_moneda' => $id_moneda,
-            ':costo_usuario_moneda' => $costo,
+            ':costo_usuario_moneda' => $costo ?: 0,
             ':cantidad_usuario_moneda' => $cantidad
         ]);
     }
@@ -131,7 +131,7 @@ UPDATE usuarios_transacciones
 SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
                                         if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
                                            0))
-WHERE precio_real_usuario_moneda is null;
+WHERE precio_real_usuario_moneda IS NULL;
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql);
