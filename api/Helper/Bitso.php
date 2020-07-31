@@ -26,8 +26,10 @@ class Bitso
         $Usuarios_Keys = new Usuarios_Keys();
         $keys = $Usuarios_Keys->selectKeys($user_id);
 
-        $this->api_key = System::decrypt($keys['api_key']);
-        $this->api_secret = System::decrypt($keys['api_secret']);
+        if ($keys) {
+            $this->api_key = System::decrypt($keys['api_key']);
+            $this->api_secret = System::decrypt($keys['api_secret']);
+        }
     }
 
     /**
@@ -45,7 +47,7 @@ class Bitso
             $orders = $bitso->lookup_order([$place_order->payload->oid]);
             return compact('place_order', 'orders');
         } catch (bitsoException $exception) {
-            JsonResponse::sendResponse(['message' => $exception->getMessage(), 'error' => $exception], HTTPStatusCodes::ServiceUnavailable);
+            JsonResponse::sendResponse($exception->getMessage(), HTTPStatusCodes::ServiceUnavailable, compact('exception'));
         }
     }
 

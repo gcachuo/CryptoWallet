@@ -4,20 +4,20 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "16c00a1db53ff2d566d9c3fcb2536228",
+    "content-hash": "ac14ee69a00416e790f6350df11be4be",
     "packages": [
         {
             "name": "bitso/bitso-php",
             "version": "dev-master",
             "source": {
                 "type": "git",
-                "url": "https://github.com/bitsoex/bitso-php.git",
-                "reference": "e12fca27ce3fe81cf2be428ecd552df1dba7fc3a"
+                "url": "https://github.com/gcachuo/bitso-php.git",
+                "reference": "df2d329ccd8b9fe49c294660d820471512d88562"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/bitsoex/bitso-php/zipball/e12fca27ce3fe81cf2be428ecd552df1dba7fc3a",
-                "reference": "e12fca27ce3fe81cf2be428ecd552df1dba7fc3a",
+                "url": "https://api.github.com/repos/gcachuo/bitso-php/zipball/df2d329ccd8b9fe49c294660d820471512d88562",
+                "reference": "df2d329ccd8b9fe49c294660d820471512d88562",
                 "shasum": ""
             },
             "require": {
@@ -32,7 +32,11 @@
                     "BitsoAPI\\": "./BitsoAPI/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -49,7 +53,10 @@
                 "bitso",
                 "php"
             ],
-            "time": "2018-09-12T15:58:35+00:00"
+            "support": {
+                "source": "https://github.com/gcachuo/bitso-php/tree/master"
+            },
+            "time": "2020-07-27T17:11:48+00:00"
         }
     ],
     "packages-dev": [],

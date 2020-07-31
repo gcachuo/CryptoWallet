@@ -24,6 +24,9 @@ class Users extends Controller
     public function __construct()
     {
         parent::__construct([
+            'PUT' => [
+                'trade' => 'addTrade'
+            ],
             'POST' => [
                 'fetchAmounts' => 'fetchAmounts',
                 'fetchCoinLimits' => 'fetchCoinLimits',
@@ -35,8 +38,11 @@ class Users extends Controller
         ]);
     }
 
-    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad, string $tipo = 'ingreso')
+    protected function addTrade()
     {
+        global $_PUT;
+        ['id_usuario' => $encrypted_user_id, 'id_moneda' => $id_moneda, 'costo' => $costo, 'cantidad' => $cantidad, 'tipo' => $tipo] = $_PUT;
+        $user_id = System::decrypt($encrypted_user_id);
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad, $tipo === 'ingreso');
     }
@@ -49,7 +55,7 @@ class Users extends Controller
         $user = $Usuarios->selectUser($email);
 
         if ($user) {
-            JsonResponse::sendResponse(['message' => 'Ya existe un usuario con este correo.']);
+            JsonResponse::sendResponse('Ya existe un usuario con este correo.');
         }
 
         $Usuarios->insertUsuario($name, $email, $password);
@@ -78,14 +84,14 @@ class Users extends Controller
         }
 
         if (!password_verify($password, $hash)) {
-            JsonResponse::sendResponse(['message' => 'El usuario o la contraseña son incorrectos.']);
+            JsonResponse::sendResponse('El usuario o la contraseña son incorrectos.');
         }
 
         $user = $Usuarios->selectUser($email);
         $Usuarios->updateLastLogin($user['id']);
 
         if (!$user) {
-            JsonResponse::sendResponse(['message' => 'User not found.']);
+            JsonResponse::sendResponse('User not found.');
         }
 
         $user['id'] = System::encrypt($user['id']);
@@ -157,7 +163,7 @@ class Users extends Controller
         $diff = $Usuarios_Transacciones->selectDiff($fecha, $user_id, $id_moneda);
 
         if ($diff['diff'] == 0) {
-            JsonResponse::sendResponse(['message' => 'Duplicated transaction.']);
+            JsonResponse::sendResponse('Duplicated transaction.');
         }
 
         $Bitso = new \Helper\Bitso($user_id);
@@ -167,14 +173,14 @@ class Users extends Controller
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
-            JsonResponse::sendResponse(['message' => 'Error placing order.'], HTTPStatusCodes::ServiceUnavailable);
+            JsonResponse::sendResponse('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
             $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
 
-            if ($order->original_amount == 0) {
-                JsonResponse::sendResponse(['message' => 'Error. Inserting zero.']);
+            if ($order->original_value == 0) {
+                JsonResponse::sendResponse('Error. Inserting zero.');
             }
         }
         return true;

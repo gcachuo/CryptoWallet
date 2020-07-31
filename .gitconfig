@@ -1,0 +1,8 @@
+[pull]
+	rebase = true
+[credential]
+    helper = store
+[submodule]
+    recurse = true
+[gc]
+	autoDetach = false

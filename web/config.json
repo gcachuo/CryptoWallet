@@ -1,8 +1,16 @@
 {
+  "code": "cryptowallet",
   "project": "CryptoWallet",
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
   "default": "cartera",
+  "error": {
+    "button": "Return to Main Page",
+    "file": "error.html",
+    "messages": {
+      "500": "An error ocurred"
+    }
+  },
   "modules": {
     "login": {
       "name": "Login",

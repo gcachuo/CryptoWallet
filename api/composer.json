@@ -1,4 +1,10 @@
 {
+  "repositories": [
+    {
+      "type": "vcs",
+      "url": "https://github.com/gcachuo/bitso-php"
+    }
+  ],
   "require": {
     "bitso/bitso-php": "dev-master"
   }

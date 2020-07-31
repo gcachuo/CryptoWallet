@@ -9,9 +9,26 @@ class Usuarios_Keys
     function selectKeys($user_id)
     {
         $sql = <<<sql
-select api_key,api_secret from usuarios_keys where id_usuario=?;
+SELECT api_key, api_secret
+FROM usuarios_keys
+WHERE id_usuario = :id_usuario;
 sql;
         $mysql = new MySQL();
-        return $mysql->fetch_single($mysql->prepare($sql, ['i', $user_id]));
+        return $mysql->prepare2($sql, [
+            ':id_usuario' => $user_id
+        ])->fetch();
+    }
+
+    public function insertKey($user_id, string $api_key, string $api_secret)
+    {
+        $sql = <<<sql
+INSERT IGNORE INTO crypto.usuarios_keys(id_usuario, api_key, api_secret) VALUES (:id_usuario, :api_key, :api_secret)
+sql;
+        $mysql = new MySQL();
+        return $mysql->prepare2($sql, [
+            ':id_usuario' => $user_id,
+            ':api_key' => $api_key,
+            ':api_secret' => $api_secret,
+        ]);
     }
 }

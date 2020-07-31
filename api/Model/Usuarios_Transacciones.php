@@ -4,6 +4,7 @@
 namespace Model;
 
 
+use BitsoAPI\bitso;
 use Helper\BitsoOrderPayload;
 
 class Usuarios_Transacciones
@@ -18,6 +19,8 @@ class Usuarios_Transacciones
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
             new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
+            new TableColumn('precio_original_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
+            new TableColumn('precio_real_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
             new TableColumn('fecha_usuario_transaccion', ColumnTypes::TIMESTAMP, 0, false, "CURRENT_TIMESTAMP"),
         ], <<<sql
 ALTER TABLE usuarios_transacciones
@@ -78,7 +81,7 @@ sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
             ':id_moneda' => $id_moneda,
-            ':costo_usuario_moneda' => $costo,
+            ':costo_usuario_moneda' => $costo ?: '0',
             ':cantidad_usuario_moneda' => $cantidad
         ]);
     }
@@ -89,8 +92,13 @@ sql;
      * @param $costo
      * @param BitsoOrderPayload $order
      */
-    function insertOrder($user_id, $id_moneda, $costo, $order)
+    function insertOrder($user_id, $id_moneda, $costo, &$order)
     {
+        if (empty($order->original_amount)) {
+            $bitso = new bitso('', '');
+            $ticker = $bitso->ticker(["book" => $order->book]);
+            $order->original_amount = $order->original_value / round($ticker->payload->bid, 2);
+        }
         $sql = <<<sql
 INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
 VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
@@ -112,5 +120,20 @@ sql;
             ':costo_usuario_moneda' => $costo,
             ':cantidad_usuario_moneda' => $costo
         ]);
+
+        $this->setPrice();
+    }
+
+    function setPrice()
+    {
+        $sql = <<<sql
+UPDATE usuarios_transacciones
+SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
+                                        if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
+                                           0))
+WHERE precio_real_usuario_moneda IS NULL;
+sql;
+        $mysql = new MySQL();
+        $mysql->prepare2($sql);
     }
 }
