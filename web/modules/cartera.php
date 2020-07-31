@@ -1,5 +1,3 @@
-<?php
-?>
 <div class="card">
     <div class="card-header">Totales</div>
     <div class="card-body padding">

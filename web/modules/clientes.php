@@ -1,5 +1,3 @@
-<?php
-?>
 <div class="card">
     <div class="card-header">Utilidad</div>
     <div class="card-body padding">
