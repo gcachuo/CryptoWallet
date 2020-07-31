@@ -53,7 +53,13 @@ $(function () {
             const columns = [
                 {
                     responsivePriority: 1,
-                    title: 'Moneda', data: 'moneda'
+                    title: 'Moneda', data: 'moneda',
+                    render: (data, type) => {
+                        if (type == 'display') {
+                            return `<a class="btn btn-xs btn-link" href="estadisticas">${data}</a>`
+                        }
+                        return data;
+                    }
                 },
                 {
                     responsivePriority: 2,

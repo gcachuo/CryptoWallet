@@ -19,7 +19,7 @@ class Trades extends Controller
     protected function getTrades()
     {
         $Usuarios_Transacciones = new Usuarios_Transacciones();
-        $trades = $Usuarios_Transacciones->selectTrades();
+        $trades = $Usuarios_Transacciones->selectTrades(1, 'eth');
 
         array_walk($trades, function (&$trade) {
             if (!$trade['price'] || $trade['price'] <= 0) {
