@@ -81,7 +81,7 @@ sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
             ':id_moneda' => $id_moneda,
-            ':costo_usuario_moneda' => $costo ?: 0,
+            ':costo_usuario_moneda' => $costo ?: '0',
             ':cantidad_usuario_moneda' => $cantidad
         ]);
     }
