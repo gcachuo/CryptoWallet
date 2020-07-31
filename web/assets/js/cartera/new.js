@@ -8,3 +8,7 @@ $(function () {
         }
     }
 );
+
+function addTrade() {
+    location.reload();
+}

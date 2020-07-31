@@ -2,7 +2,7 @@
 $monedas = System::curl(['url' => 'coins/list'])['monedas'];
 ?>
 <div class="padding">
-    <form class="container" method="post" action="cartera/ajax/save.php">
+    <form class="container" method="put" uri="users/trade" callback="addTrade">
         <input type="hidden" name="id_usuario">
         <div class="form-group">
             <select name="tipo" class="form-control" required>

@@ -24,6 +24,9 @@ class Users extends Controller
     public function __construct()
     {
         parent::__construct([
+            'PUT' => [
+                'trade' => 'addTrade'
+            ],
             'POST' => [
                 'fetchAmounts' => 'fetchAmounts',
                 'fetchCoinLimits' => 'fetchCoinLimits',
@@ -35,8 +38,11 @@ class Users extends Controller
         ]);
     }
 
-    public function addTrade(int $user_id, string $id_moneda, float $costo, float $cantidad, string $tipo = 'ingreso')
+    protected function addTrade()
     {
+        global $_PUT;
+        ['id_usuario' => $encrypted_user_id, 'id_moneda' => $id_moneda, 'costo' => $costo, 'cantidad' => $cantidad, 'tipo' => $tipo] = $_PUT;
+        $user_id = System::decrypt($encrypted_user_id);
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad, $tipo === 'ingreso');
     }
