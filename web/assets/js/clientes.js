@@ -106,8 +106,6 @@ function initComplete() {
     tableCoins = $("#tabla-monedas").DataTable({
         data,
 
-        order: [[5, 'desc']],
-
         ajax: null,
         scrollX: false,
         processing: true,
