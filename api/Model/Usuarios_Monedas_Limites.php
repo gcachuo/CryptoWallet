@@ -15,7 +15,11 @@ class Usuarios_Monedas_Limites
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
             new TableColumn('limite', ColumnTypes::DECIMAL, '15,2', true),
             new TableColumn('cantidad', ColumnTypes::DECIMAL, '15,2', false),
-        ]);
+        ],<<<sql
+create unique index usuarios_monedas_limites_id_usuario_id_moneda_uindex
+	on usuarios_monedas_limites (id_usuario, id_moneda);
+sql
+);
     }
 
     public function selectLimits($user_id)
