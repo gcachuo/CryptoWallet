@@ -1,9 +1,12 @@
 {
   "code": "cryptowallet",
   "project": "CryptoWallet",
+  "description": "CryptoWallet",
+  "copyright": "CryptoWallet",
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
   "default": "cartera",
+  "breadcrumbs": true,
   "error": {
     "button": "Return to Main Page",
     "file": "error.html",
