@@ -1,0 +1,9 @@
+[submodule "api/Lib"]
+	path = api/Lib
+	url = git@github.com:gcachuo/SimpleAPI.git
+[submodule "web/core"]
+	path = web/core
+	url = git@github.com:gcachuo/SimpleAPI.git
+[submodule "web/themes/flatkit"]
+	path = web/themes/flatkit
+	url = git@gitlab.com:kchu-software/themes/flatkit-template.git
