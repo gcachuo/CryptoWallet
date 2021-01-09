@@ -1,9 +1,12 @@
 {
   "code": "cryptowallet",
   "project": "CryptoWallet",
+  "description": "CryptoWallet",
+  "copyright": "CryptoWallet",
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
   "default": "cartera",
+  "breadcrumbs": true,
   "error": {
     "button": "Return to Main Page",
     "file": "error.html",
@@ -27,12 +30,23 @@
     "cartera": {
       "name": "Cartera",
       "icon": "account_balance_wallet",
-      "href": "cartera"
+      "href": "cartera",
+      "action": {
+        "name": "New Transaction",
+        "href": "new"
+      }
     },
     "clientes": {
       "name": "Clientes",
       "icon": "people",
       "href": "clientes"
+    },
+    "logout": {
+      "name": "Cerrar Sesión",
+      "icon": "lock",
+      "href": "login?logout=true",
+      "permissions": false,
+      "onclick": "return confirm('¿Estas seguro de cerrar sesión?')"
     }
   }
 }

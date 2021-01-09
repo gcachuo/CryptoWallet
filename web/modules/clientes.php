@@ -1,5 +1,4 @@
-<?php
-?>
+<input type="hidden" id="user_token" value="<?= $_SESSION['user_token'] ?>">
 <div class="card">
     <div class="card-header">Utilidad</div>
     <div class="card-body padding">
@@ -69,4 +68,9 @@
         <table id="tabla-clientes" class="table"></table>
     </div>
 </div>
-<script src="assets/js/clientes.js"></script>
+<script>
+    $(()=>{
+        const clientes = new App.Clientes();
+        clientes.initDatatable();
+    });
+</script>

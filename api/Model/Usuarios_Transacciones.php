@@ -136,4 +136,28 @@ sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql);
     }
+
+    public function selectTrades(int $id_usuario, string $id_moneda)
+    {
+        $this->setPrice();
+
+        $sql = <<<sql
+SELECT 
+    fecha_usuario_transaccion date,
+    costo_usuario_moneda cost,
+    cantidad_usuario_moneda quantity,
+    precio_real_usuario_moneda price
+FROM usuarios_transacciones
+WHERE
+	  id_usuario = :id_usuario
+  AND id_moneda = :id_moneda
+ORDER BY fecha_usuario_transaccion;
+sql;
+        $mysql = new MySQL();
+        $query = $mysql->prepare2($sql, [
+            ':id_usuario' => $id_usuario,
+            ':id_moneda' => $id_moneda,
+        ]);
+        return $query->fetchAll();
+    }
 }

@@ -32,6 +32,7 @@ class Users extends Controller
                 'fetchCoinLimits' => 'fetchCoinLimits',
                 'sellCoin' => 'sellCoin',
                 'signIn' => 'signIn',
+                'login' => 'signIn',
                 'signUp' => 'signUp',
                 'fetchClients' => 'fetchClients',
             ]
@@ -41,8 +42,12 @@ class Users extends Controller
     protected function addTrade()
     {
         global $_PUT;
-        ['id_usuario' => $encrypted_user_id, 'id_moneda' => $id_moneda, 'costo' => $costo, 'cantidad' => $cantidad, 'tipo' => $tipo] = $_PUT;
-        $user_id = System::decrypt($encrypted_user_id);
+        ['user_token' => $user_token, 'id_moneda' => $id_moneda, 'costo' => $costo, 'cantidad' => $cantidad, 'tipo' => $tipo] = $_PUT;
+
+        $user = System::decode_token($user_token);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $Usuarios_Transacciones->insertTrade($user_id, $id_moneda, $costo, $cantidad, $tipo === 'ingreso');
     }
@@ -96,12 +101,16 @@ class Users extends Controller
 
         $user['id'] = System::encrypt($user['id']);
 
-        return compact('user');
+        $token = System::encode_token($user);
+        return compact('user', 'token');
     }
 
     protected function fetchClients()
     {
-        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+        System::check_value_empty($_POST, ['user_token']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
 
         $Usuarios = new Usuarios();
         $clients = $Usuarios->selectClients($user_id);
@@ -154,7 +163,11 @@ class Users extends Controller
 
     protected function sellCoin()
     {
-        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+        System::check_value_empty($_POST, ['user_token']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
         $id_moneda = $_POST['coin']['idMoneda'];
         $costo = $_POST['total'];
         $fecha = date('Y-m-d H:i:s');
@@ -163,7 +176,7 @@ class Users extends Controller
         $diff = $Usuarios_Transacciones->selectDiff($fecha, $user_id, $id_moneda);
 
         if ($diff['diff'] == 0) {
-            JsonResponse::sendResponse('Duplicated transaction.');
+            throw new \CoreException('Duplicated transaction.', 400);
         }
 
         $Bitso = new \Helper\Bitso($user_id);
@@ -188,7 +201,10 @@ class Users extends Controller
 
     protected function fetchCoinLimits()
     {
-        $user_id = System::decrypt(System::isset_get($_POST['user']['id']));
+        System::check_value_empty($_POST, ['user_token']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
 
         $Usuarios_Monedas_Limites = new Usuarios_Monedas_Limites();
         $dbresults = $Usuarios_Monedas_Limites->selectLimits($user_id);
@@ -205,7 +221,9 @@ class Users extends Controller
 
     protected function fetchAmounts()
     {
-        $user_id = System::isset_get($_POST['user']['id']);
+        System::check_value_empty($_POST, ['user_token']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
 
         $Usuarios_Transacciones = new Usuarios_Transacciones();

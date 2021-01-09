@@ -1,12 +1,18 @@
 RewriteEngine on
 
+RewriteCond %{HTTP:Connection} Upgrade [NC]
+RewriteCond %{HTTP:Upgrade} websocket [NC]
+RewriteRule /(.*) ws://localhost:8080/$1 [P,L]
+
 ErrorDocument 503 503.html
+
+php_flag  log_errors on
+php_value error_log error.log
 
 RewriteCond %{REQUEST_URI} !doc
 RewriteCond %{REQUEST_URI} !public
+RewriteCond %{REQUEST_URI} !templates
 RewriteRule ^(.*)$ index.php [QSA]
-
-AddHandler application/x-httpd-php73 .php
 
 php_value post_max_size 30M
 php_value upload_max_filesize 30M

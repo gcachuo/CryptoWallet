@@ -3,7 +3,7 @@ $monedas = System::curl(['url' => 'coins/list'])['monedas'];
 ?>
 <div class="padding">
     <form class="container" method="put" uri="users/trade" callback="addTrade">
-        <input type="hidden" name="id_usuario">
+        <input type="hidden" name="user_token" value="<?= $_SESSION['user_token'] ?>">
         <div class="form-group">
             <select name="tipo" class="form-control" required>
                 <option value="">Seleccione Tipo</option>
@@ -29,5 +29,9 @@ $monedas = System::curl(['url' => 'coins/list'])['monedas'];
         </div>
         <button class="btn btn-primary">Guardar</button>
     </form>
-    <script src="assets/js/cartera/new.js"></script>
 </div>
+<script>
+    function addTrade() {
+        location.reload();
+    }
+</script>
