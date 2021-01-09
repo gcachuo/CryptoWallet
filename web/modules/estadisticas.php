@@ -4,4 +4,9 @@
         <div id="chartdiv" style="width: 100%; height: 100%"></div>
     </div>
 </div>
-<script src="assets/js/estadisticas.js"></script>
+<script>
+    $(()=>{
+        const estadisticas = new App.Estadisticas();
+        estadisticas.getTradesChart();
+    });
+</script>

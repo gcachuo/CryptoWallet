@@ -1,3 +1,4 @@
+<input type="hidden" id="user_token" value="<?= $_SESSION['user_token'] ?>">
 <div class="card">
     <div class="card-header">Totales</div>
     <div class="card-body padding">
@@ -22,4 +23,9 @@
         <table class="table"></table>
     </div>
 </div>
-<script src="assets/js/cartera.js"></script>
+<script>
+    $(()=>{
+        const cartera = new App.Cartera();
+        cartera.initDatatable();
+    });
+</script>
