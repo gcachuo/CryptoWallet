@@ -8,9 +8,10 @@ export class Estadisticas {
     constructor() {
         Defaults.ajaxSettings();
     }
-    async getTradesChart(){
+    async getTradesChart(coin: string){
         const {data: {trades: data}}:ApiResponse = await $.ajax({
-            url: 'trades/data'
+            url: 'trades/data',
+            data:{coin}
         });
         this.loadChart($('#chartdiv'), data, {});
     }

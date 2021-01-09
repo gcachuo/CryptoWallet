@@ -50,9 +50,9 @@ export class Cartera {
                 {
                     responsivePriority: 1,
                     title: 'Moneda', data: 'moneda',
-                    render: (data, type) => {
+                    render: (data, type,{idMoneda}) => {
                         if (type == 'display') {
-                            return `<a class="btn btn-xs btn-link" href="estadisticas">${data}</a>`
+                            return `<a class="btn btn-xs btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
                         }
                         return data;
                     }
