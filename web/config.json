@@ -3,6 +3,8 @@
   "project": "CryptoWallet",
   "description": "CryptoWallet",
   "copyright": "CryptoWallet",
+  "keywords": "crypto, bitcoin, ethereum, cryptocurrency",
+  "author": "gcachuo@gmail.com",
   "theme": "themes/flatkit/html/",
   "entry": "index.html",
   "default": "cartera",

@@ -11,7 +11,7 @@ try {
         <div id="chartdiv" style="width: 100%; height: 100%"></div>
     </div>
 </div>
-<input type="text" id="coin" value="<?= $_GET['coin'] ?? null ?>">
+<input type="hidden" id="coin" value="<?= $_GET['coin'] ?? null ?>">
 <script>
     $(() => {
         const estadisticas = new App.Estadisticas();
