@@ -39,12 +39,17 @@ export class Cartera {
 
             pageLength: 25,
             scrollX: false,
-            scrollY: 'calc(100vh - 411px)',
             processing: true,
             serverSide: false,
             responsive: true,
             searching: false,
             initComplete: this.initComplete,
+
+            rowCallback: function( row, data, index ) {
+                if (data['cantidad'] <= 0) {
+                    $(row).hide();
+                }
+            },
 
             columnDefs: Defaults.global.dt.getColumns([
                 {

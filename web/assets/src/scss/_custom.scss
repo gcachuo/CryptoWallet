@@ -7,7 +7,7 @@ $gray-300: 'gray';
   &.show {
     opacity: 1;
 
-    .modal-dialog{
+    .modal-dialog {
       margin: 0;
       max-width: unset;
     }
@@ -36,10 +36,11 @@ $gray-300: 'gray';
     }
   }
 
-  &.fade{
+  &.fade {
     .modal-dialog {
       transform: unset;
     }
+
     &.hide {
       opacity: 0;
     }
@@ -225,7 +226,11 @@ body {
   overflow-y: hidden;
 }
 
-#view{
+#view {
   overflow: auto;
   height: 100vh;
+}
+
+.app-footer:not(.hide) ~ .app-body {
+  padding-bottom: unset;
 }

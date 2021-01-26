@@ -7,6 +7,7 @@ namespace Controller;
 use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
 use Controller;
+use CoreException;
 use Helper\BitsoOrder;
 use Helper\BitsoOrderPayload;
 use Helper\BitsoOrders;
@@ -176,7 +177,7 @@ class Users extends Controller
         $diff = $Usuarios_Transacciones->selectDiff($fecha, $user_id, $id_moneda);
 
         if ($diff['diff'] == 0) {
-            throw new \CoreException('Duplicated transaction.', 400);
+            throw new CoreException('Duplicated transaction.', 400);
         }
 
         $Bitso = new \Helper\Bitso($user_id);
@@ -236,6 +237,11 @@ class Users extends Controller
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
+
+                    if (!$ticker->payload->ask || !$ticker->payload->bid) {
+                        throw new bitsoException('price zero: ' . $ticker->payload->book, HTTPStatusCodes::ServiceUnavailable);
+                    }
+
                     $prices[$amount['book']] = round(($ticker->payload->ask + $ticker->payload->bid) / 2, 2);
                 } catch (bitsoException $exception) {
                     $Precios_Monedas = new Precios_Monedas();
