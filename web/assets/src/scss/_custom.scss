@@ -3,11 +3,6 @@ $spacer: 0;
 $white: 'white';
 $gray-300: 'gray';
 
-#view{
-  overflow: auto;
-  height: 100vh;
-}
-
 #modal {
   &.show {
     opacity: 1;
@@ -228,4 +223,9 @@ ol, ul, dl {
 
 body {
   overflow-y: hidden;
+}
+
+#view{
+  overflow: auto;
+  height: 100vh;
 }

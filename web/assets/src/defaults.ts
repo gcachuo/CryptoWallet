@@ -1,16 +1,26 @@
 import AjaxSettings = DataTables.AjaxSettings;
+import ColumnSettings = DataTables.ColumnSettings;
+import ColumnDefsSettings = DataTables.ColumnDefsSettings;
+
 import {DT} from "./typings/DataTables";
+
 import $ from 'jquery';
-import 'datatables.net'
-import 'datatables.net-dt'
-import 'datatables.net-buttons'
 import "bootstrap";
 import * as toastr from "toastr";
+
+import 'datatables.net';
+import 'datatables.net-dt';
+import 'datatables.net-buttons';
+
+import '@fortawesome/fontawesome-free/js/fontawesome';
+import '@fortawesome/fontawesome-free/js/solid';
+import '@fortawesome/fontawesome-free/js/regular';
+import '@fortawesome/fontawesome-free/js/brands';
 
 interface ISettings {
     apiUrl: string,
     code?: string,
-    dt?: ((DataTables.Settings & DT & { getColumns? }))
+    dt?: ((DataTables.Settings & DT & { getColumns?: (columns: (ColumnSettings & { responsivePriority?: number })[]) => ColumnDefsSettings[] }))
 }
 
 export class Defaults {
@@ -89,7 +99,7 @@ export class Defaults {
                     info: "Mostrando pagina _PAGE_ de _PAGES_",
                     infoEmpty: "Mostrando 0 a 0 de 0 registros",
                     loadingRecords: "Cargando...",
-                    processing: "<i class='fas fa-spin fa-spinner'></i>",
+                    processing: "<i class='fa fa-spin fa-spinner'></i>",
                     paginate: {
                         first: "Primero",
                         last: "Ultimo",
@@ -106,7 +116,7 @@ export class Defaults {
                     column['targets'] = index;
                     return column;
                 });
-                return columns;
+                return <ColumnDefsSettings[]>columns;
             }
         }
     }
@@ -117,7 +127,7 @@ export class Defaults {
         });
     }
 
-    public static ajaxSettings() {
+    private static ajaxSettings() {
         const ajaxSettings: AjaxSettings & { api: boolean } = {
             api: true,
             async: true,
@@ -156,10 +166,12 @@ export class Defaults {
     }
 
     private static overwriteFormSubmit() {
-        $(document).off('submit').on('submit', 'form', (e) => {
+        $(document).off('submit', 'form').on('submit', 'form', (e) => {
+            const triggered = $(e.currentTarget).attr('triggered');
             const url = $(e.currentTarget).attr('uri');
-            if (url) {
+            if (url && !triggered) {
                 e.preventDefault();
+                $(e.currentTarget).attr('triggered', 'true');
 
                 const $button = $(`button[type='submit']`);
                 this.$buttonHTML = $button.html();
@@ -186,7 +198,13 @@ export class Defaults {
 
                 let data: object = {};
                 (valuePair as JQuery.NameValuePair[]).map(({name, value}) => {
-                    data[name] = value;
+                    if (name.includes('[]')) {
+                        name = name.replace('[]', '');
+                        data[name] = data[name] || [];
+                        data[name].push(value);
+                    } else {
+                        data[name] = value;
+                    }
                 });
 
                 $.ajax({
@@ -200,6 +218,8 @@ export class Defaults {
                     if (redirect) {
                         location.href = redirect;
                     }
+                }).always(() => {
+                    $(e.currentTarget).removeAttr('triggered');
                 });
             }
         })
