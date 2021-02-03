@@ -249,12 +249,17 @@ class Users extends Controller
                     $prices[$amount['book']] = (double)$fallback;
                 }
             }
-            $amount['costo'] = (float)$amount['costo'] > 0 ? (float)$amount['costo'] : 0.01;
 
-            $amounts[$key]['precio'] = $prices[$amount['book']];
-            $amounts[$key]['total'] = $amount['cantidad'] * $amounts[$key]['precio'];
-            $amounts[$key]['porcentaje'] = (float)$amount['costo'] ? ($amounts[$key]['total'] - $amount['costo']) / $amount['costo'] : 0;
-            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] ? $amount['costo'] / $amount['cantidad'] : 0);
+            $precio = $prices[$amount['book']];
+            $actual = $amount['cantidad'] * $precio;
+            $costo = $amount['costo'];
+
+            $porcentaje = $costo != 0 ? (($actual - $costo) / abs($costo)) : 0;
+
+            $amounts[$key]['precio'] = $precio;
+            $amounts[$key]['total'] = $actual;
+            $amounts[$key]['porcentaje'] = $porcentaje;
+            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] ? $costo / $amount['cantidad'] : 0);
         }
 
         return compact('amounts');
