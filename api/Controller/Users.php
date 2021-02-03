@@ -255,11 +255,15 @@ class Users extends Controller
             $costo = $amount['costo'];
 
             $porcentaje = $costo != 0 ? (($actual - $costo) / abs($costo)) : 0;
+            $porcentaje = $costo > 0 ? $porcentaje : null;
+
+            //if(old>0,(new/old-1),((new+abs(old)/abs(old))
+            //$porcentaje = $costo > 0 ? ($actual / $costo - 1) : ($costo != 0 ? ($actual + abs($costo) / abs($costo)) : 0);
 
             $amounts[$key]['precio'] = $precio;
             $amounts[$key]['total'] = $actual;
             $amounts[$key]['porcentaje'] = $porcentaje;
-            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] ? $costo / $amount['cantidad'] : 0);
+            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] && $costo > 0 ? $costo / $amount['cantidad'] : 0);
         }
 
         return compact('amounts');
