@@ -180,10 +180,17 @@ class Users extends Controller
             throw new CoreException('Duplicated transaction.', 400);
         }
 
-        $Bitso = new \Helper\Bitso($user_id);
-        /** @var BitsoOrder $orders */
-        /** @var BitsoOrder $place_order */
-        ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
+        try {
+            $Bitso = new \Helper\Bitso($user_id);
+            /** @var BitsoOrder $orders */
+            /** @var BitsoOrder $place_order */
+            ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
+        } catch (CoreException $exception) {
+            if ($exception->getCode() != 503) {
+                throw $exception;
+            }
+            throw new CoreException($exception->getMessage(), HTTPStatusCodes::BadRequest);
+        }
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
