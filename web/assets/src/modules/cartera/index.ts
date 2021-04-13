@@ -2,6 +2,7 @@ import {Defaults} from "../../defaults";
 import $ from 'jquery';
 import 'datatables.net';
 import numeral from 'numeral';
+import toastr from 'toastr';
 
 export class Cartera {
     private static totales = {

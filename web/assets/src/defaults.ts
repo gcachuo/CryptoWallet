@@ -27,33 +27,54 @@ export class Defaults {
     private static settings: ISettings;
     public static global: ISettings & { [name: string]: any } = Defaults.getSettings();
     private static $buttonHTML;
+    private static code: string;
+    private static user_token: string;
 
-    constructor() {
-        $(() => {
-            Defaults.ajaxSettings();
+    public static init() {
+        this.code = ($("#tag-code").length ? $("#tag-code").attr('content').toString() : '');
+        this.user_token = ($("#tag-user-token").length ? $("#tag-user-token").attr('content').toString() : '');
 
-            Defaults.overwriteFormSubmit();
+        Defaults.ajaxSettings();
 
-            Defaults.datatableSettings();
+        Defaults.overwriteFormSubmit();
 
-            Defaults.setupForms();
+        Defaults.datatableSettings();
 
-            $('.parent-module').off('click').on('click', (e) => {
-                $(e.currentTarget).parent().toggleClass('active');
-            });
+        Defaults.setupForms();
 
-            $("button").prop('disabled', false);
+        Defaults.loadSelect2();
+
+        $('.parent-module').off('click').on('click', (e) => {
+            $(e.currentTarget).parent().toggleClass('active');
         });
+
+        $("button").prop('disabled', false);
     }
 
-    public static loadSelect2() {
+    private static loadSelect2() {
         require('select2');
         if ($('.select2').length) {
             $.each($('.select2'), (i, element) => {
                 $(element).select2({
                     width: 'resolve',
                     dropdownAutoWidth: true,
-                    placeholder: $(element).data('placeholder')
+                    placeholder: $(element).data('placeholder'),
+                    ajax: $(element).data('url') ? {
+                        url: $(element).data('url'),
+                        dataType: 'json',
+                        processResults: function ({data}) {
+                            if ($(element).data('items')) {
+                                let items = data[$(element).data('items')];
+                                items = items.map((item) => {
+                                    return {id: item.id, text: item.name};
+                                });
+                                return {
+                                    results: items
+                                };
+                            }
+                            return data;
+                        }
+                    } : null
                 });
             });
         }
@@ -73,7 +94,7 @@ export class Defaults {
 
     private static datatableSettings(): void {
         if ($.fn.dataTable) {
-            $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn';
+            $.fn.dataTable.Buttons.defaults.dom.button.className = 'btn btn-sm';
             $.extend($.fn.dataTable.ext.classes, {
                 sFilterInput: "form-control",
                 sLengthSelect: "form-control",
@@ -88,6 +109,10 @@ export class Defaults {
                 ajax: {
                     dataSrc: (name) => {
                         return ({status, code, data, error}) => data[name]
+                    },
+                    headers: {
+                        'X-Client': this.code,
+                        Authorization: 'Bearer ' + this.user_token
                     }
                 },
                 pageLength: 25,
@@ -187,28 +212,37 @@ export class Defaults {
                     return;
                 }
 
+                let data;
                 let valuePair: JQuery.NameValuePair[] | FormData = $(e.currentTarget).serializeArray();
                 if (method.toUpperCase() === 'POST' && fileUpload) {
-                    valuePair = new FormData(<HTMLFormElement>$(e.currentTarget).get(0));
+                    data = new FormData(<HTMLFormElement>$(e.currentTarget).get(0));
                     $.ajaxSetup({
                         contentType: false,
                         processData: false,
                     });
+                } else {
+                    data = {};
+                    (valuePair as JQuery.NameValuePair[]).map(({name, value}) => {
+                        if (name.includes('[]')) {
+                            name = name.replace('[]', '');
+                            data[name] = data[name] || [];
+                            data[name].push(value);
+                        } else {
+                            data[name] = value;
+                        }
+                    });
+                    data = JSON.stringify(data);
+                    $.ajaxSetup({
+                        contentType: 'application/json'
+                    });
                 }
 
-                let data: object = {};
-                (valuePair as JQuery.NameValuePair[]).map(({name, value}) => {
-                    if (name.includes('[]')) {
-                        name = name.replace('[]', '');
-                        data[name] = data[name] || [];
-                        data[name].push(value);
-                    } else {
-                        data[name] = value;
-                    }
-                });
-
                 $.ajax({
-                    url, method, data: JSON.stringify(data), contentType: 'application/json'
+                    url, method, data: data,
+                    headers: {
+                        'X-Client': this.code,
+                        Authorization: 'Bearer ' + this.user_token
+                    }
                 }).done((result) => {
                     if (window[callback]) {
                         window[callback](result);
@@ -286,7 +320,21 @@ export class Defaults {
     }
 
     static Alert(message, type = 'success') {
+        if (!message) {
+            return;
+        }
         toastr.clear();
         toastr[type](message);
+    }
+
+    static downloadFile(uri, name) {
+        const url = Defaults.global.apiUrl + '/' + uri;
+
+        const link = document.createElement("a");
+        link.setAttribute('download', name);
+        link.href = url;
+        document.body.appendChild(link);
+        link.click();
+        link.remove();
     }
 }
