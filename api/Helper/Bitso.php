@@ -28,8 +28,13 @@ class Bitso
         $keys = $Usuarios_Keys->selectKeys($user_id);
 
         if ($keys) {
-            $this->api_key = System::decrypt($keys['api_key']);
-            $this->api_secret = System::decrypt($keys['api_secret']);
+            $api_key = System::decrypt($keys['api_key']);
+            $api_secret = System::decrypt($keys['api_secret']);
+
+            System::check_value_empty(compact('api_key', 'api_secret'), ['api_key', 'api_secret'], 'Decryption failed, check seed');
+
+            $this->api_key = $api_key;
+            $this->api_secret = $api_secret;
         }
     }
 
