@@ -180,10 +180,17 @@ class Users extends Controller
             throw new CoreException('Duplicated transaction.', 400);
         }
 
-        $Bitso = new \Helper\Bitso($user_id);
-        /** @var BitsoOrder $orders */
-        /** @var BitsoOrder $place_order */
-        ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
+        try {
+            $Bitso = new \Helper\Bitso($user_id);
+            /** @var BitsoOrder $orders */
+            /** @var BitsoOrder $place_order */
+            ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
+        } catch (CoreException $exception) {
+            if ($exception->getCode() != 503) {
+                throw $exception;
+            }
+            throw new CoreException($exception->getMessage(), HTTPStatusCodes::BadRequest);
+        }
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
@@ -229,11 +236,13 @@ class Users extends Controller
 
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $amounts = $Usuarios_Transacciones->selectAmounts($user_id);
+        $avgs = $Usuarios_Transacciones->selectBuyPriceAvg($user_id);
 
         $bitso = new bitso('', '');
 
         $prices = [];
         foreach ($amounts as $key => $amount) {
+            $precio_promedio_compra = $avgs[$amount['idMoneda']];
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
@@ -249,12 +258,21 @@ class Users extends Controller
                     $prices[$amount['book']] = (double)$fallback;
                 }
             }
-            $amount['costo'] = (float)$amount['costo'] > 0 ? (float)$amount['costo'] : 0.01;
 
-            $amounts[$key]['precio'] = $prices[$amount['book']];
-            $amounts[$key]['total'] = $amount['cantidad'] * $amounts[$key]['precio'];
-            $amounts[$key]['porcentaje'] = (float)$amount['costo'] ? ($amounts[$key]['total'] - $amount['costo']) / $amount['costo'] : 0;
-            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] ? $amount['costo'] / $amount['cantidad'] : 0);
+            $precio = $prices[$amount['book']];
+            $actual = $amount['cantidad'] * $precio;
+            $costo = $amount['costo'];
+
+            $porcentaje = $costo != 0 ? (($actual - $costo) / abs($costo)) : 0;
+            $porcentaje = ($costo > 0) ? $porcentaje : (($precio && $precio_promedio_compra) ? $precio / $precio_promedio_compra : null);
+
+            //if(old>0,(new/old-1),((new+abs(old)/abs(old))
+            //$porcentaje = $costo > 0 ? ($actual / $costo - 1) : ($costo != 0 ? ($actual + abs($costo) / abs($costo)) : 0);
+
+            $amounts[$key]['precio'] = $precio;
+            $amounts[$key]['total'] = $actual;
+            $amounts[$key]['porcentaje'] = $porcentaje;
+            $amounts[$key]['promedio'] = ((float)$amount['cantidad'] && $costo > 0 ? $costo / $amount['cantidad'] : 0);
         }
 
         return compact('amounts');

@@ -45,7 +45,7 @@ export class Cartera {
             searching: false,
             initComplete: this.initComplete,
 
-            rowCallback: function( row, data, index ) {
+            rowCallback: function (row, data, index) {
                 if (data['cantidad'] <= 0) {
                     $(row).hide();
                 }
@@ -55,7 +55,7 @@ export class Cartera {
                 {
                     responsivePriority: 1,
                     title: 'Moneda', data: 'moneda',
-                    render: (data, type,{idMoneda}) => {
+                    render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
                             return `<a class="btn btn-xs btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
                         }
@@ -130,7 +130,10 @@ export class Cartera {
                     title: '%', data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
-                            return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
+                            if (data !== null) {
+                                return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
+                            }
+                            return `<span class="text-muted">N/A</span>`;
                         }
                         return data;
                     }
