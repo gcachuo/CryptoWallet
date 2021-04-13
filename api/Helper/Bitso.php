@@ -5,6 +5,7 @@ namespace Helper;
 
 
 use BitsoAPI\bitsoException;
+use CoreException;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Usuarios_Keys;
@@ -27,8 +28,13 @@ class Bitso
         $keys = $Usuarios_Keys->selectKeys($user_id);
 
         if ($keys) {
-            $this->api_key = System::decrypt($keys['api_key']);
-            $this->api_secret = System::decrypt($keys['api_secret']);
+            $api_key = System::decrypt($keys['api_key']);
+            $api_secret = System::decrypt($keys['api_secret']);
+
+            System::check_value_empty(compact('api_key', 'api_secret'), ['api_key', 'api_secret'], 'Decryption failed, check seed');
+
+            $this->api_key = $api_key;
+            $this->api_secret = $api_secret;
         }
     }
 
@@ -47,7 +53,7 @@ class Bitso
             $orders = $bitso->lookup_order([$place_order->payload->oid]);
             return compact('place_order', 'orders');
         } catch (bitsoException $exception) {
-            JsonResponse::sendResponse($exception->getMessage(), HTTPStatusCodes::ServiceUnavailable, compact('exception'));
+            throw new CoreException($exception->getMessage(), HTTPStatusCodes::ServiceUnavailable, compact('exception'));
         }
     }
 
