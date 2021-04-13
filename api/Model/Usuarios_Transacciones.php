@@ -42,9 +42,9 @@ sql
 SELECT
   m.id_moneda idMoneda,
   nombre_moneda moneda,
-  sum(costo_usuario_moneda)              costo,
-  round(sum(cantidad_usuario_moneda), 8) cantidad,
-  concat(ut.id_moneda,'_',par_moneda) book
+  SUM(costo_usuario_moneda)              costo,
+  ROUND(SUM(cantidad_usuario_moneda), 8) cantidad,
+  CONCAT(ut.id_moneda,'_',par_moneda) book
 FROM usuarios_transacciones ut
 INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
 WHERE id_usuario = ?
@@ -53,6 +53,21 @@ sql;
 
         $mysql = new MySQL();
         return $mysql->fetch_all($mysql->prepare($sql, ['i', $user_id]));
+    }
+
+    function selectBuyPriceAvg(int $id_usuario)
+    {
+        $sql = <<<sql
+SELECT id_moneda,
+      AVG(costo_usuario_moneda / cantidad_usuario_moneda) precio_compra_promedio
+FROM usuarios_transacciones
+WHERE id_usuario = :id_usuario
+AND costo_usuario_moneda / cantidad_usuario_moneda>0
+AND costo_usuario_moneda>0
+GROUP BY id_moneda
+sql;
+        $mysql = new MySQL();
+        return array_column($mysql->prepare2($sql, [':id_usuario' => $id_usuario])->fetchAll(), 'precio_compra_promedio', 'id_moneda');
     }
 
     function selectDiff($fecha, $user_id, $id_moneda)
@@ -128,8 +143,8 @@ sql;
     {
         $sql = <<<sql
 UPDATE usuarios_transacciones
-SET precio_real_usuario_moneda     = if(id_moneda = 'mxn', 1,
-                                        if(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
+SET precio_real_usuario_moneda     = IF(id_moneda = 'mxn', 1,
+                                        IF(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
                                            0))
 WHERE precio_real_usuario_moneda IS NULL;
 sql;

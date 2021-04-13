@@ -236,11 +236,13 @@ class Users extends Controller
 
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $amounts = $Usuarios_Transacciones->selectAmounts($user_id);
+        $avgs = $Usuarios_Transacciones->selectBuyPriceAvg($user_id);
 
         $bitso = new bitso('', '');
 
         $prices = [];
         foreach ($amounts as $key => $amount) {
+            $precio_promedio_compra = $avgs[$amount['idMoneda']];
             if (empty($prices[$amount['book']])) {
                 try {
                     $ticker = $bitso->ticker(["book" => $amount['book']]);
@@ -262,7 +264,7 @@ class Users extends Controller
             $costo = $amount['costo'];
 
             $porcentaje = $costo != 0 ? (($actual - $costo) / abs($costo)) : 0;
-            $porcentaje = $costo > 0 ? $porcentaje : null;
+            $porcentaje = ($costo > 0) ? $porcentaje : (($precio && $precio_promedio_compra) ? $precio / $precio_promedio_compra : null);
 
             //if(old>0,(new/old-1),((new+abs(old)/abs(old))
             //$porcentaje = $costo > 0 ? ($actual / $costo - 1) : ($costo != 0 ? ($actual + abs($costo) / abs($costo)) : 0);
