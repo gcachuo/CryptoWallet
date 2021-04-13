@@ -5,6 +5,7 @@ namespace Helper;
 
 
 use BitsoAPI\bitsoException;
+use CoreException;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Usuarios_Keys;
@@ -47,7 +48,7 @@ class Bitso
             $orders = $bitso->lookup_order([$place_order->payload->oid]);
             return compact('place_order', 'orders');
         } catch (bitsoException $exception) {
-            JsonResponse::sendResponse($exception->getMessage(), HTTPStatusCodes::ServiceUnavailable, compact('exception'));
+            throw new CoreException($exception->getMessage(), HTTPStatusCodes::ServiceUnavailable, compact('exception'));
         }
     }
 
