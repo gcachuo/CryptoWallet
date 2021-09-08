@@ -36,6 +36,7 @@ class Users extends Controller
                 'login' => 'signIn',
                 'signUp' => 'signUp',
                 'fetchClients' => 'fetchClients',
+                'setCoinLimit' => 'setCoinLimit',
             ]
         ]);
     }
@@ -240,6 +241,7 @@ class Users extends Controller
 
         $bitso = new bitso('', '');
 
+        $limits = $this->fetchCoinLimits();
         $prices = [];
         foreach ($amounts as $key => $amount) {
             $precio_promedio_compra = $avgs[$amount['idMoneda']];
@@ -261,7 +263,9 @@ class Users extends Controller
 
             $precio = $prices[$amount['book']];
             $actual = $amount['cantidad'] * $precio;
-            $costo = $amount['costo'];
+            $limite_venta = $limits['sell'][$amount['idMoneda']]['threshold'];
+            $limite_monto = $limits['sell'][$amount['idMoneda']]['amount'];
+            $costo = $limite_venta ?: $amount['costo'];
 
             $porcentaje = $costo != 0 ? (($actual - $costo) / abs($costo)) : 0;
             $porcentaje = ($costo > 0) ? $porcentaje : (($precio && $precio_promedio_compra) ? $precio / $precio_promedio_compra : null);
@@ -273,8 +277,27 @@ class Users extends Controller
             $amounts[$key]['total'] = $actual;
             $amounts[$key]['porcentaje'] = $porcentaje;
             $amounts[$key]['promedio'] = ((float)$amount['cantidad'] && $costo > 0 ? $costo / $amount['cantidad'] : 0);
+
+            $amounts[$key]['limite']['venta'] = $limite_venta;
+            $amounts[$key]['limite']['monto'] = $limite_monto;
+//            $amounts[$key]['costo'] = $limite_venta ?: $amount['costo'];
         }
 
         return compact('amounts');
+    }
+
+    protected function setCoinLimit()
+    {
+        System::check_value_empty($_POST, ['user_token', 'idMoneda']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
+        $o_usuarios_monedas_limites = new Usuarios_Monedas_Limites();
+        $o_usuarios_monedas_limites->updateLimit([
+            'id_usuario' => $user_id,
+            'id_moneda' => $_POST['idMoneda'],
+            'limite' => $_POST['limit'],
+        ]);
     }
 }
