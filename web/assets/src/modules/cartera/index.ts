@@ -12,6 +12,17 @@ export class Cartera {
     private static coins;
     private static table;
 
+    static btnChangeLimit(idMoneda) {
+        const limit = prompt('Ingrese un nuevo costo.');
+        $.post('users/setCoinLimit', {
+            user_token: $("#user_token").val(),
+            limit,
+            idMoneda
+        }).done(({data}: ApiResponse<[]>) => {
+            Cartera.table.ajax.reload();
+        });
+    }
+
     constructor() {
         setInterval(() => {
             Cartera.totales = {
@@ -58,7 +69,7 @@ export class Cartera {
                     title: 'Moneda', data: 'moneda',
                     render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
-                            return `<a class="btn btn-xs btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
+                            return `<a class="btn btn-sm btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
                         }
                         return data;
                     }
@@ -96,10 +107,11 @@ export class Cartera {
                 {
                     responsivePriority: 2,
                     title: 'Costo', data: 'costo',
-                    render: (data, type, {limite: {venta}}) => {
+                    render: (data, type, {idMoneda, limite: {venta}}) => {
                         if (type === 'display') {
                             data = venta ? venta : data;
-                            return numeral(data).format('$0,0.00');
+                            data = numeral(data).format('$0,0.00');
+                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${data}</button>`;
                         }
                         Cartera.totales.costo += +data;
                         return data;
@@ -210,3 +222,5 @@ export class Cartera {
         });
     }
 }
+
+window['btnChangeLimit'] = Cartera.btnChangeLimit;

@@ -36,6 +36,7 @@ class Users extends Controller
                 'login' => 'signIn',
                 'signUp' => 'signUp',
                 'fetchClients' => 'fetchClients',
+                'setCoinLimit' => 'setCoinLimit',
             ]
         ]);
     }
@@ -283,5 +284,20 @@ class Users extends Controller
         }
 
         return compact('amounts');
+    }
+
+    protected function setCoinLimit()
+    {
+        System::check_value_empty($_POST, ['user_token', 'idMoneda']);
+        $user = System::decode_token($_POST['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
+        $o_usuarios_monedas_limites = new Usuarios_Monedas_Limites();
+        $o_usuarios_monedas_limites->updateLimit([
+            'id_usuario' => $user_id,
+            'id_moneda' => $_POST['idMoneda'],
+            'limite' => $_POST['limit'],
+        ]);
     }
 }
