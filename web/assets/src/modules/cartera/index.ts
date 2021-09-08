@@ -41,6 +41,10 @@ export class Cartera {
                 type: 'POST',
                 url: 'users/fetchAmounts',
                 dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
+                    Cartera.totales = {
+                        costo: 0,
+                        actual: 0,
+                    }
                     Cartera.coins = amounts;
                     return amounts;
                 },
@@ -56,6 +60,18 @@ export class Cartera {
             responsive: true,
             searching: false,
             initComplete: this.initComplete,
+
+            footerCallback(row, data) {
+                let costo = 0;
+                let actual = 0;
+                data.map((row) => {
+                    costo += +row['costo'];
+                    actual += +row['total'];
+                })
+                $("#txtTotalCosto").val(numeral(costo).format('$0,0.00'));
+                $("#txtTotalActual").val(numeral(actual).format('$0,0.00'));
+                $("#txtTotalGP").val(numeral(actual - costo).format('$0,0.00'));
+            },
 
             rowCallback: function (row, data, index) {
                 if (data['cantidad'] <= 0) {
@@ -113,7 +129,6 @@ export class Cartera {
                             data = numeral(data).format('$0,0.00');
                             return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${data}</button>`;
                         }
-                        Cartera.totales.costo += +data;
                         return data;
                     }
                 },
@@ -124,7 +139,6 @@ export class Cartera {
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
-                        Cartera.totales.actual += +data;
                         return data;
                     }
                 },
@@ -158,9 +172,9 @@ export class Cartera {
     }
 
     initComplete() {
-        $("#txtTotalCosto").val(numeral(Cartera.totales.costo).format('$0,0.00'));
-        $("#txtTotalActual").val(numeral(Cartera.totales.actual).format('$0,0.00'));
-        $("#txtTotalGP").val(numeral(Cartera.totales.actual - Cartera.totales.costo).format('$0,0.00'));
+        // $("#txtTotalCosto").val(numeral(Cartera.totales.costo).format('$0,0.00'));
+        // $("#txtTotalActual").val(numeral(Cartera.totales.actual).format('$0,0.00'));
+        // $("#txtTotalGP").val(numeral(Cartera.totales.actual - Cartera.totales.costo).format('$0,0.00'));
 
         Cartera.totales.costo = 0;
         Cartera.totales.actual = 0;
