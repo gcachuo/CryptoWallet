@@ -96,8 +96,9 @@ export class Cartera {
                 {
                     responsivePriority: 2,
                     title: 'Costo', data: 'costo',
-                    render: (data, type) => {
+                    render: (data, type, {limite: {venta}}) => {
                         if (type === 'display') {
+                            data = venta ? venta : data;
                             return numeral(data).format('$0,0.00');
                         }
                         Cartera.totales.costo += +data;
@@ -118,7 +119,8 @@ export class Cartera {
                 {
                     responsivePriority: 3,
                     title: 'Utilidad',
-                    render: (data, type, {total: actual, costo, porcentaje}) => {
+                    render: (data, type, {total: actual, costo, porcentaje, limite: {venta}}) => {
+                        costo = venta ? venta : costo;
                         data = actual - costo;
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';

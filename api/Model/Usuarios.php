@@ -40,7 +40,7 @@ sql;
     function selectUser($email)
     {
         $sql = <<<sql
-SELECT id_usuario id, nombre_usuario nombre, correo_usuario correo, perfil_usuario perfil
+SELECT id_usuario id, nombre_usuario name, correo_usuario correo, perfil_usuario perfil
 FROM usuarios
 WHERE correo_usuario=?
 sql;
