@@ -12,6 +12,17 @@ export class Cartera {
     private static coins;
     private static table;
 
+    static btnChangeLimit(idMoneda) {
+        const limit = prompt('Ingrese un nuevo costo.');
+        $.post('users/setCoinLimit', {
+            user_token: $("#user_token").val(),
+            limit,
+            idMoneda
+        }).done(({data}: ApiResponse<[]>) => {
+            Cartera.table.ajax.reload();
+        });
+    }
+
     constructor() {
         setInterval(() => {
             Cartera.totales = {
@@ -30,6 +41,10 @@ export class Cartera {
                 type: 'POST',
                 url: 'users/fetchAmounts',
                 dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
+                    Cartera.totales = {
+                        costo: 0,
+                        actual: 0,
+                    }
                     Cartera.coins = amounts;
                     return amounts;
                 },
@@ -46,6 +61,18 @@ export class Cartera {
             searching: false,
             initComplete: this.initComplete,
 
+            footerCallback(row, data) {
+                let costo = 0;
+                let actual = 0;
+                data.map((row) => {
+                    costo += +row['costo'];
+                    actual += +row['total'];
+                })
+                $("#txtTotalCosto").val(numeral(costo).format('$0,0.00'));
+                $("#txtTotalActual").val(numeral(actual).format('$0,0.00'));
+                $("#txtTotalGP").val(numeral(actual - costo).format('$0,0.00'));
+            },
+
             rowCallback: function (row, data, index) {
                 if (data['cantidad'] <= 0) {
                     $(row).hide();
@@ -58,7 +85,7 @@ export class Cartera {
                     title: 'Moneda', data: 'moneda',
                     render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
-                            return `<a class="btn btn-xs btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
+                            return `<a class="btn btn-sm btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
                         }
                         return data;
                     }
@@ -96,11 +123,12 @@ export class Cartera {
                 {
                     responsivePriority: 2,
                     title: 'Costo', data: 'costo',
-                    render: (data, type) => {
+                    render: (data, type, {idMoneda, limite: {venta}}) => {
                         if (type === 'display') {
-                            return numeral(data).format('$0,0.00');
+                            data = venta ? venta : data;
+                            data = numeral(data).format('$0,0.00');
+                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${data}</button>`;
                         }
-                        Cartera.totales.costo += +data;
                         return data;
                     }
                 },
@@ -111,14 +139,14 @@ export class Cartera {
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
                         }
-                        Cartera.totales.actual += +data;
                         return data;
                     }
                 },
                 {
                     responsivePriority: 3,
                     title: 'Utilidad',
-                    render: (data, type, {total: actual, costo, porcentaje}) => {
+                    render: (data, type, {total: actual, costo, porcentaje, limite: {venta}}) => {
+                        costo = venta ? venta : costo;
                         data = actual - costo;
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
@@ -144,9 +172,9 @@ export class Cartera {
     }
 
     initComplete() {
-        $("#txtTotalCosto").val(numeral(Cartera.totales.costo).format('$0,0.00'));
-        $("#txtTotalActual").val(numeral(Cartera.totales.actual).format('$0,0.00'));
-        $("#txtTotalGP").val(numeral(Cartera.totales.actual - Cartera.totales.costo).format('$0,0.00'));
+        // $("#txtTotalCosto").val(numeral(Cartera.totales.costo).format('$0,0.00'));
+        // $("#txtTotalActual").val(numeral(Cartera.totales.actual).format('$0,0.00'));
+        // $("#txtTotalGP").val(numeral(Cartera.totales.actual - Cartera.totales.costo).format('$0,0.00'));
 
         Cartera.totales.costo = 0;
         Cartera.totales.actual = 0;
@@ -208,3 +236,5 @@ export class Cartera {
         });
     }
 }
+
+window['btnChangeLimit'] = Cartera.btnChangeLimit;

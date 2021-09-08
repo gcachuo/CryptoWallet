@@ -21,13 +21,15 @@
       "name": "Login",
       "icon": "",
       "href": "login",
-      "file": "signin.html"
+      "file": "signin.html",
+      "onlogin": false
     },
     "signup": {
       "name": "Signup",
       "icon": "",
       "href": "signup",
-      "file": "signup.html"
+      "file": "signup.html",
+      "onlogin": false
     },
     "cartera": {
       "name": "Cartera",
@@ -41,7 +43,8 @@
     "clientes": {
       "name": "Clientes",
       "icon": "people",
-      "href": "clientes"
+      "href": "clientes",
+      "hidden": true
     },
     "logout": {
       "name": "Cerrar Sesión",
