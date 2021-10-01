@@ -31,6 +31,10 @@ sql;
         return $mysql->prepare($sql, ['i', $user_id]);
     }
 
+    /**
+     * @param array $row
+     * @throws \CoreException
+     */
     public function updateLimit(array $row)
     {
         if (!$row['limite']) {
@@ -60,7 +64,7 @@ sql;
                 ':id_usuario' => $row['id_usuario'],
                 ':id_moneda' => $row['id_moneda'],
                 ':limite' => $row['limite'],
-                ':cantidad' => $row['cantidad'] ?? ($row['limite'] * 0.05),
+                ':cantidad' => ($row['limite'] * 0.05),
             ]);
         }
     }
