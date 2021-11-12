@@ -5,27 +5,34 @@ import {Defaults} from "../../defaults";
 import $ from 'jquery';
 
 export class Estadisticas {
-    async getTradesChart(coin: string){
-        const {data: {trades: data}}:ApiResponse = await $.ajax({
+    async getTradesChart(coin: string) {
+        const {data}: ApiResponse<{ trades, buys, sells }> = await $.ajax({
             url: 'trades/data',
-            data:{coin}
+            data: {coin}
         });
-        this.loadChart($('#chartdiv'), data, {});
+        Estadisticas.loadChart($('#chartdiv'), data, {});
     }
 
-    private loadChart($element, data, options) {
+    private static loadChart($element, data: { trades, buys, sells }, options) {
         // Create chart instance
         const chart = am4core.create($element.get(0), am4charts.XYChart);
+
         chart.language.locale = am4lang_es_ES;
         chart.language.locale["_decimalSeparator"] = ".";
         chart.language.locale["_thousandSeparator"] = ",";
 
         // Add data
-        chart.data = data;
+        chart.data = data.trades;
+        console.log(data);
 
         // Create axes
         const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
-        const valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+        const valueAxis1 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis1.title.text = "Trades";
+
+        const valueAxis2 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis2.title.text = "Buys";
+        valueAxis2.syncWithAxis = valueAxis1;
 
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd H:mm";
@@ -40,14 +47,15 @@ export class Estadisticas {
 
         // Create series
         const series = chart.series.push(new am4charts.LineSeries());
-        series.dataFields.valueY = "value";
+        series.dataFields.valueY = "sell";
         series.dataFields.dateX = "date";
-        series.tooltipText = "{value}"
+        series.tooltipText = "{sell}"
         series.strokeWidth = 2;
         series.minBulletDistance = 15;
+        series.smoothing = "monotoneX";
 
         // Drop-shaped tooltips
-        series.tooltipText = '$' + `{value.formatNumber('#,##0.00')}`;
+        series.tooltipText = 'Sell: $' + `{sell.formatNumber('#,##0.00')}`;
         series.tooltip.background.cornerRadius = 20;
         series.tooltip.background.strokeOpacity = 0;
         series.tooltip.pointerOrientation = "vertical";
@@ -55,6 +63,25 @@ export class Estadisticas {
         series.tooltip.label.minHeight = 40;
         series.tooltip.label.textAlign = "middle";
         series.tooltip.label.textValign = "middle";
+
+        // Create series
+        const series2 = chart.series.push(new am4charts.LineSeries());
+        series2.dataFields.valueY = "buy";
+        series2.dataFields.dateX = "date";
+        series2.tooltipText = "{buy}"
+        series2.strokeWidth = 2;
+        series2.minBulletDistance = 15;
+        series2.smoothing = "monotoneX";
+
+        // Drop-shaped tooltips
+        series2.tooltipText = 'Buy: $' + `{buy.formatNumber('#,##0.00')}`;
+        series2.tooltip.background.cornerRadius = 20;
+        series2.tooltip.background.strokeOpacity = 0;
+        series2.tooltip.pointerOrientation = "vertical";
+        series2.tooltip.label.minWidth = 40;
+        series2.tooltip.label.minHeight = 40;
+        series2.tooltip.label.textAlign = "middle";
+        series2.tooltip.label.textValign = "middle";
 
         // Make bullets grow on hover
         const bullet = series.bullets.push(new am4charts.CircleBullet());
@@ -65,11 +92,20 @@ export class Estadisticas {
         const bullethover = bullet.states.create("hover");
         bullethover.properties.scale = 1.3;
 
+        // Make bullets grow on hover
+        const bullet2 = series2.bullets.push(new am4charts.CircleBullet());
+        bullet2.circle.strokeWidth = 2;
+        bullet2.circle.radius = 4;
+        bullet2.circle.fill = am4core.color("#fff");
+
+        const bullethover2 = bullet2.states.create("hover");
+        bullethover2.properties.scale = 1.3;
+
         // Make a panning cursor
         chart.cursor = new am4charts.XYCursor();
         chart.cursor.behavior = "panXY";
         chart.cursor.xAxis = dateAxis;
-        chart.cursor.snapToSeries = series;
+        chart.cursor.snapToSeries = [series, series2];
 
         // Create vertical scrollbar and place it before the value axis
         chart.scrollbarY = new am4core.Scrollbar();
