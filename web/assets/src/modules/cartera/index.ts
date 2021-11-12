@@ -115,7 +115,7 @@ export class Cartera {
                     title: 'U. Compra', data: 'estadisticas',
                     render: ({buy: data, sell}, type, {promedio, precio}) => {
                         if (type === 'display') {
-                            const text = promedio > data && sell > precio ? 'success' : '';
+                            const text = sell > precio && promedio > precio ? 'success' : '';
                             return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
                         }
                         return data;
@@ -126,7 +126,7 @@ export class Cartera {
                     title: 'U. Venta', data: 'estadisticas',
                     render: ({sell: data, buy}, type, {promedio, precio}) => {
                         if (type === 'display') {
-                            const text = promedio < data && buy < precio ? 'success' : '';
+                            const text = precio > buy && precio > promedio ? 'success' : '';
                             return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
                         }
                         return data;
