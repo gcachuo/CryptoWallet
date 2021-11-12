@@ -281,6 +281,8 @@ class Users extends Controller
             $amounts[$key]['limite']['venta'] = $limite_venta;
             $amounts[$key]['limite']['monto'] = $limite_monto;
 //            $amounts[$key]['costo'] = $limite_venta ?: $amount['costo'];
+
+            $amounts[$key]['estadisticas'] = Trades::getTradesByCoin($user_id, $amount['idMoneda']);
         }
 
         return compact('amounts');

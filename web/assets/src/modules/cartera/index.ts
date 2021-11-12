@@ -112,7 +112,29 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'Promedio', data: 'promedio',
+                    title: 'U. Compra', data: 'estadisticas',
+                    render: ({buy: data, sell}, type, {promedio, precio}) => {
+                        if (type === 'display') {
+                            const text = promedio > data && sell > precio ? 'success' : '';
+                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 4,
+                    title: 'U. Venta', data: 'estadisticas',
+                    render: ({sell: data, buy}, type, {promedio, precio}) => {
+                        if (type === 'display') {
+                            const text = promedio < data && buy < precio ? 'success' : '';
+                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 4,
+                    title: 'Costo Promedio', data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');

@@ -19,15 +19,14 @@ class Trades extends Controller
     }
 
     /**
+     * @param $idUser
+     * @param $coin
      * @return array
-     * @throws CoreException
      */
-    protected function getTrades(): array
+    public static function getTradesByCoin($idUser, $coin): array
     {
-        System::check_value_empty($_GET, ['coin']);
-
         $Usuarios_Transacciones = new Usuarios_Transacciones();
-        $trades = $Usuarios_Transacciones->selectTrades(1, $_GET['coin']);
+        $trades = $Usuarios_Transacciones->selectTrades($idUser, $coin);
 
         $buy = $sell = 0;
         array_walk($trades, function (&$trade) use (&$buy, &$sell) {
@@ -51,6 +50,23 @@ class Trades extends Controller
         });
 
         $trades = array_values(array_filter($trades));
+
+        return compact('trades', 'buy', 'sell');
+    }
+
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function getTrades(): array
+    {
+        System::check_value_empty($_GET, ['coin']);
+
+        [
+            'trades' => $trades,
+            'buy' => $buy,
+            'sell' => $sell,
+        ] = $this->getTradesByCoin(1, $_GET['coin']);
 
         return compact('trades', 'buy', 'sell');
     }
