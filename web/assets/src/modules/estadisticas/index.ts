@@ -3,17 +3,85 @@ import * as am4charts from "@amcharts/amcharts4/charts";
 import am4lang_es_ES from "@amcharts/amcharts4/lang/es_ES";
 import {Defaults} from "../../defaults";
 import $ from 'jquery';
+import moment from 'moment';
+import numeral from 'numeral';
 
 export class Estadisticas {
     async getTradesChart(coin: string) {
-        const {data}: ApiResponse<{ trades, buys, sells }> = await $.ajax({
+        const {data: {trades: data, buy, sell}}: ApiResponse<{ trades, buy, sell }> = await $.ajax({
             url: 'trades/data',
             data: {coin}
         });
+
         Estadisticas.loadChart($('#chartdiv'), data, {});
+        Estadisticas.loadDatatable($('table'), data);
+
+        $("#lastBuy").text(numeral(buy).format('$#,#.##'));
+        $("#lastSell").text(numeral(sell).format('$#,#.##'));
     }
 
-    private static loadChart($element, data: { trades, buys, sells }, options) {
+    private static loadDatatable($element, data) {
+        $element.DataTable({
+            stateSave: false,
+            order: [[0, 'desc']],
+            ajax: null,
+            data: data,
+            columnDefs: Defaults.global.dt.getColumns([
+                {
+                    title: 'Fecha',
+                    data: 'date',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return moment(data).format('DD/MMM/YYYY hh:mma');
+                        }
+                        return data;
+                    }
+                },
+                {
+                    title: 'Tipo',
+                    data: 'type',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return data == 'buy' ? '<span class="text-success">Compra</span>' : '<span class="text-danger">Venta</span>';
+                        }
+                        return data;
+                    }
+                },
+                {
+                    title: 'Costo',
+                    data: 'cost',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return numeral(data).format('$#,#.##');
+                        }
+                        return data;
+                    }
+                },
+                {
+                    title: 'Cantidad',
+                    data: 'quantity',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return numeral(data).format('#,#.########');
+                        }
+                        return data;
+                    }
+                },
+                {
+                    title: 'Precio',
+                    data: 'price',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return numeral(data).format('$#,#.##');
+                        }
+                        return data;
+                    }
+                }
+            ])
+        });
+    }
+
+    private static loadChart($element, data, options) {
         // Create chart instance
         const chart = am4core.create($element.get(0), am4charts.XYChart);
 
@@ -22,8 +90,7 @@ export class Estadisticas {
         chart.language.locale["_thousandSeparator"] = ",";
 
         // Add data
-        chart.data = data.trades;
-        console.log(data);
+        chart.data = data;
 
         // Create axes
         const dateAxis = chart.xAxes.push(new am4charts.DateAxis());
@@ -53,6 +120,7 @@ export class Estadisticas {
         series.strokeWidth = 2;
         series.minBulletDistance = 15;
         series.smoothing = "monotoneX";
+        series.stroke = am4core.color("#f44455");
 
         // Drop-shaped tooltips
         series.tooltipText = 'Sell: $' + `{sell.formatNumber('#,##0.00')}`;
@@ -72,6 +140,7 @@ export class Estadisticas {
         series2.strokeWidth = 2;
         series2.minBulletDistance = 15;
         series2.smoothing = "monotoneX";
+        series2.stroke = am4core.color("#6cc788");
 
         // Drop-shaped tooltips
         series2.tooltipText = 'Buy: $' + `{buy.formatNumber('#,##0.00')}`;
