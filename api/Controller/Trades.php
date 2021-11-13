@@ -32,8 +32,8 @@ class Trades extends Controller
         $user_id = System::decrypt($user_id);
 
         $Bitso = new Bitso($user_id);
-        $orders = $Bitso->lookupOrder($_GET['oids']);
-        $order_trades = $Bitso->orderTrades($_GET['oids']);
+        $orders = $Bitso->lookupOrder($_GET['oid']);
+        $order_trades = $Bitso->orderTrades($_GET['oid']);
         return compact('orders', 'order_trades');
     }
 
