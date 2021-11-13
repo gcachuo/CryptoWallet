@@ -105,10 +105,10 @@ sql;
 
     /**
      * @param int $user_id
-     * @param int $order_id
+     * @param string $order_id
      * @throws CoreException
      */
-    function insertOrder(int $user_id, int $order_id)
+    function insertOrder(int $user_id, string $order_id)
     {
         $bitso = new \Helper\Bitso($user_id);
         $trade = $bitso->orderTrades($order_id);
