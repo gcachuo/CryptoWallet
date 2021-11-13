@@ -215,6 +215,8 @@ export class Cartera {
             const coin = Cartera.coins.find(function (element) {
                 return element.idMoneda === key;
             });
+            delete coin['estadisticas'];
+            
             const threshold = +val.threshold;
             const amount = +val.amount;
             if (coin.total > (threshold + amount)) {
