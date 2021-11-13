@@ -143,10 +143,13 @@ sql;
     {
         $sql = <<<sql
 UPDATE usuarios_transacciones
-SET precio_real_usuario_moneda     = IF(id_moneda = 'mxn', 1,
-                                        IF(cantidad_usuario_moneda != 0, (costo_usuario_moneda / cantidad_usuario_moneda)*(1-(0.65/100)),
-                                           0))
-WHERE precio_real_usuario_moneda IS NULL;
+SET
+	precio_real_usuario_moneda = IF(id_moneda = 'mxn', 1,
+	                                IF(cantidad_usuario_moneda != 0, (costo_usuario_moneda / cantidad_usuario_moneda) *
+	                                                                 IF(cantidad_usuario_moneda > 0, 1 - (0.65 / 100), 1 + (0.41 / 100)),
+	                                   0))
+WHERE
+	precio_real_usuario_moneda IS NULL;
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql);
