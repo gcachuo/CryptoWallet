@@ -62,4 +62,15 @@ class Bitso
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
         $bitso->cancel_order(['order_id' => $oid]);
     }
+
+    public function speiWithdrawal(float $amount, string $first_name, string $last_name, string $CLABE)
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        $bitso->spei_withdrawal([
+            'amount' => $amount,
+            'recipient_given_names' => $first_name,
+            'recipient_family_names' => $last_name,
+            'clabe' => $CLABE,
+        ]);
+    }
 }
