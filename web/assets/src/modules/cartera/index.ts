@@ -35,7 +35,7 @@ export class Cartera {
 
     initDatatable() {
         Cartera.table = $("table").DataTable({
-            order: [[6, 'desc']],
+            order: [[9, 'desc']],
 
             ajax: {
                 type: 'POST',
@@ -216,7 +216,7 @@ export class Cartera {
                 return element.idMoneda === key;
             });
             delete coin['estadisticas'];
-            
+
             const threshold = +val.threshold;
             const amount = +val.amount;
             if (coin.total > (threshold + amount)) {
