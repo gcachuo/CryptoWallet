@@ -85,11 +85,40 @@ class Bitso extends \BitsoAPI\bitso
 
     /**
      * @param string $oid
-     * @return mixed
+     * @return BitsoTradePayload
      */
     function orderTrades(string $oid): BitsoTradePayload
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return System::objectToObject($bitso->order_trades($oid)->payload[0], get_class(new BitsoTradePayload()));
+
+        $order_trade = [
+            'book' => '',
+            'created_at' => '',
+            'minor' => '',
+            'major' => '',
+            'fees_amount' => '',
+            'fees_currency' => '',
+            'minor_currency' => '',
+            'major_currency' => '',
+            'oid' => '',
+            'tid' => '',
+            'price' => '',
+            'side' => '',
+            'maker_side' => ''
+        ];
+        foreach ($bitso->order_trades($oid)->payload as $trade) {
+            /** @var BitsoTradePayload $trade */
+            $trade = System::objectToObject($trade, get_class(new BitsoTradePayload()));
+            if (empty($order_trade['book'])) {
+                $order_trade = (array)$trade;
+            } else {
+                $order_trade['minor'] += $trade->minor;
+                $order_trade['major'] += $trade->major;
+                $order_trade['fees_amount'] += $trade->fees_amount;
+                $order_trade['price'] = round($order_trade['minor'] / abs($order_trade['major']), 2);
+            }
+        }
+
+        return new BitsoTradePayload($order_trade);
     }
 }

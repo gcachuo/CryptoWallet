@@ -2,7 +2,7 @@
 
 namespace Helper;
 
-class BitsoTradePayload
+class BitsoTradePayload extends \stdClass
 {
     public string $book;
     public string $created_at;
@@ -17,4 +17,23 @@ class BitsoTradePayload
     public string $price;
     public string $side;
     public string $maker_side;
+
+    public function __construct(array $trade = [])
+    {
+        if (!empty($trade)) {
+            $this->book = $trade['book'];
+            $this->created_at = $trade['created_at'];
+            $this->minor = $trade['minor'];
+            $this->major = $trade['major'];
+            $this->fees_amount = $trade['fees_amount'];
+            $this->fees_currency = $trade['fees_currency'];
+            $this->minor_currency = $trade['minor_currency'];
+            $this->major_currency = $trade['major_currency'];
+            $this->oid = $trade['oid'];
+            $this->tid = $trade['tid'];
+            $this->price = $trade['price'];
+            $this->side = $trade['side'];
+            $this->maker_side = $trade['maker_side'];
+        }
+    }
 }
