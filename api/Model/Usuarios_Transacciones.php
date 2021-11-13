@@ -110,7 +110,7 @@ sql;
      * @param BitsoOrderPayload $order
      * @throws CoreException
      */
-    function insertOrder($user_id, $id_moneda, $costo, BitsoOrderPayload &$order)
+    function insertOrder($user_id, $id_moneda, $costo, $order)
     {
         if (empty($order->original_amount)) {
             $order->original_amount = $order->original_value / $order->price;
