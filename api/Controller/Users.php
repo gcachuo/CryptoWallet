@@ -198,7 +198,7 @@ class Users extends Controller
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
-            JsonResponse::sendResponse('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
+            throw new CoreException('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {

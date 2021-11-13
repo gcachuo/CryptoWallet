@@ -18,6 +18,7 @@ class Usuarios_Transacciones
             new TableColumn('id_usuario_transaccion', ColumnTypes::BIGINT, 20, true, null, true, true),
             new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true),
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
+            new TableColumn('oid', ColumnTypes::VARCHAR, 100, false),
             new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
             new TableColumn('precio_original_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
@@ -112,20 +113,19 @@ sql;
     function insertOrder($user_id, $id_moneda, $costo, BitsoOrderPayload &$order)
     {
         if (empty($order->original_amount)) {
-            $bitso = new bitso('', '');
-            $ticker = $bitso->ticker(["book" => $order->book]);
-            $order->original_amount = $order->original_value / round($ticker->payload->bid, 2);
+            $order->original_amount = $order->original_value / $order->price;
         }
         $sql = <<<sql
-INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
-VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda, oid)
+VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda, :oid);
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
             ':id_moneda' => $id_moneda,
             ':costo_usuario_moneda' => -$costo,
-            ':cantidad_usuario_moneda' => -$order->original_amount
+            ':cantidad_usuario_moneda' => -$order->original_amount,
+            ':oid' => $order->oid
         ]);
 
         $sql = <<<sql
