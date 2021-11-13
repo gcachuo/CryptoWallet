@@ -73,4 +73,14 @@ class Bitso
             'clabe' => $CLABE,
         ]);
     }
+
+    /**
+     * @param array $oids
+     * @return mixed
+     */
+    function lookupOrder(array $oids): mixed
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        return $bitso->lookup_order($oids);
+    }
 }
