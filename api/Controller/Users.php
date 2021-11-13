@@ -163,6 +163,9 @@ class Users extends Controller
         return compact('clients', 'wallet');
     }
 
+    /**
+     * @throws CoreException
+     */
     protected function sellCoin()
     {
         System::check_value_empty($_POST, ['user_token']);

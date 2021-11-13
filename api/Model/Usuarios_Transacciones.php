@@ -5,6 +5,7 @@ namespace Model;
 
 
 use BitsoAPI\bitso;
+use CoreException;
 use Helper\BitsoOrderPayload;
 
 class Usuarios_Transacciones
@@ -106,8 +107,9 @@ sql;
      * @param $id_moneda
      * @param $costo
      * @param BitsoOrderPayload $order
+     * @throws CoreException
      */
-    function insertOrder($user_id, $id_moneda, $costo, &$order)
+    function insertOrder($user_id, $id_moneda, $costo, BitsoOrderPayload &$order)
     {
         if (empty($order->original_amount)) {
             $bitso = new bitso('', '');
@@ -146,7 +148,7 @@ UPDATE usuarios_transacciones
 SET
 	precio_real_usuario_moneda = IF(id_moneda = 'mxn', 1,
 	                                IF(cantidad_usuario_moneda != 0, (costo_usuario_moneda / cantidad_usuario_moneda) *
-	                                                                 IF(cantidad_usuario_moneda > 0, 1 - (0.65 / 100), 1 + (0.41 / 100)),
+	                                                                 IF(cantidad_usuario_moneda > 0, 1 - (0.65 / 100), 1 + (0.65 / 100)),
 	                                   0))
 WHERE
 	precio_real_usuario_moneda IS NULL;
