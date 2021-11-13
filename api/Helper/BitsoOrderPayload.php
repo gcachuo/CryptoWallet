@@ -2,9 +2,9 @@
 
 namespace Helper;
 
-abstract class BitsoOrderPayload
+class BitsoOrderPayload
 {
-    public float $unfilled_amount;
+    public string $unfilled_amount;
     public string $book;
     public string $created_at;
     public string $updated_at;
@@ -12,5 +12,5 @@ abstract class BitsoOrderPayload
     public string $type;
     public string $oid;
     public string $status;
-    public float $original_value;
+    public string $original_value;
 }

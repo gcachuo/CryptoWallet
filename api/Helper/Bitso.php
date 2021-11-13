@@ -80,7 +80,7 @@ class Bitso extends \BitsoAPI\bitso
     function lookupOrder(string $oid): BitsoOrderPayload
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->lookup_order([$oid])->payload[0];
+        return System::objectToObject($bitso->lookup_order([$oid])->payload[0], get_class(new BitsoOrderPayload()));
     }
 
     /**
@@ -90,6 +90,6 @@ class Bitso extends \BitsoAPI\bitso
     function orderTrades(string $oid): BitsoTradePayload
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->order_trades($oid)->payload[0];
+        return System::objectToObject($bitso->order_trades($oid)->payload[0], get_class(new BitsoTradePayload()));
     }
 }
