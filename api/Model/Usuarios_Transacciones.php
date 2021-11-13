@@ -113,7 +113,9 @@ sql;
     function insertOrder($user_id, $id_moneda, $costo, $order)
     {
         if (empty($order->original_amount)) {
-            $order->original_amount = $order->original_value / $order->price;
+            $bitso = new bitso('', '');
+            $ticker = $bitso->ticker(["book" => $order->book]);
+            $order->original_amount = $order->original_value / round($ticker->payload->bid, 2);
         }
         $sql = <<<sql
 INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda, oid)
