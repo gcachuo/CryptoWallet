@@ -112,4 +112,16 @@ class Bitso extends \BitsoAPI\bitso
     {
         return intval(round(microtime(true) * 1000));
     }
+
+    #gets data and makes request
+    public function getData($nonce, $path, $RequestPath, $HTTPMethod, $JSONPayload, $type)
+    {
+        $message = $nonce . $HTTPMethod . $RequestPath . $JSONPayload;
+        $signature = hash_hmac('sha256', $message, $this->secret);
+        $format = 'Bitso %s:%s:%s';
+        $authHeader = sprintf($format, $this->key, $nonce, $signature);
+        $result = $this->url_request($type, $path, $HTTPMethod, $JSONPayload, $authHeader);
+
+        return $this->checkAndDecode($result);
+    }
 }
