@@ -31,7 +31,7 @@ class Trades extends Controller
         $user_id = $user['id'];
 
         $Bitso = new Bitso($user_id);
-        $orders = $Bitso->lookupOrder($_GET['oids']);
+        $orders = $Bitso->lookupOrder(System::json_decode($_GET['oids']));
         return compact('orders');
     }
 
