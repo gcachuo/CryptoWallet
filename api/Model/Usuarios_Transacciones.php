@@ -104,30 +104,27 @@ sql;
     }
 
     /**
-     * @param $user_id
-     * @param $id_moneda
-     * @param $costo
-     * @param BitsoOrderPayload $order
+     * @param int $user_id
+     * @param int $order_id
      * @throws CoreException
      */
-    function insertOrder($user_id, $id_moneda, $costo, $order)
+    function insertOrder(int $user_id, int $order_id)
     {
-        if (empty($order->original_amount)) {
-            $bitso = new bitso('', '');
-            $ticker = $bitso->ticker(["book" => $order->book]);
-            $order->original_amount = $order->original_value / round($ticker->payload->bid, 2);
-        }
+        $bitso = new \Helper\Bitso($user_id);
+        $trade = $bitso->orderTrades($order_id);
+
         $sql = <<<sql
-INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda, oid)
-VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda, :oid);
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda, precio_original_usuario_moneda, oid)
+VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda,:precio_original_usuario_moneda, :oid);
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
-            ':id_moneda' => $id_moneda,
-            ':costo_usuario_moneda' => -$costo,
-            ':cantidad_usuario_moneda' => -$order->original_amount,
-            ':oid' => $order->oid
+            ':id_moneda' => $trade->major_currency,
+            ':costo_usuario_moneda' => $trade->minor - $trade->fees_amount,
+            ':cantidad_usuario_moneda' => $trade->major,
+            ':precio_original_usuario_moneda' => $trade->price,
+            ':oid' => $trade->oid
         ]);
 
         $sql = <<<sql
@@ -136,8 +133,8 @@ VALUES (:id_usuario, 'mxn', :costo_usuario_moneda, :cantidad_usuario_moneda);
 sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
-            ':costo_usuario_moneda' => $costo,
-            ':cantidad_usuario_moneda' => $costo
+            ':costo_usuario_moneda' => $trade->minor - $trade->fees_amount,
+            ':cantidad_usuario_moneda' => $trade->minor - $trade->fees_amount
         ]);
 
         $this->setPrice();
@@ -148,10 +145,7 @@ sql;
         $sql = <<<sql
 UPDATE usuarios_transacciones
 SET
-	precio_real_usuario_moneda = IF(id_moneda = 'mxn', 1,
-	                                IF(cantidad_usuario_moneda != 0, (costo_usuario_moneda / cantidad_usuario_moneda) *
-	                                                                 IF(cantidad_usuario_moneda > 0, 1 - (0.65 / 100), 1 + (0.65 / 100)),
-	                                   0))
+	precio_real_usuario_moneda = IF(id_moneda = 'mxn', 1, costo_usuario_moneda / cantidad_usuario_moneda)
 WHERE
 	precio_real_usuario_moneda IS NULL;
 sql;

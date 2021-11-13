@@ -202,10 +202,10 @@ class Users extends Controller
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
-            $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
+            $Usuarios_Transacciones->insertOrder($user_id, $order->oid);
 
             if ($order->original_value == 0) {
-                JsonResponse::sendResponse('Error. Inserting zero.');
+                throw new CoreException('Error. Inserting zero.', HTTPStatusCodes::BadRequest);
             }
         }
         return true;

@@ -77,20 +77,20 @@ class Bitso extends \BitsoAPI\bitso
      * @param string $oid
      * @return mixed
      */
-    function lookupOrder(string $oid)
+    function lookupOrder(string $oid): BitsoOrderPayload
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->lookup_order([$oid])->payload;
+        return $bitso->lookup_order([$oid])->payload[0];
     }
 
     /**
      * @param string $oid
      * @return mixed
      */
-    function orderTrades(string $oid)
+    function orderTrades(string $oid): BitsoTradePayload
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->order_trades($oid)->payload;
+        return $bitso->order_trades($oid)->payload[0];
     }
 
     function order_trades($id)
