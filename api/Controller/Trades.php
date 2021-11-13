@@ -26,13 +26,15 @@ class Trades extends Controller
      */
     protected function getOrder(): array
     {
-        System::check_value_empty($_GET, ['user_token', 'oids']);
+        System::check_value_empty($_GET, ['user_token', 'oid']);
         $user = System::decode_token($_GET['user_token']);
         $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
 
         $Bitso = new Bitso($user_id);
-        $orders = $Bitso->lookupOrder(System::json_decode($_GET['oids']));
-        return compact('orders');
+        $orders = $Bitso->lookupOrder($_GET['oids']);
+        $order_trades = $Bitso->orderTrades($_GET['oids']);
+        return compact('orders', 'order_trades');
     }
 
     /**

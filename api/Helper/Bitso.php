@@ -75,12 +75,22 @@ class Bitso
     }
 
     /**
-     * @param array $oids
+     * @param string $oid
      * @return mixed
      */
-    function lookupOrder(array $oids): mixed
+    function lookupOrder(string $oid)
     {
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->lookup_order($oids);
+        return $bitso->lookup_order([$oid])->payload;
+    }
+
+    /**
+     * @param string $oid
+     * @return mixed
+     */
+    function orderTrades(string $oid)
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        return $bitso->order_trades($oid)->payload;
     }
 }
