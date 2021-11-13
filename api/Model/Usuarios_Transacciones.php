@@ -5,6 +5,7 @@ namespace Model;
 
 
 use BitsoAPI\bitso;
+use CoreException;
 use Helper\BitsoOrderPayload;
 
 class Usuarios_Transacciones
@@ -17,6 +18,7 @@ class Usuarios_Transacciones
             new TableColumn('id_usuario_transaccion', ColumnTypes::BIGINT, 20, true, null, true, true),
             new TableColumn('id_usuario', ColumnTypes::BIGINT, 20, true),
             new TableColumn('id_moneda', ColumnTypes::VARCHAR, 5, true),
+            new TableColumn('oid', ColumnTypes::VARCHAR, 100, false),
             new TableColumn('costo_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false, "0.00"),
             new TableColumn('cantidad_usuario_moneda', ColumnTypes::DECIMAL, "15,8", true),
             new TableColumn('precio_original_usuario_moneda', ColumnTypes::DECIMAL, "15,2", false),
@@ -102,28 +104,27 @@ sql;
     }
 
     /**
-     * @param $user_id
-     * @param $id_moneda
-     * @param $costo
-     * @param BitsoOrderPayload $order
+     * @param int $user_id
+     * @param string $order_id
+     * @throws CoreException
      */
-    function insertOrder($user_id, $id_moneda, $costo, &$order)
+    function insertOrder(int $user_id, string $order_id)
     {
-        if (empty($order->original_amount)) {
-            $bitso = new bitso('', '');
-            $ticker = $bitso->ticker(["book" => $order->book]);
-            $order->original_amount = $order->original_value / round($ticker->payload->bid, 2);
-        }
+        $bitso = new \Helper\Bitso($user_id);
+        $trade = $bitso->orderTrades($order_id);
+
         $sql = <<<sql
-INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda)
-VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda);
+INSERT INTO usuarios_transacciones(id_usuario, id_moneda, costo_usuario_moneda, cantidad_usuario_moneda, precio_original_usuario_moneda, oid)
+VALUES (:id_usuario, :id_moneda, :costo_usuario_moneda, :cantidad_usuario_moneda,:precio_original_usuario_moneda, :oid);
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
-            ':id_moneda' => $id_moneda,
-            ':costo_usuario_moneda' => -$costo,
-            ':cantidad_usuario_moneda' => -$order->original_amount
+            ':id_moneda' => $trade->major_currency,
+            ':costo_usuario_moneda' => -($trade->minor - $trade->fees_amount),
+            ':cantidad_usuario_moneda' => $trade->major,
+            ':precio_original_usuario_moneda' => $trade->price,
+            ':oid' => $trade->oid
         ]);
 
         $sql = <<<sql
@@ -132,8 +133,8 @@ VALUES (:id_usuario, 'mxn', :costo_usuario_moneda, :cantidad_usuario_moneda);
 sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
-            ':costo_usuario_moneda' => $costo,
-            ':cantidad_usuario_moneda' => $costo
+            ':costo_usuario_moneda' => $trade->minor - $trade->fees_amount,
+            ':cantidad_usuario_moneda' => $trade->minor - $trade->fees_amount
         ]);
 
         $this->setPrice();
@@ -143,10 +144,10 @@ sql;
     {
         $sql = <<<sql
 UPDATE usuarios_transacciones
-SET precio_real_usuario_moneda     = IF(id_moneda = 'mxn', 1,
-                                        IF(cantidad_usuario_moneda != 0, costo_usuario_moneda / cantidad_usuario_moneda,
-                                           0))
-WHERE precio_real_usuario_moneda IS NULL;
+SET
+	precio_real_usuario_moneda = IF(id_moneda = 'mxn', 1, IF(cantidad_usuario_moneda!=0,costo_usuario_moneda / cantidad_usuario_moneda,0))
+WHERE
+	precio_real_usuario_moneda IS NULL;
 sql;
         $mysql = new MySQL();
         $mysql->prepare2($sql);

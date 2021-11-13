@@ -7,11 +7,10 @@ namespace Helper;
 use BitsoAPI\bitsoException;
 use CoreException;
 use HTTPStatusCodes;
-use JsonResponse;
 use Model\Usuarios_Keys;
 use System;
 
-class Bitso
+class Bitso extends \BitsoAPI\bitso
 {
     /**
      * @var false|string
@@ -62,26 +61,64 @@ class Bitso
         $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
         $bitso->cancel_order(['order_id' => $oid]);
     }
-}
 
-abstract class BitsoOrderPayload
-{
-    public $original_value;
-    public $unfilled_amount;
-    public $original_amount;
-    public $book;
-    public $created_at;
-    public $updated_at;
-    public $side;
-    public $type;
-    public $oid;
-    public $status;
-    public $price;
-    public $time_in_force;
-}
+    public function speiWithdrawal(float $amount, string $first_name, string $last_name, string $CLABE)
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        $bitso->spei_withdrawal([
+            'amount' => $amount,
+            'recipient_given_names' => $first_name,
+            'recipient_family_names' => $last_name,
+            'clabe' => $CLABE,
+        ]);
+    }
 
-/*abstract class BitsoOrder
-{
-    public bool $success;
-    public BitsoOrderPayload $payload;
-}*/
+    /**
+     * @param string $oid
+     * @return mixed
+     */
+    function lookupOrder(string $oid): BitsoOrderPayload
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        return System::objectToObject($bitso->lookup_order([$oid])->payload[0], get_class(new BitsoOrderPayload()));
+    }
+
+    /**
+     * @param string $oid
+     * @return BitsoTradePayload
+     */
+    function orderTrades(string $oid): BitsoTradePayload
+    {
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+
+        $order_trade = [
+            'book' => '',
+            'created_at' => '',
+            'minor' => '',
+            'major' => '',
+            'fees_amount' => '',
+            'fees_currency' => '',
+            'minor_currency' => '',
+            'major_currency' => '',
+            'oid' => '',
+            'tid' => '',
+            'price' => '',
+            'side' => '',
+            'maker_side' => ''
+        ];
+        foreach ($bitso->order_trades($oid)->payload as $trade) {
+            /** @var BitsoTradePayload $trade */
+            $trade = System::objectToObject($trade, get_class(new BitsoTradePayload()));
+            if (empty($order_trade['book'])) {
+                $order_trade = (array)$trade;
+            } else {
+                $order_trade['minor'] += $trade->minor;
+                $order_trade['major'] += $trade->major;
+                $order_trade['fees_amount'] += $trade->fees_amount;
+                $order_trade['price'] = round($order_trade['minor'] / abs($order_trade['major']), 2);
+            }
+        }
+
+        return new BitsoTradePayload($order_trade);
+    }
+}

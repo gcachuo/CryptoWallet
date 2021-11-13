@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Controller;
-
 
 use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
@@ -10,14 +8,12 @@ use Controller;
 use CoreException;
 use Helper\BitsoOrder;
 use Helper\BitsoOrderPayload;
-use Helper\BitsoOrders;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Precios_Monedas;
 use Model\Usuarios;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
-use PHPUnit\Util\Json;
 use System;
 
 class Users extends Controller
@@ -163,9 +159,12 @@ class Users extends Controller
         return compact('clients', 'wallet');
     }
 
+    /**
+     * @throws CoreException
+     */
     protected function sellCoin()
     {
-        System::check_value_empty($_POST, ['user_token']);
+        System::check_value_empty($_POST, ['user_token', 'coin', 'total']);
         $user = System::decode_token($_POST['user_token']);
         $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
@@ -195,14 +194,14 @@ class Users extends Controller
 
         if (empty($orders->payload)) {
             $Bitso->cancelOrder($place_order->payload->oid);
-            JsonResponse::sendResponse('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
+            throw new CoreException('Error placing order.', HTTPStatusCodes::ServiceUnavailable);
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
-            $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
+            $Usuarios_Transacciones->insertOrder($user_id, $order->oid);
 
             if ($order->original_value == 0) {
-                JsonResponse::sendResponse('Error. Inserting zero.');
+                throw new CoreException('Error. Inserting zero.', HTTPStatusCodes::BadRequest);
             }
         }
         return true;
@@ -281,6 +280,8 @@ class Users extends Controller
             $amounts[$key]['limite']['venta'] = $limite_venta;
             $amounts[$key]['limite']['monto'] = $limite_monto;
 //            $amounts[$key]['costo'] = $limite_venta ?: $amount['costo'];
+
+            $amounts[$key]['estadisticas'] = Trades::getTradesByCoin($user_id, $amount['idMoneda']);
         }
 
         return compact('amounts');
