@@ -168,7 +168,7 @@ class Users extends Controller
      */
     protected function sellCoin()
     {
-        System::check_value_empty($_POST, ['user_token']);
+        System::check_value_empty($_POST, ['user_token', 'coin', 'total']);
         $user = System::decode_token($_POST['user_token']);
         $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
