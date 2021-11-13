@@ -121,7 +121,7 @@ sql;
         $mysql->prepare2($sql, [
             ':id_usuario' => $user_id,
             ':id_moneda' => $trade->major_currency,
-            ':costo_usuario_moneda' => $trade->minor - $trade->fees_amount,
+            ':costo_usuario_moneda' => -($trade->minor - $trade->fees_amount),
             ':cantidad_usuario_moneda' => $trade->major,
             ':precio_original_usuario_moneda' => $trade->price,
             ':oid' => $trade->oid
