@@ -4,6 +4,7 @@ namespace Controller;
 
 use Controller;
 use CoreException;
+use Helper\Bitso;
 use Model\Usuarios_Transacciones;
 use System;
 
@@ -13,9 +14,27 @@ class Trades extends Controller
     {
         parent::__construct([
             'GET' => [
-                'data' => 'getTrades'
+                'data' => 'getTrades',
+                'order' => 'getOrder'
             ]
         ]);
+    }
+
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function getOrder(): array
+    {
+        System::check_value_empty($_GET, ['user_token', 'oid']);
+        $user = System::decode_token($_GET['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
+        $Bitso = new Bitso($user_id);
+        $order = $Bitso->lookupOrder($_GET['oid']);
+        $order_trade = $Bitso->orderTrades($_GET['oid']);
+        return compact('order', 'order_trade');
     }
 
     /**

@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Controller;
-
 
 use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
@@ -10,14 +8,12 @@ use Controller;
 use CoreException;
 use Helper\BitsoOrder;
 use Helper\BitsoOrderPayload;
-use Helper\BitsoOrders;
 use HTTPStatusCodes;
 use JsonResponse;
 use Model\Precios_Monedas;
 use Model\Usuarios;
 use Model\Usuarios_Monedas_Limites;
 use Model\Usuarios_Transacciones;
-use PHPUnit\Util\Json;
 use System;
 
 class Users extends Controller
@@ -202,10 +198,10 @@ class Users extends Controller
         }
         /** @var BitsoOrderPayload $order */
         foreach ($orders->payload as $order) {
-            $Usuarios_Transacciones->insertOrder($user_id, $id_moneda, $costo, $order);
+            $Usuarios_Transacciones->insertOrder($user_id, $order->oid);
 
             if ($order->original_value == 0) {
-                JsonResponse::sendResponse('Error. Inserting zero.');
+                throw new CoreException('Error. Inserting zero.', HTTPStatusCodes::BadRequest);
             }
         }
         return true;
