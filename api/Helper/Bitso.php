@@ -89,8 +89,7 @@ class Bitso extends \BitsoAPI\bitso
      */
     function orderTrades(string $oid): BitsoTradePayload
     {
-        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
-        return $bitso->order_trades($oid)->payload[0];
+        return $this->order_trades($oid)->payload[0];
     }
 
     function order_trades($id)
@@ -111,17 +110,5 @@ class Bitso extends \BitsoAPI\bitso
     private function makeNonce(): int
     {
         return intval(round(microtime(true) * 1000));
-    }
-
-    #gets data and makes request
-    public function getData($nonce, $path, $RequestPath, $HTTPMethod, $JSONPayload, $type)
-    {
-        $message = $nonce . $HTTPMethod . $RequestPath . $JSONPayload;
-        $signature = hash_hmac('sha256', $message, $this->secret);
-        $format = 'Bitso %s:%s:%s';
-        $authHeader = sprintf($format, $this->key, $nonce, $signature);
-        $result = $this->url_request($type, $path, $HTTPMethod, $JSONPayload, $authHeader);
-
-        return $this->checkAndDecode($result);
     }
 }
