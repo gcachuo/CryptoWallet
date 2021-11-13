@@ -3,6 +3,8 @@
 namespace Controller;
 
 use Controller;
+use CoreException;
+use Helper\Bitso;
 use Model\Usuarios_Transacciones;
 use System;
 
@@ -12,30 +14,79 @@ class Trades extends Controller
     {
         parent::__construct([
             'GET' => [
-                'data' => 'getTrades'
+                'data' => 'getTrades',
+                'order' => 'getOrder'
             ]
         ]);
     }
 
-    protected function getTrades()
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function getOrder(): array
+    {
+        System::check_value_empty($_GET, ['user_token', 'oid']);
+        $user = System::decode_token($_GET['user_token']);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
+        $Bitso = new Bitso($user_id);
+        $order = $Bitso->lookupOrder($_GET['oid']);
+        $order_trade = $Bitso->orderTrades($_GET['oid']);
+        return compact('order', 'order_trade');
+    }
+
+    /**
+     * @param $idUser
+     * @param $coin
+     * @return array
+     */
+    public static function getTradesByCoin($idUser, $coin): array
+    {
+        $Usuarios_Transacciones = new Usuarios_Transacciones();
+        $trades = $Usuarios_Transacciones->selectTrades($idUser, $coin);
+
+        $buy = $sell = 0;
+        array_walk($trades, function (&$trade) use (&$buy, &$sell) {
+            if (!$trade['price'] || $trade['price'] <= 0) {
+                $trade = null;
+            } else {
+                if (+$trade['cost'] > 0) {
+                    $trade['buy'] = $trade['price'];
+                    $trade['type'] = 'buy';
+                    $buy = $trade['price'];
+                } elseif (+$trade['cost'] < 0) {
+                    $trade['sell'] = $trade['price'];
+                    $trade['type'] = 'sell';
+                    $sell = $trade['price'];
+                }
+                $trade['date'] = date('Y-m-d H:i', strtotime($trade['date']));
+                $trade['trade'] = $trade['price'];
+                $trade['cost'] = abs($trade['cost']);
+                $trade['quantity'] = abs($trade['quantity']);
+            }
+        });
+
+        $trades = array_values(array_filter($trades));
+
+        return compact('trades', 'buy', 'sell');
+    }
+
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function getTrades(): array
     {
         System::check_value_empty($_GET, ['coin']);
 
-        $Usuarios_Transacciones = new Usuarios_Transacciones();
-        $trades = $Usuarios_Transacciones->selectTrades(1, $_GET['coin']);
+        [
+            'trades' => $trades,
+            'buy' => $buy,
+            'sell' => $sell,
+        ] = $this->getTradesByCoin(1, $_GET['coin']);
 
-        array_walk($trades, function (&$trade) {
-            if (!$trade['price'] || $trade['price'] <= 0) {
-                $trade = null;
-            }
-            $trade = [
-                'date' => date('Y-m-d H:i', strtotime($trade['date'])),
-                'value' => $trade['price']
-            ];
-        });
-
-        $trades = array_filter($trades);
-
-        return compact('trades');
+        return compact('trades', 'buy', 'sell');
     }
 }

@@ -35,7 +35,7 @@ export class Cartera {
 
     initDatatable() {
         Cartera.table = $("table").DataTable({
-            order: [[6, 'desc']],
+            order: [[9, 'desc']],
 
             ajax: {
                 type: 'POST',
@@ -112,7 +112,29 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'Promedio', data: 'promedio',
+                    title: 'U. Compra', data: 'estadisticas',
+                    render: ({buy: data, sell}, type, {promedio, precio}) => {
+                        if (type === 'display') {
+                            const text = sell > precio && promedio > precio ? 'success' : '';
+                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 4,
+                    title: 'U. Venta', data: 'estadisticas',
+                    render: ({sell: data, buy}, type, {promedio, precio}) => {
+                        if (type === 'display') {
+                            const text = precio > buy && precio > promedio ? 'success' : '';
+                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
+                        }
+                        return data;
+                    }
+                },
+                {
+                    responsivePriority: 4,
+                    title: 'Costo Promedio', data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
@@ -193,6 +215,8 @@ export class Cartera {
             const coin = Cartera.coins.find(function (element) {
                 return element.idMoneda === key;
             });
+            delete coin['estadisticas'];
+
             const threshold = +val.threshold;
             const amount = +val.amount;
             if (coin.total > (threshold + amount)) {
