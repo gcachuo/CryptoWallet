@@ -89,26 +89,7 @@ class Bitso extends \BitsoAPI\bitso
      */
     function orderTrades(string $oid): BitsoTradePayload
     {
-        return $this->order_trades($oid)->payload[0];
-    }
-
-    function order_trades($id)
-    {
-        /*
-          Returns all Trades Associated with an order
-        */
-        $path = $this->url . '/order_trades/' . $id;
-        $RequestPath = '/api/v3/order_trades/' . $id;
-        $nonce = $this->makeNonce();
-        $HTTPMethod = 'GET';
-        $JSONPayload = '';
-        $type = 'PRIVATE';
-
-        return $this->getData($nonce, $path, $RequestPath, $HTTPMethod, $JSONPayload, $type);
-    }
-
-    private function makeNonce(): int
-    {
-        return intval(round(microtime(true) * 1000));
+        $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+        return $bitso->order_trades($oid)->payload[0];
     }
 }
