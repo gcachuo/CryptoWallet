@@ -121,4 +121,14 @@ class Bitso extends \BitsoAPI\bitso
 
         return new BitsoTradePayload($order_trade);
     }
+
+    function selectBalances()
+    {
+        try {
+            $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
+            return $bitso->balances()->payload->balances;
+        } catch (bitsoException $exception) {
+            return [];
+        }
+    }
 }

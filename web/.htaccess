@@ -1,5 +1,7 @@
 RewriteEngine on
 
+AddHandler application/x-httpd-php .php
+
 # Don't rewrite files or directories
 RewriteCond %{REQUEST_FILENAME} -f [OR]
 RewriteCond %{REQUEST_FILENAME} -d
