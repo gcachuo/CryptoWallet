@@ -7,7 +7,8 @@ export class Clientes {
     private static tableClients;
     private static tableCoins;
     private static totales;
-    initDatatable(){
+
+    initDatatable() {
         Clientes.tableClients = $("#tabla-clientes").DataTable({
             order: [[2, 'desc']],
             ajax: {
@@ -16,7 +17,7 @@ export class Clientes {
                 data: {
                     user_token: $("#user_token").val()
                 },
-                dataSrc: ({response: {data: {clients, wallet}}}) => {
+                dataSrc: ({data: {clients, wallet}}: ApiResponse<{ clients, wallet }>) => {
                     Clientes.totales = {
                         actual: {
                             cartera: wallet.total,
@@ -47,7 +48,7 @@ export class Clientes {
             processing: true,
             serverSide: false,
             searching: false,
-            initComplete:this.initComplete,
+            initComplete: this.initComplete,
 
             columnDefs: Defaults.global.dt.getColumns([
                 {
@@ -77,6 +78,7 @@ export class Clientes {
             ]),
         });
     }
+
     initComplete() {
         Clientes.totales.utilidad = {
             cartera: Clientes.totales.actual.cartera - Clientes.totales.costo.cartera,

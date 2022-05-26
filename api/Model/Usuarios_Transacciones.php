@@ -83,8 +83,20 @@ sql;
         return $mysql->fetch_single($mysql->prepare($sql, ['ssis', $fecha, $fecha, $user_id, $id_moneda]));
     }
 
-    function insertTrade($user_id, $id_moneda, $costo, $cantidad, $income = true)
+    /**
+     * @param $user_id
+     * @param $id_moneda
+     * @param $costo
+     * @param $cantidad
+     * @param $income
+     * @return void
+     * @throws CoreException
+     */
+    function insertTrade($user_id, $id_moneda, $costo, $cantidad, $income = true): void
     {
+        $costo = abs($costo);
+        $cantidad = abs($cantidad);
+
         if (!$income) {
             $costo = -$costo;
             $cantidad = -$cantidad;
