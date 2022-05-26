@@ -40,7 +40,7 @@ export class Cartera {
             ajax: {
                 type: 'POST',
                 url: 'users/fetchAmounts',
-                dataSrc: ({status, code, response: {message, data: {amounts}}, error}) => {
+                dataSrc: ({data: {amounts}}: ApiResponse<{ amounts: { book, cantidad, costo, estadisticas, idMoneda, limite, moneda, porcentaje, precio, promedio, total }[] }>) => {
                     Cartera.totales = {
                         costo: 0,
                         actual: 0,
@@ -203,7 +203,7 @@ export class Cartera {
 
         $.post('users/fetchCoinLimits', {
             user_token: $("#user_token").val()
-        }).done(({status, code, response: {message, data: {sell}}, error}) => {
+        }).done(({data: {sell}}: ApiResponse<{ sell }>) => {
             Cartera.autoSell(sell);
         });
 
@@ -232,11 +232,7 @@ export class Cartera {
                     Cartera.table.ajax.reload();
                 }).fail(response => {
                     if (response.responseJSON) {
-                        const {
-                            status,
-                            code,
-                            response: {message, error: {type, message: error_message, file, line}}
-                        } = response.responseJSON;
+                        const {code, message, response: {message: error_message}}: ApiErrorResponse = response.responseJSON;
                         switch (true) {
                             case code >= 500:
                                 toastr.error('An error ocurred.');

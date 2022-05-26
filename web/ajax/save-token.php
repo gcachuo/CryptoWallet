@@ -1,13 +1,7 @@
 <?php
-include __DIR__ . "/../core/System.php";
-System::init(['DIR' => __DIR__.'/../', 'ENV' => 'www']);
-
-$headers = apache_request_headers();
-$authorization = $headers['Authorization'];
-$token = str_replace('Bearer ', '', $authorization);
-
-session_start();
-$_SESSION['user_token'] = $token;
-session_write_close();
-
-JsonResponse::sendResponse('Completed.');
+include_once __DIR__ . '/../core/System.php';
+System::init(['DIR' => __DIR__ . '/..', 'ENV' => 'www']);
+System::check_value_empty($_GET, ['token']);
+System::sessionSet('user_token', $_GET['token']);
+$token = $_GET['token'];
+JsonResponse::sendResponse('Completed', compact('token'));

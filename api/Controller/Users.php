@@ -70,7 +70,11 @@ class Users extends Controller
         return compact('user');
     }
 
-    protected function signIn()
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function signIn(): array
     {
         System::check_value_empty($_POST, ['email', 'password'], 'Missing  Data.');
         ['email' => $email, 'password' => $password] = $_POST;
