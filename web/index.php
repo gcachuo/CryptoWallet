@@ -1,4 +1,5 @@
 <?php
+
 include __DIR__ . "/core/System.php";
 
 define('SESSIONCHECK', true);
