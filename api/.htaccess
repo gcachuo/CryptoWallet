@@ -1,5 +1,7 @@
 RewriteEngine on
 
+AddHandler application/x-httpd-php .php
+
 RewriteCond %{HTTP:Connection} Upgrade [NC]
 RewriteCond %{HTTP:Upgrade} websocket [NC]
 RewriteRule /(.*) ws://localhost:8080/$1 [P,L]

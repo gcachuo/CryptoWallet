@@ -1,0 +1,4 @@
+This is a Brave Rewards publisher verification file.
+
+Domain: gcachuo.com
+Token: 463229931c09766f040bdb1f1c703646b919418aeeede42e3db0c0aab27f8854
