@@ -74,7 +74,7 @@ export class Cartera {
             },
 
             rowCallback: function (row, data, index) {
-                if (data['cantidad'] <= 0) {
+                if (data['cantidad'] <= 0 || numeral(data['total']).format('0.00') <= 0) {
                     $(row).hide();
                 }
             },
@@ -219,8 +219,12 @@ export class Cartera {
 
             const threshold = +val.threshold;
             const amount = +val.amount;
-            if (coin.total > (threshold + amount)) {
+            if (coin.total > (threshold + amount) && amount > 0) {
                 const total = Math.floor((coin.total - threshold) / amount) * amount;
+                if (isNaN(total)) {
+                    console.error("Trying to sell NaN", coin.total, threshold, amount);
+                    return;
+                }
                 toastr.info('Selling $' + total + ' ' + coin.idMoneda);
                 console.info('Selling $' + total + ' ' + coin.idMoneda);
                 $.post('users/sellCoin', {

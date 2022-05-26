@@ -2,10 +2,10 @@
 
 namespace Controller;
 
-use BitsoAPI\bitso;
 use BitsoAPI\bitsoException;
 use Controller;
 use CoreException;
+use Helper\Bitso;
 use Helper\BitsoOrder;
 use Helper\BitsoOrderPayload;
 use HTTPStatusCodes;
@@ -117,7 +117,7 @@ class Users extends Controller
         $Usuarios = new Usuarios();
         $clients = $Usuarios->selectClients($user_id);
 
-        $bitso = new bitso('', '');
+        $bitso = new Bitso($user_id);
 
         $Precios_Monedas = new Precios_Monedas();
         $prices = [];
@@ -185,7 +185,7 @@ class Users extends Controller
         }
 
         try {
-            $Bitso = new \Helper\Bitso($user_id);
+            $Bitso = new Bitso($user_id);
             /** @var BitsoOrder $orders */
             /** @var BitsoOrder $place_order */
             ['place_order' => $place_order, 'orders' => $orders] = $Bitso->placeOrder($id_moneda, $costo);
@@ -242,7 +242,8 @@ class Users extends Controller
         $amounts = $Usuarios_Transacciones->selectAmounts($user_id);
         $avgs = $Usuarios_Transacciones->selectBuyPriceAvg($user_id);
 
-        $bitso = new bitso('', '');
+        $bitso = new Bitso($user_id);
+        $_bitso = new \BitsoAPI\bitso('', '');
 
         $limits = $this->fetchCoinLimits();
         $prices = [];
@@ -250,7 +251,7 @@ class Users extends Controller
             $precio_promedio_compra = $avgs[$amount['idMoneda']];
             if (empty($prices[$amount['book']])) {
                 try {
-                    $ticker = $bitso->ticker(["book" => $amount['book']]);
+                    $ticker = $_bitso->ticker(["book" => $amount['book']]);
 
                     if (!$ticker->payload->ask || !$ticker->payload->bid) {
                         throw new bitsoException('price zero: ' . $ticker->payload->book, HTTPStatusCodes::ServiceUnavailable);
@@ -286,6 +287,32 @@ class Users extends Controller
 //            $amounts[$key]['costo'] = $limite_venta ?: $amount['costo'];
 
             $amounts[$key]['estadisticas'] = Trades::getTradesByCoin($user_id, $amount['idMoneda']);
+
+            $balances = array_filter(array_column($bitso->selectBalances(), "total", "currency"), function ($balance) {
+                return $balance > 0;
+            });
+
+            $cantidad = $balances[$amount['idMoneda']] - $amount['cantidad'];
+            if ($cantidad != 0) {
+                if ($amount['idMoneda'] === "mxn") {
+                    $cantidad = round($cantidad, 2);
+                    $costo = $cantidad;
+                } else {
+                    $ticker = $_bitso->ticker(['book' => $amount['book']])->payload;
+                    $costo = abs($cantidad) * (($ticker->ask + $ticker->bid) / 2);
+                }
+                if ($cantidad > 0 && $limite_venta !== null && $limite_venta < ($actual + $costo)) {
+                    $o_usuarios_monedas_limites = new Usuarios_Monedas_Limites();
+                    $o_usuarios_monedas_limites->updateLimit([
+                        'id_usuario' => $user_id,
+                        'id_moneda' => $amount['idMoneda'],
+                        'limite' => $actual + $costo,
+                    ]);
+                }
+                if ($costo != 0 || $cantidad != 0) {
+                    $Usuarios_Transacciones->insertTrade($user_id, $amount['idMoneda'], $costo, $cantidad, $cantidad > 0);
+                }
+            }
         }
 
         return compact('amounts');
