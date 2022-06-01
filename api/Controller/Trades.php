@@ -81,11 +81,15 @@ class Trades extends Controller
     {
         System::check_value_empty($_GET, ['coin']);
 
+        $user = System::decode_token(USER_TOKEN);
+        $user_id = $user['id'];
+        $user_id = System::decrypt($user_id);
+
         [
             'trades' => $trades,
             'buy' => $buy,
             'sell' => $sell,
-        ] = $this->getTradesByCoin(1, $_GET['coin']);
+        ] = $this->getTradesByCoin($user_id, $_GET['coin']);
 
         return compact('trades', 'buy', 'sell');
     }
