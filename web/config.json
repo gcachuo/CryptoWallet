@@ -46,6 +46,11 @@
       "href": "clientes",
       "hidden": true
     },
+    "notificaciones": {
+      "name": "Notificaciones",
+      "icon": "notifications",
+      "href": "notificaciones"
+    },
     "logout": {
       "name": "Cerrar Sesión",
       "icon": "lock",

@@ -2,6 +2,7 @@ import {Defaults} from "./defaults";
 
 $(() => {
     Defaults.init();
+    Defaults.initNotifications();
 });
 
 import "expose-loader?exposes[]=$&exposes[]=jQuery!jquery";

@@ -11,6 +11,13 @@ import * as toastr from "toastr";
 import 'datatables.net';
 import 'datatables.net-dt';
 import 'datatables.net-buttons';
+import 'datatables.net-buttons/js/buttons.html5';
+
+import pdfmake from 'pdfmake';
+import pdfFonts from "pdfmake/build/vfs_fonts";
+
+pdfmake.vfs = pdfFonts.pdfMake.vfs;
+$.fn.dataTable.Buttons['pdfMake'](pdfmake);
 
 import '@fortawesome/fontawesome-free/js/fontawesome';
 import '@fortawesome/fontawesome-free/js/solid';
@@ -49,6 +56,20 @@ export class Defaults {
         });
 
         $("button").prop('disabled', false);
+    }
+
+    public static initNotifications(){
+        if (!Notification) {
+            alert('Desktop notifications not available in your browser. Try Chromium.');
+            return;
+        }
+
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(() => Defaults.browserNotification({
+                title: 'Notificaciones Activadas',
+                body: 'Has activado las notificaciones correctamente'
+            }));
+        }
     }
 
     private static loadSelect2() {
@@ -157,6 +178,10 @@ export class Defaults {
             api: true,
             async: true,
             dataType: "json",
+            headers: {
+                'X-Client': this.code,
+                Authorization: 'Bearer ' + this.user_token
+            },
             beforeSend: function (jqXHR, settings: AjaxSettings & { api: boolean }) {
                 if (settings.api) {
                     settings.url = Defaults.settings.apiUrl + settings.url;
@@ -198,7 +223,7 @@ export class Defaults {
                 e.preventDefault();
                 $(e.currentTarget).attr('triggered', 'true');
 
-                const $button = $(`button[type='submit']`);
+                const $button = $(`button[type='submit'][clicked=true]`);
                 this.$buttonHTML = $button.html();
                 $button.prop('disabled', true).prepend('<i class="fa fa-spinner fa-spin"></i>' + ' ');
 
@@ -336,5 +361,26 @@ export class Defaults {
         document.body.appendChild(link);
         link.click();
         link.remove();
+    }
+
+    static async browserNotification(data: { title: string, body: string, url?: string | null, icon?: string | null, }) {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(() => this.browserNotification({
+                title: 'Notificaciones Activadas',
+                body: 'Has activado las notificaciones correctamente'
+            }))
+        } else {
+            const notification = new Notification(
+                data.title,
+                {
+                    icon: data.icon,
+                    body: data.body,
+                }
+            );
+
+            notification.onclick = function () {
+                window.open(data.url || location.href);
+            };
+        }
     }
 }
