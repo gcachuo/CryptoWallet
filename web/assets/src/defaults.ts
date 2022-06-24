@@ -58,6 +58,20 @@ export class Defaults {
         $("button").prop('disabled', false);
     }
 
+    public static initNotifications(){
+        if (!Notification) {
+            alert('Desktop notifications not available in your browser. Try Chromium.');
+            return;
+        }
+
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(() => Defaults.browserNotification({
+                title: 'Notificaciones Activadas',
+                body: 'Has activado las notificaciones correctamente'
+            }));
+        }
+    }
+
     private static loadSelect2() {
         require('select2');
         if ($('.select2').length) {
