@@ -15,11 +15,11 @@ class Bitso extends \BitsoAPI\bitso
     /**
      * @var false|string
      */
-    private string|false $api_key;
+    private string $api_key;
     /**
      * @var false|string
      */
-    private string|false $api_secret;
+    private string $api_secret;
 
     public function __construct($user_id)
     {
