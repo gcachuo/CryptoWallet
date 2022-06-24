@@ -15,11 +15,11 @@ class Bitso extends \BitsoAPI\bitso
     /**
      * @var false|string
      */
-    private $api_key;
+    private string|false $api_key;
     /**
      * @var false|string
      */
-    private $api_secret;
+    private string|false $api_secret;
 
     public function __construct($user_id)
     {
@@ -122,7 +122,7 @@ class Bitso extends \BitsoAPI\bitso
         return new BitsoTradePayload($order_trade);
     }
 
-    function selectBalances()
+    function selectBalances(): array
     {
         try {
             $bitso = new \BitsoAPI\bitso($this->api_key, $this->api_secret);
@@ -130,5 +130,13 @@ class Bitso extends \BitsoAPI\bitso
         } catch (bitsoException $exception) {
             return [];
         }
+    }
+
+    /**
+     * @return bool
+     */
+    public function isKeySet(): bool
+    {
+        return !empty($this->api_key) && !empty($this->api_secret);
     }
 }

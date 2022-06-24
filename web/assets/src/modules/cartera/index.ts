@@ -3,6 +3,7 @@ import $ from 'jquery';
 import 'datatables.net';
 import numeral from 'numeral';
 import toastr from 'toastr';
+import {Alert} from "bootstrap";
 
 export class Cartera {
     private static totales = {
@@ -10,7 +11,7 @@ export class Cartera {
         actual: 0,
     };
     private static coins;
-    private static table;
+    private static table: DataTables.Api;
 
     static btnChangeLimit(idMoneda) {
         const limit = prompt('Ingrese un nuevo costo.');
@@ -50,7 +51,19 @@ export class Cartera {
                 },
                 data: {
                     user_token: $('#user_token').val()
-                }
+                },
+
+                error: (e, settings, message) => {
+                    const {responseJSON}: { responseJSON?: ApiErrorResponse } = e;
+                    Cartera.totales = {
+                        costo: 0,
+                        actual: 0,
+                    }
+                    Cartera.coins = [];
+                    console.error('DataTables error: ', responseJSON.message, responseJSON.error);
+                    Defaults.Alert(message, 'error');
+                    return true;
+                },
             },
 
             pageLength: 25,
@@ -194,10 +207,6 @@ export class Cartera {
     }
 
     initComplete() {
-        // $("#txtTotalCosto").val(numeral(Cartera.totales.costo).format('$0,0.00'));
-        // $("#txtTotalActual").val(numeral(Cartera.totales.actual).format('$0,0.00'));
-        // $("#txtTotalGP").val(numeral(Cartera.totales.actual - Cartera.totales.costo).format('$0,0.00'));
-
         Cartera.totales.costo = 0;
         Cartera.totales.actual = 0;
 
@@ -230,7 +239,11 @@ export class Cartera {
                 $.post('users/sellCoin', {
                     coin, total,
                     user_token: $("#user_token").val()
-                }).done(() => {
+                }).done((e: ApiResponse<boolean>) => {
+                    if (!e.data) {
+                        toastr.clear();
+                        return;
+                    }
                     toastr.success('Sold ' + total + ' ' + coin.idMoneda);
                     console.info('Sold ' + total + ' ' + coin.idMoneda);
                     Cartera.table.ajax.reload();
