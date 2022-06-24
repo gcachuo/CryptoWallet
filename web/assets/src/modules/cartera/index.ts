@@ -234,6 +234,10 @@ export class Cartera {
                     console.error("Trying to sell NaN", coin.total, threshold, amount);
                     return;
                 }
+                Defaults.browserNotification({
+                    title: coin.idMoneda.toUpperCase(),
+                    body: 'Selling $' + total + ' ' + coin.idMoneda.toUpperCase()
+                });
                 toastr.info('Selling $' + total + ' ' + coin.idMoneda);
                 console.info('Selling $' + total + ' ' + coin.idMoneda);
                 $.post('users/sellCoin', {
@@ -244,6 +248,10 @@ export class Cartera {
                         toastr.clear();
                         return;
                     }
+                    Defaults.browserNotification({
+                        title: coin.idMoneda.toUpperCase(),
+                        body: 'Sold ' + total + ' ' + coin.idMoneda.toUpperCase()
+                    });
                     toastr.success('Sold ' + total + ' ' + coin.idMoneda);
                     console.info('Sold ' + total + ' ' + coin.idMoneda);
                     Cartera.table.ajax.reload();

@@ -15,6 +15,7 @@ import 'datatables.net-buttons/js/buttons.html5';
 
 import pdfmake from 'pdfmake';
 import pdfFonts from "pdfmake/build/vfs_fonts";
+
 pdfmake.vfs = pdfFonts.pdfMake.vfs;
 $.fn.dataTable.Buttons['pdfMake'](pdfmake);
 
@@ -346,5 +347,26 @@ export class Defaults {
         document.body.appendChild(link);
         link.click();
         link.remove();
+    }
+
+    static async browserNotification(data: { title: string, body: string, url?: string | null, icon?: string | null, }) {
+        if (Notification.permission !== "granted") {
+            Notification.requestPermission().then(() => this.browserNotification({
+                title: 'Notificaciones Activadas',
+                body: 'Has activado las notificaciones correctamente'
+            }))
+        } else {
+            const notification = new Notification(
+                data.title,
+                {
+                    icon: data.icon,
+                    body: data.body,
+                }
+            );
+
+            notification.onclick = function () {
+                window.open(data.url || location.href);
+            };
+        }
     }
 }
