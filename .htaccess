@@ -1,2 +1,5 @@
 RewriteEngine on
 #RewriteRule ^ /web/
+AddHandler application/x-httpd-php .php
+
+

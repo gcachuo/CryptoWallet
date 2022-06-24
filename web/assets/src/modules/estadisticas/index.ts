@@ -10,7 +10,10 @@ export class Estadisticas {
     async getTradesChart(coin: string) {
         const {data: {trades: data, buy, sell}}: ApiResponse<{ trades, buy, sell }> = await $.ajax({
             url: 'trades/data',
-            data: {coin}
+            data: {
+                coin,
+                user_token: $("#user_token").val()
+            }
         });
 
         Estadisticas.loadChart($('#chartdiv'), data, {});
