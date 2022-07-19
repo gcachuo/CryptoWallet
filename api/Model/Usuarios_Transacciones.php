@@ -205,9 +205,9 @@ SELECT
 	@running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
 	@last_price := precio_real_usuario_moneda                              AS precio,
 	@total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
-	cantidad_usuario_moneda                                                   cantidad,
-	costo_usuario_moneda                                                      costo,
-	ROUND((costo_usuario_moneda) / @total_anterior * 100, 2)              AS porcentaje
+	cantidad_usuario_moneda                                                AS moneda,
+	costo_usuario_moneda                                                   AS mxn,
+	ROUND((costo_usuario_moneda) / @total_anterior * 100, 2)               AS porcentaje
 FROM
 	usuarios_transacciones t
 		JOIN (SELECT @running_cost := 0) c

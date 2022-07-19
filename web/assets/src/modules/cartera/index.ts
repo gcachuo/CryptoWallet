@@ -98,7 +98,7 @@ export class Cartera {
                     title: 'Moneda', data: 'moneda',
                     render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
-                            return `<a class="btn btn-sm btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
+                            return `<button class="btn btn-sm btn-link" onclick="btnOpenStatistics('${idMoneda}')">${data}</button>`;
                         }
                         return data;
                     }
@@ -160,9 +160,10 @@ export class Cartera {
                     title: 'Costo', data: 'costo',
                     render: (data, type, {idMoneda, limite: {venta}}) => {
                         if (type === 'display') {
-                            data = venta ? venta : data;
-                            data = numeral(data).format('$0,0.00');
-                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${data}</button>`;
+                            if (idMoneda !== 'mxn') {
+                                data = venta ? venta : data;
+                            }
+                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${numeral(data).format('$0,0.00')}</button>`;
                         }
                         return data;
                     }
@@ -280,6 +281,11 @@ export class Cartera {
             }
         });
     }
+
+    static btnOpenStatistics(idMoneda) {
+        Defaults.openModal({title: `Estadisticas | ${idMoneda.toUpperCase()}`, url: `estadisticas?coin=${idMoneda}`})
+    }
 }
 
 window['btnChangeLimit'] = Cartera.btnChangeLimit;
+window['btnOpenStatistics'] = Cartera.btnOpenStatistics;

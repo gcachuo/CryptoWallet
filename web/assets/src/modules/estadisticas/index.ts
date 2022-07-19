@@ -25,6 +25,7 @@ export class Estadisticas {
 
     private static loadDatatable($element, data) {
         $element.DataTable({
+            retrieve: true,
             stateSave: false,
             order: [[0, 'desc']],
             ajax: null,
@@ -113,7 +114,8 @@ export class Estadisticas {
             "count": 1
         }
 
-        dateAxis.min = (new Date(2018, 10, 1)).getTime();
+        const minDate = moment(data[0].date);
+        dateAxis.min = (new Date(minDate.year(), minDate.month(), minDate.date())).getTime();
 
         // Create series
         const series = chart.series.push(new am4charts.LineSeries());
