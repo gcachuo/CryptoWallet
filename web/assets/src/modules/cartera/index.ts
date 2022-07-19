@@ -3,7 +3,6 @@ import $ from 'jquery';
 import 'datatables.net';
 import numeral from 'numeral';
 import toastr from 'toastr';
-import {Alert} from "bootstrap";
 
 export class Cartera {
     private static totales = {
@@ -37,6 +36,7 @@ export class Cartera {
     initDatatable() {
         Cartera.table = $("table").DataTable({
             order: [[9, 'desc']],
+            stateSave: false,
 
             ajax: {
                 type: 'POST',
@@ -157,13 +157,14 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 2,
-                    title: 'Costo', data: 'costo',
+                    title: 'Costo',
+                    data: 'costo',
                     render: (data, type, {idMoneda, limite: {venta}}) => {
                         if (type === 'display') {
                             if (idMoneda !== 'mxn') {
                                 data = venta ? venta : data;
                             }
-                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${numeral(data).format('$0,0.00')}</button>`;
+                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link text-dark">${numeral(data).format('$0,0.00')}</button>`;
                         }
                         return data;
                     }
@@ -181,11 +182,12 @@ export class Cartera {
                 {
                     responsivePriority: 3,
                     title: 'Utilidad',
-                    render: (data, type, {total: actual, costo, porcentaje, limite: {venta}}) => {
+                    data: null,
+                    render: (data, type, {idMoneda, total: actual, costo, porcentaje, limite: {venta}}) => {
                         costo = venta ? venta : costo;
                         data = actual - costo;
                         if (type === 'display') {
-                            return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
+                            return `<button class="btn btn-sm btn-link text-${porcentaje >= 0 ? 'success' : 'danger'}" onclick="btnOpenCalc('${idMoneda}')">${numeral(data).format('$0,0.00')}</button>`;
                         }
                         return data;
                     }
@@ -285,7 +287,12 @@ export class Cartera {
     static btnOpenStatistics(idMoneda) {
         Defaults.openModal({title: `Estadisticas | ${idMoneda.toUpperCase()}`, url: `estadisticas?coin=${idMoneda}`})
     }
+
+    static btnOpenCalc(idMoneda) {
+        Defaults.openModal({title: `Utilidad | ${idMoneda.toUpperCase()}`, url: `utilidad?coin=${idMoneda}`})
+    }
 }
 
 window['btnChangeLimit'] = Cartera.btnChangeLimit;
 window['btnOpenStatistics'] = Cartera.btnOpenStatistics;
+window['btnOpenCalc'] = Cartera.btnOpenCalc;

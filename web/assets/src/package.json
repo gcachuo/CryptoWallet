@@ -6,6 +6,7 @@
     "datatables.net": "^1.10.22",
     "datatables.net-buttons": "^1.6.5",
     "datatables.net-dt": "^1.10.22",
+    "datatables.net-responsive": "^2.3.0",
     "jquery": "^3.5.1",
     "moment": "^2.29.1",
     "numeral": "^2.0.6",
