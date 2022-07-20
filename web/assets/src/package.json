@@ -3,7 +3,7 @@
     "@amcharts/amcharts4": "^4.10.13",
     "@fortawesome/fontawesome-free": "^5.14.0",
     "bootstrap": "^4.5.2",
-    "datatables.net": "^1.10.22",
+    "datatables.net": "^1.11.3",
     "datatables.net-buttons": "^1.6.5",
     "datatables.net-dt": "^1.10.22",
     "datatables.net-responsive": "^2.3.0",
