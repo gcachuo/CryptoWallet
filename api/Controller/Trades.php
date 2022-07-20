@@ -15,9 +15,26 @@ class Trades extends Controller
         parent::__construct([
             'GET' => [
                 'data' => 'getTrades',
-                'order' => 'getOrder'
+                'order' => 'getOrder',
+                'profit' => 'getProfit',
             ]
         ]);
+    }
+
+    /**
+     * @return array
+     * @throws CoreException
+     */
+    protected function getProfit(): array
+    {
+        System::check_value_empty($_GET, ['coin']);
+        $user = System::decode_token(USER_TOKEN);
+        $user_id = System::decrypt($user['id']);
+
+        $o_usuarios_transacciones = new Usuarios_Transacciones();
+        $profit = $o_usuarios_transacciones->selectCalc($user_id, $_GET['coin']);
+
+        return compact('profit');
     }
 
     /**

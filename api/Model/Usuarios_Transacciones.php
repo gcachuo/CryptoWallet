@@ -188,4 +188,43 @@ sql;
         ]);
         return $query->fetchAll();
     }
+
+    /**
+     * @param int $id_usuario
+     * @param string $id_moneda
+     * @return array|false
+     * @throws CoreException
+     */
+    function selectCalc(int $id_usuario, string $id_moneda)
+    {
+        $sql = <<<sql
+SELECT
+    fecha_usuario_transaccion fecha,
+	@running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8)      AS costo_actual,
+	ROUND(@running_total, 8)                                               AS cantidad_anterior,
+	@total_anterior := ROUND(@running_total * @last_price, 2)              AS total_anterior,
+	@running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
+	@last_price := precio_real_usuario_moneda                              AS precio,
+	@total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
+	cantidad_usuario_moneda                                                AS moneda,
+	costo_usuario_moneda                                                   AS mxn,
+	ROUND((costo_usuario_moneda) / @total_anterior, 2)               AS porcentaje
+FROM
+	usuarios_transacciones t
+		JOIN (SELECT @running_cost := 0) c
+		JOIN (SELECT @running_total := 0) r
+		JOIN (SELECT @last_price := 0) p
+WHERE
+	  id_usuario = :id_usuario
+  AND id_moneda = :id_moneda
+ORDER BY
+	fecha_usuario_transaccion;
+sql;
+        $mysql = new MySQL();
+        $query = $mysql->prepare2($sql, [
+            ':id_usuario' => $id_usuario,
+            ':id_moneda' => $id_moneda,
+        ]);
+        return $query->fetchAll();
+    }
 }
