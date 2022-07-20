@@ -101,8 +101,8 @@ export class Utilidad {
 
                 $("#sells").text(numeral(Math.abs(sells)).format('$0,0.00'));
                 $("#buys").text(numeral(buys).format('$0,0.00'));
-                $("#profits").text(numeral(profit).format('$0,0.00'));
                 $("#total").text(numeral(total).format('$0,0.00'));
+                $("#profits").text(`${numeral(profit).format('$0,0.00')} (${numeral(profit / buys).format('0,0.00%')})`);
             },
         });
     }
