@@ -3,7 +3,6 @@ import $ from 'jquery';
 import 'datatables.net';
 import numeral from 'numeral';
 import toastr from 'toastr';
-import {Alert} from "bootstrap";
 
 export class Cartera {
     private static totales = {
@@ -37,6 +36,7 @@ export class Cartera {
     initDatatable() {
         Cartera.table = $("table").DataTable({
             order: [[9, 'desc']],
+            stateSave: false,
 
             ajax: {
                 type: 'POST',
@@ -95,17 +95,19 @@ export class Cartera {
             columnDefs: Defaults.global.dt.getColumns([
                 {
                     responsivePriority: 1,
-                    title: 'Moneda', data: 'moneda',
+                    title: 'Moneda',
+                    data: 'moneda',
                     render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
-                            return `<a class="btn btn-sm btn-link" href="estadisticas?coin=${idMoneda}">${data}</a>`
+                            return `<button class="btn btn-sm btn-link" onclick="btnOpenStatistics('${idMoneda}')">${data}</button>`;
                         }
                         return data;
                     }
                 },
                 {
                     responsivePriority: 2,
-                    title: 'Cantidad', data: 'cantidad',
+                    title: 'Cantidad',
+                    data: 'cantidad',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('0.00000000');
@@ -115,7 +117,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Precio', data: 'precio',
+                    title: 'Precio',
+                    data: 'precio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
@@ -125,7 +128,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Compra', data: 'estadisticas',
+                    title: 'U. Compra',
+                    data: 'estadisticas',
                     render: ({buy: data, sell}, type, {promedio, precio}) => {
                         if (type === 'display') {
                             const text = sell > precio && promedio > precio ? 'success' : '';
@@ -136,7 +140,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Venta', data: 'estadisticas',
+                    title: 'U. Venta',
+                    data: 'estadisticas',
                     render: ({sell: data, buy}, type, {promedio, precio}) => {
                         if (type === 'display') {
                             const text = precio > buy && precio > promedio ? 'success' : '';
@@ -147,7 +152,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'Costo Promedio', data: 'promedio',
+                    title: 'Costo Promedio',
+                    data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
@@ -157,19 +163,22 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 2,
-                    title: 'Costo', data: 'costo',
+                    title: 'Costo',
+                    data: 'costo',
                     render: (data, type, {idMoneda, limite: {venta}}) => {
                         if (type === 'display') {
-                            data = venta ? venta : data;
-                            data = numeral(data).format('$0,0.00');
-                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link">${data}</button>`;
+                            if (idMoneda !== 'mxn') {
+                                data = venta ? venta : data;
+                            }
+                            return `<button onclick="btnChangeLimit('${idMoneda}')" class="btn btn-sm btn-link text-dark">${numeral(data).format('$0,0.00')}</button>`;
                         }
                         return data;
                     }
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Actual', data: 'total',
+                    title: 'Actual',
+                    data: 'total',
                     render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
@@ -180,18 +189,20 @@ export class Cartera {
                 {
                     responsivePriority: 3,
                     title: 'Utilidad',
-                    render: (data, type, {total: actual, costo, porcentaje, limite: {venta}}) => {
+                    data: null,
+                    render: (data, type, {idMoneda, total: actual, costo, porcentaje, limite: {venta}}) => {
                         costo = venta ? venta : costo;
                         data = actual - costo;
                         if (type === 'display') {
-                            return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
+                            return `<button class="btn btn-sm btn-link text-${porcentaje >= 0 ? 'success' : 'danger'}" onclick="btnOpenCalc('${idMoneda}')">${numeral(data).format('$0,0.00')}</button>`;
                         }
                         return data;
                     }
                 },
                 {
                     responsivePriority: 3,
-                    title: '%', data: 'porcentaje',
+                    title: '%',
+                    data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
                             if (data !== null) {
@@ -280,6 +291,16 @@ export class Cartera {
             }
         });
     }
+
+    static btnOpenStatistics(idMoneda) {
+        Defaults.openModal({title: `Estadisticas | ${idMoneda.toUpperCase()}`, url: `estadisticas?coin=${idMoneda}`})
+    }
+
+    static btnOpenCalc(idMoneda) {
+        Defaults.openModal({title: `Utilidad | ${idMoneda.toUpperCase()}`, url: `utilidad?coin=${idMoneda}`})
+    }
 }
 
 window['btnChangeLimit'] = Cartera.btnChangeLimit;
+window['btnOpenStatistics'] = Cartera.btnOpenStatistics;
+window['btnOpenCalc'] = Cartera.btnOpenCalc;
