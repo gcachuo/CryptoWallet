@@ -95,7 +95,8 @@ export class Cartera {
             columnDefs: Defaults.global.dt.getColumns([
                 {
                     responsivePriority: 1,
-                    title: 'Moneda', data: 'moneda',
+                    title: 'Moneda',
+                    data: 'moneda',
                     render: (data, type, {idMoneda}) => {
                         if (type == 'display') {
                             return `<button class="btn btn-sm btn-link" onclick="btnOpenStatistics('${idMoneda}')">${data}</button>`;
@@ -105,7 +106,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 2,
-                    title: 'Cantidad', data: 'cantidad',
+                    title: 'Cantidad',
+                    data: 'cantidad',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('0.00000000');
@@ -115,7 +117,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Precio', data: 'precio',
+                    title: 'Precio',
+                    data: 'precio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
@@ -125,7 +128,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Compra', data: 'estadisticas',
+                    title: 'U. Compra',
+                    data: 'estadisticas',
                     render: ({buy: data, sell}, type, {promedio, precio}) => {
                         if (type === 'display') {
                             const text = sell > precio && promedio > precio ? 'success' : '';
@@ -136,7 +140,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Venta', data: 'estadisticas',
+                    title: 'U. Venta',
+                    data: 'estadisticas',
                     render: ({sell: data, buy}, type, {promedio, precio}) => {
                         if (type === 'display') {
                             const text = precio > buy && precio > promedio ? 'success' : '';
@@ -147,7 +152,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'Costo Promedio', data: 'promedio',
+                    title: 'Costo Promedio',
+                    data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
                             return numeral(data).format('$0,0.00');
@@ -171,7 +177,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 1,
-                    title: 'Actual', data: 'total',
+                    title: 'Actual',
+                    data: 'total',
                     render: (data, type, {porcentaje}) => {
                         if (type === 'display') {
                             return `<span class="text-${porcentaje >= 0 ? 'success' : 'danger'}">` + numeral(data).format('$0,0.00') + '</span>';
@@ -194,7 +201,8 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 3,
-                    title: '%', data: 'porcentaje',
+                    title: '%',
+                    data: 'porcentaje',
                     render: (data, type) => {
                         if (type === 'display') {
                             if (data !== null) {

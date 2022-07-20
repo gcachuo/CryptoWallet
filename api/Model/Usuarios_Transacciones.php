@@ -199,6 +199,7 @@ sql;
     {
         $sql = <<<sql
 SELECT
+    fecha_usuario_transaccion fecha,
 	@running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8)      AS costo_actual,
 	ROUND(@running_total, 8)                                               AS cantidad_anterior,
 	@total_anterior := ROUND(@running_total * @last_price, 2)              AS total_anterior,
@@ -207,7 +208,7 @@ SELECT
 	@total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
 	cantidad_usuario_moneda                                                AS moneda,
 	costo_usuario_moneda                                                   AS mxn,
-	ROUND((costo_usuario_moneda) / @total_anterior * 100, 2)               AS porcentaje
+	ROUND((costo_usuario_moneda) / @total_anterior, 2)               AS porcentaje
 FROM
 	usuarios_transacciones t
 		JOIN (SELECT @running_cost := 0) c
