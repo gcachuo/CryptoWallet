@@ -4,6 +4,7 @@
 namespace Controller;
 
 
+use BitsoAPI\bitso;
 use Controller;
 use CoreException;
 use Model\Monedas;
@@ -15,7 +16,8 @@ class Coins extends Controller
     {
         parent::__construct([
             'GET' => [
-                'list' => 'selectCoins'
+                'list' => 'selectCoins',
+                'ticker' => 'getCurrentTicker',
             ]
         ]);
     }
@@ -34,5 +36,15 @@ class Coins extends Controller
         $monedas = $Monedas->selectMonedas($user_id);
 
         return compact('monedas');
+    }
+
+    function getCurrentTicker()
+    {
+        System::check_value_empty($_GET, ['coin']);
+
+        $_bitso = new bitso('', '');
+        $ticker = $_bitso->ticker(['book' => $_GET['coin'] . '_mxn'])->payload;
+
+        return ($ticker->ask + $ticker->bid) / 2;
     }
 }

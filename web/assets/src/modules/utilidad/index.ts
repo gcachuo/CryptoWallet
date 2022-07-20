@@ -76,13 +76,16 @@ export class Utilidad {
                 },
             ]),
 
-            footerCallback(node, data) {
+            async footerCallback(node, data) {
                 let
                     sells = 0,
                     buys = 0,
-                    profit = 0;
+                    profit = 0,
+                    total = 0;
 
-                data.map((row: { mxn, total_actual }) => {
+                const {data: ticker}: ApiResponse<number> = await $.get('coins/ticker?coin=' + coin);
+
+                data.map((row: { mxn, total_actual, total_cantidad }) => {
                     if (row.mxn > 0) {
                         buys += +row.mxn;
                     } else if (row.mxn < 0) {
@@ -91,13 +94,15 @@ export class Utilidad {
                     if (row.total_actual === 0) {
                         buys = sells = 0;
                     } else {
-                        profit = row.total_actual - buys + Math.abs(sells);
+                        total = row.total_cantidad * ticker;
+                        profit = total + Math.abs(sells) - buys;
                     }
-                })
+                });
 
                 $("#sells").text(numeral(Math.abs(sells)).format('$0,0.00'));
                 $("#buys").text(numeral(buys).format('$0,0.00'));
                 $("#profits").text(numeral(profit).format('$0,0.00'));
+                $("#total").text(numeral(total).format('$0,0.00'));
             },
         });
     }
