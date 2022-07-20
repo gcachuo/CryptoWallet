@@ -216,7 +216,9 @@ FROM
 		JOIN (SELECT @last_price := 0) p
 WHERE
 	  id_usuario = :id_usuario
-  AND id_moneda = :id_moneda;
+  AND id_moneda = :id_moneda
+ORDER BY
+	fecha_usuario_transaccion DESC;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
