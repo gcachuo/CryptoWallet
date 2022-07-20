@@ -218,7 +218,7 @@ WHERE
 	  id_usuario = :id_usuario
   AND id_moneda = :id_moneda
 ORDER BY
-	fecha_usuario_transaccion DESC;
+	fecha_usuario_transaccion;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
