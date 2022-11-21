@@ -5,9 +5,21 @@ export interface IAmounts {
   book: string;
   cantidad: number;
   costo: number;
-  estadisticas: object;
+  estadisticas: {
+    buy: number;
+    sell: number;
+    trades: {
+      buy: number;
+      cost: number;
+      date: string;
+      price: number;
+      quantity: number;
+      trade: number;
+      type: "buy" | "sell";
+    }[];
+  };
   idMoneda: string;
-  limite: object;
+  limite: { monto: number; venta: number };
   moneda: string;
   porcentaje: number;
   precio: number;
