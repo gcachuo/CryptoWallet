@@ -1,15 +1,24 @@
-import { ScrollView } from "react-native";
 import { useEffect, useState } from "react";
+import { ScrollView } from "react-native";
+import numeral from "numeral";
+import { Button, Card, Paragraph, Title } from "react-native-paper";
+
 import UsersAPI, { IAmounts } from "../../API/Users";
+
 import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
 import useAccessToken from "../../Hooks/useAccessToken";
-import { Card, Paragraph, Title } from "react-native-paper";
-import numeral from "numeral";
 
 export default function Cartera() {
   const accessToken = useAccessToken();
-  useAxiosInterceptors();
   const [amounts, setAmounts] = useState([] as IAmounts[]);
+  const [show, setShow] = useState({} as { [index: string]: boolean });
+
+  useAxiosInterceptors();
+
+  function changeVisibility(book: string, status: boolean) {
+    show[book] = status;
+    setShow({ ...show });
+  }
 
   useEffect(() => {
     accessToken &&
@@ -20,61 +29,77 @@ export default function Cartera() {
 
   return (
     <ScrollView style={{ paddingHorizontal: 20 }}>
-      {amounts.map((row) => {
-        const actual = +numeral(+row.precio * row.cantidad).format("#.##");
-        let utilidad = +numeral(actual - row.costo).format("#.##");
+      {amounts
+        .sort((a, b) => b.porcentaje - a.porcentaje)
+        .map((row) => {
+          const actual = +numeral(+row.precio * row.cantidad).format("#.##");
+          let utilidad = +numeral(actual - row.costo).format("#.##");
 
-        if (actual == 0) {
-          return;
-        }
+          if (actual == 0) {
+            return;
+          }
 
-        if (row.limite.venta > 0) {
-          utilidad = +numeral(actual - row.limite.venta).format("#.##");
-        }
+          if (row.limite.venta > 0) {
+            utilidad = +numeral(actual - row.limite.venta).format("#.##");
+          }
 
-        return (
-          <Card key={row.book} style={{ marginVertical: 10 }}>
-            <Card.Title
-              title={row.moneda}
-              subtitle={`Precio: ` + numeral(row.precio).format("$#,#.##")}
-            />
+          return (
+            <Card key={row.book} style={{ marginVertical: 10 }}>
+              <Card.Title
+                title={row.moneda}
+                subtitle={`Precio: ` + numeral(row.precio).format("$#,#.##")}
+              />
 
-            <Card.Content>
-              <Title>
-                {`Porcentaje: ` + numeral(row.porcentaje).format("#.##%")}
-              </Title>
-              <Title>
-                {`Utilidad: ` + numeral(utilidad).format("$#,#.##")}
-              </Title>
-              <Paragraph>
-                {`Actual: ` + numeral(actual).format("$#,#.##")}
-              </Paragraph>
-              <Paragraph>
-                {`Cantidad: ` + numeral(+row.cantidad).format("#,#.########")}
-              </Paragraph>
-              <Paragraph>
-                {`Precio Promedio: ` + numeral(row.promedio).format("$#,#.##")}
-              </Paragraph>
-              <Paragraph>
-                {`Ultima Compra: ` +
-                  numeral(row.estadisticas.buy).format("$#,#.##")}
-              </Paragraph>
-              <Paragraph>
-                {`Ultima Venta: ` +
-                  numeral(row.estadisticas.sell).format("$#,#.##")}
-              </Paragraph>
-              <Paragraph>
-                {`Costo: ` + numeral(row.costo).format("$#,#.##")}
-              </Paragraph>
-              {row.limite.venta > 0 && (
-                <Paragraph>
-                  {`Limite: ` + numeral(row.limite.venta).format("$#,#.##")}
-                </Paragraph>
-              )}
-            </Card.Content>
-          </Card>
-        );
-      })}
+              <Card.Content>
+                <Title>{`Actual: ` + numeral(actual).format("$#,#.##")}</Title>
+                <Title>
+                  {`Porcentaje: ` + numeral(row.porcentaje).format("#.##%")}
+                </Title>
+                <Title>
+                  {`Utilidad: ` + numeral(utilidad).format("$#,#.##")}
+                </Title>
+                {(show[row.book] ?? false) && (
+                  <>
+                    <Paragraph>
+                      {`Cantidad: ` +
+                        numeral(+row.cantidad).format("#,#.########")}
+                    </Paragraph>
+                    <Paragraph>
+                      {`Precio Promedio: ` +
+                        numeral(row.promedio).format("$#,#.##")}
+                    </Paragraph>
+                    <Paragraph>
+                      {`Ultima Compra: ` +
+                        numeral(row.estadisticas.buy).format("$#,#.##")}
+                    </Paragraph>
+                    <Paragraph>
+                      {`Ultima Venta: ` +
+                        numeral(row.estadisticas.sell).format("$#,#.##")}
+                    </Paragraph>
+                    <Paragraph>
+                      {`Costo: ` + numeral(row.costo).format("$#,#.##")}
+                    </Paragraph>
+                    {row.limite.venta > 0 && (
+                      <Paragraph>
+                        {`Limite: ` +
+                          numeral(row.limite.venta).format("$#,#.##")}
+                      </Paragraph>
+                    )}
+                  </>
+                )}
+              </Card.Content>
+              <Card.Actions>
+                <Button
+                  onPress={() => {
+                    changeVisibility(row.book, !(show[row.book] ?? false));
+                  }}
+                >
+                  {show[row.book] ?? false ? "Hide" : "Show"}
+                </Button>
+              </Card.Actions>
+            </Card>
+          );
+        })}
     </ScrollView>
   );
 }
