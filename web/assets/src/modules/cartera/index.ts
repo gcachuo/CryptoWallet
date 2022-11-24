@@ -55,6 +55,11 @@ export class Cartera {
 
                 error: (e, settings, message) => {
                     const {responseJSON}: { responseJSON?: ApiErrorResponse } = e;
+                    
+                    if (responseJSON.code == 401) {
+                        location.href = "login?logout=true"
+                    }
+
                     Cartera.totales = {
                         costo: 0,
                         actual: 0,
