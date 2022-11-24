@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { RefreshControl, ScrollView } from "react-native";
 import numeral from "numeral";
 import { Button, Card, Paragraph, Title } from "react-native-paper";
@@ -7,40 +7,58 @@ import UsersAPI, { IAmounts } from "../../API/Users";
 
 import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
 import useAccessToken from "../../Hooks/useAccessToken";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { AxiosError } from "axios";
+import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 export default function Cartera() {
   const accessToken = useAccessToken();
   const [amounts, setAmounts] = useState([] as IAmounts[]);
   const [show, setShow] = useState({} as { [index: string]: boolean });
+  const [refresh, setRefresh] = useState(false);
+  const navigation = useNavigation() as DrawerNavigationProp<any>;
 
   useAxiosInterceptors();
+
+  useFocusEffect(
+    useCallback(() => {
+      if (accessToken) {
+        setRefresh(true);
+        setAmounts([]);
+        fetchAmounts(accessToken);
+      }
+    }, [accessToken])
+  );
+
+  function onRefresh() {
+    fetchAmounts(accessToken);
+  }
+
+  function fetchAmounts(accessToken: string) {
+    UsersAPI.fetchAmounts(accessToken)
+      .then((result) => {
+        setAmounts(result);
+        setRefresh(false);
+      })
+      .catch((error) => {
+        if (error as AxiosError) {
+          if (error.response.data.code == 401) {
+            navigation.navigate("Login");
+          }
+        }
+      });
+  }
 
   function changeVisibility(book: string, status: boolean) {
     show[book] = status;
     setShow({ ...show });
   }
 
-  useEffect(() => {
-    setAmounts([]);
-    fetchAmounts();
-  }, []);
-
-  function onRefresh() {
-    fetchAmounts();
-  }
-
-  function fetchAmounts() {
-    accessToken &&
-      UsersAPI.fetchAmounts(accessToken).then((result) => {
-        setAmounts(result);
-      });
-  }
-
   return (
     <ScrollView
       style={{ paddingHorizontal: 20 }}
       refreshControl={
-        <RefreshControl refreshing={!amounts.length} onRefresh={onRefresh} />
+        <RefreshControl refreshing={refresh} onRefresh={onRefresh} />
       }
     >
       {!!amounts.length &&

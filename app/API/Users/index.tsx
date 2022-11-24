@@ -28,8 +28,26 @@ export interface IAmounts {
 }
 
 export default class UsersAPI {
+  static async login(email: string, password: string) {
+    const uri = "user/login";
+
+    const response = (await axios.post(uri, {
+      email,
+      password,
+    })) as AxiosResponse<
+      ApiResponse<{
+        token: string;
+        user: { correo: string; id: string; name: string; perfil: number };
+      }>
+    >;
+
+    return response.data.data.token;
+  }
+
   static async fetchAmounts(accessToken: string) {
-    const response = (await axios.post("users/fetchAmounts", {
+    const uri = "users/fetchAmounts";
+
+    const response = (await axios.post(uri, {
       user_token: accessToken,
     })) as AxiosResponse<
       ApiResponse<{

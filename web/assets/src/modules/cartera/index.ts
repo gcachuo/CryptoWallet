@@ -55,7 +55,7 @@ export class Cartera {
 
                 error: (e, settings, message) => {
                     const {responseJSON}: { responseJSON?: ApiErrorResponse } = e;
-                    
+
                     if (responseJSON.code == 401) {
                         location.href = "login?logout=true"
                     }

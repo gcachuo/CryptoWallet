@@ -57,16 +57,15 @@ export default function useAxiosInterceptors() {
           try {
             switch (error.response?.status) {
               case 401:
-                console.log(error.response?.data.detail);
-                Toast.show(
+                console.log(
                   `${401} Unauthorized. [${error.config?.method?.toUpperCase()}] /${
                     error.config?.url
-                  }`,
-                  {
-                    duration: Toast.durations.LONG,
-                    position: Toast.positions.BOTTOM,
-                  }
+                  }`
                 );
+                Toast.show(error.response?.data.message, {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                });
                 break;
               case 403:
                 console.warn(403, "Forbidden:", "/" + error.config?.url);

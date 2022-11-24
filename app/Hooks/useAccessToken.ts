@@ -1,11 +1,26 @@
 import { useEffect, useState } from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-export default function useAccessToken() {
-  const [accessToken, setAccessToken] = useState(
-    "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpYXQiOjE2NjkwNjM4NTQsImRhdGEiOnsiaWQiOiJvdFF2a3ZMYldXZno3QUk5d1hGUTl5ZStBRHo4Rzc5ZklPcXVxVkk2d3BNPSIsIm5hbWUiOiJNZW1vIENhY2h1IiwiY29ycmVvIjoiZ2NhY2h1Lm9AZ21haWwuY29tIiwicGVyZmlsIjowfSwiZXhwIjoxNjY5MTUwMjU0fQ.uA1K0rvHWhnmGsV-lUnd6no5YT_m6_tHKFDtD6hI4mc"
-  );
+export default function useAccessToken(value?: string) {
+  const [accessToken, setAccessToken] = useState("");
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // RootNavigation.navigate("Login");
+    if (value) {
+      saveToken(value);
+    } else {
+      AsyncStorage.getItem("@access_token").then((value1) => {
+        value1 && setAccessToken(value1);
+      });
+    }
+  }, [value]);
+
+  async function saveToken(token?: string) {
+    if (token) {
+      setAccessToken(token);
+      await AsyncStorage.setItem("@access_token", token);
+    }
+  }
 
   return accessToken;
 }
