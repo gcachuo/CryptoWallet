@@ -3,35 +3,35 @@ import axios, { AxiosError, AxiosResponse } from "axios";
 import Toast from "react-native-root-toast";
 import Constants from "expo-constants";
 import useAccessToken from "./useAccessToken";
+import * as RootNavigation from "../RootNavigation";
 
 export default function useAxiosInterceptors() {
   const accessToken = useAccessToken();
 
   useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use(
-      async (request) => {
-        console.info("Start:", request.method?.toUpperCase(), request.url);
+    const requestInterceptor = axios.interceptors.request.use((request) => {
+      console.info("Start:", request.method?.toUpperCase(), request.url);
 
-        if (request.url?.includes("https://")) {
-          request.baseURL = "";
-          return request;
-        }
-
-        const baseUrl =
-          Constants.manifest?.extra?.BASE_URL[Constants.manifest?.extra?.ENV];
-        if (baseUrl) {
-          request.baseURL = baseUrl;
-          request.headers = request.headers || {};
-          if (accessToken) {
-            // console.log(accessToken);
-            request.headers.Authorization = `Bearer ${accessToken}`;
-            return request;
-          }
-        }
-
+      if (request.url?.includes("https://")) {
+        request.baseURL = "";
         return request;
       }
-    );
+
+      const baseUrl =
+        Constants.manifest?.extra?.BASE_URL[Constants.manifest?.extra?.ENV];
+      if (baseUrl) {
+        request.baseURL = baseUrl;
+        request.headers = request.headers || {};
+        // console.log(accessToken);
+        if (accessToken) {
+          request.headers.Authorization = `Bearer ${accessToken}`;
+          return request;
+        } else {
+          RootNavigation.navigate("Login");
+        }
+      }
+      return request;
+    });
 
     const responseInterceptor = axios.interceptors.response.use(
       async (

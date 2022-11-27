@@ -21,12 +21,12 @@ export default function Cartera() {
     }, [])
   );
 
-  function onRefresh() {
-    setRefresh(true);
+  const onRefresh = useCallback(() => {
     fetchAmounts();
-  }
+  }, []);
 
   function fetchAmounts() {
+    setRefresh(true);
     UsersAPI.fetchAmounts()
       .then((result) => {
         setAmounts(result);
