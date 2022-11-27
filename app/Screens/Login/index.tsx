@@ -1,9 +1,9 @@
 import { View } from "react-native";
 import { Button, Surface, TextInput } from "react-native-paper";
 import UsersAPI from "../../API/Users";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import useAccessToken from "../../Hooks/useAccessToken";
-import { useFocusEffect, useNavigation } from "@react-navigation/native";
+import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 export default function Login() {
@@ -11,22 +11,15 @@ export default function Login() {
   const [password, setPassword] = useState("");
   const [token, setToken] = useState("");
 
-  const accessToken = useAccessToken(token);
   const navigation = useNavigation() as DrawerNavigationProp<any>;
+  useAccessToken(token);
 
   async function login() {
+    setToken("");
     const token = await UsersAPI.login(email, password);
     setToken(token);
+    navigation.navigate("Cartera");
   }
-
-  useFocusEffect(
-    useCallback(() => {
-      console.log(accessToken);
-      if (accessToken) {
-        navigation.navigate("Cartera");
-      }
-    }, [accessToken])
-  );
 
   return (
     <View>

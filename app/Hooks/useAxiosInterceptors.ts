@@ -23,6 +23,7 @@ export default function useAxiosInterceptors() {
           request.baseURL = baseUrl;
           request.headers = request.headers || {};
           if (accessToken) {
+            // console.log(accessToken);
             request.headers.Authorization = `Bearer ${accessToken}`;
             return request;
           }
@@ -56,6 +57,19 @@ export default function useAxiosInterceptors() {
         if (error instanceof AxiosError) {
           try {
             switch (error.response?.status) {
+              case 400:
+                console.warn(
+                  error.response?.status,
+                  error.config?.method?.toUpperCase(),
+                  error.config?.baseURL! + error.config?.url,
+                  error.response?.data.message,
+                  error.config?.data
+                );
+                Toast.show(error.response?.data.message, {
+                  duration: Toast.durations.LONG,
+                  position: Toast.positions.BOTTOM,
+                });
+                break;
               case 401:
                 console.log(
                   `${401} Unauthorized. [${error.config?.method?.toUpperCase()}] /${

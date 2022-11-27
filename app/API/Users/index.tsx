@@ -44,12 +44,10 @@ export default class UsersAPI {
     return response.data.data.token;
   }
 
-  static async fetchAmounts(accessToken: string) {
+  static async fetchAmounts() {
     const uri = "users/fetchAmounts";
 
-    const response = (await axios.post(uri, {
-      user_token: accessToken,
-    })) as AxiosResponse<
+    const response = (await axios.post(uri)) as AxiosResponse<
       ApiResponse<{
         amounts: IAmounts[];
       }>

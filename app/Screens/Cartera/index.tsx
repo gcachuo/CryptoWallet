@@ -4,48 +4,35 @@ import numeral from "numeral";
 import { Button, Card, Paragraph, Title } from "react-native-paper";
 
 import UsersAPI, { IAmounts } from "../../API/Users";
-
-import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
-import useAccessToken from "../../Hooks/useAccessToken";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
-import { AxiosError } from "axios";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
 
 export default function Cartera() {
-  const accessToken = useAccessToken();
   const [amounts, setAmounts] = useState([] as IAmounts[]);
   const [show, setShow] = useState({} as { [index: string]: boolean });
   const [refresh, setRefresh] = useState(false);
-  const navigation = useNavigation() as DrawerNavigationProp<any>;
 
-  useAxiosInterceptors();
+  const navigation = useNavigation() as DrawerNavigationProp<any>;
 
   useFocusEffect(
     useCallback(() => {
-      if (accessToken) {
-        setRefresh(true);
-        setAmounts([]);
-        fetchAmounts(accessToken);
-      }
-    }, [accessToken])
+      setAmounts([]);
+      onRefresh();
+    }, [])
   );
 
   function onRefresh() {
-    fetchAmounts(accessToken);
+    setRefresh(true);
+    fetchAmounts();
   }
 
-  function fetchAmounts(accessToken: string) {
-    UsersAPI.fetchAmounts(accessToken)
+  function fetchAmounts() {
+    UsersAPI.fetchAmounts()
       .then((result) => {
         setAmounts(result);
-        setRefresh(false);
       })
-      .catch((error) => {
-        if (error as AxiosError) {
-          if (error.response.data.code == 401) {
-            navigation.navigate("Login");
-          }
-        }
+      .finally(() => {
+        setRefresh(false);
       });
   }
 

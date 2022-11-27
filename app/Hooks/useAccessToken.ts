@@ -2,13 +2,11 @@ import { useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function useAccessToken(value?: string) {
-  const [accessToken, setAccessToken] = useState("");
+  const [accessToken, setAccessToken] = useState(value);
 
   useEffect(() => {
-    // RootNavigation.navigate("Login");
-    if (value) {
-      saveToken(value);
-    } else {
+    value && saveToken(value);
+    if (!value) {
       AsyncStorage.getItem("@access_token").then((value1) => {
         value1 && setAccessToken(value1);
       });
