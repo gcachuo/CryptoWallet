@@ -1,7 +1,7 @@
 import { View } from "react-native";
 import { Button, Surface, TextInput } from "react-native-paper";
 import UsersAPI from "../../API/Users";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import useAccessToken from "../../Hooks/useAccessToken";
 import { useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
@@ -18,8 +18,13 @@ export default function Login() {
     setToken("");
     const token = await UsersAPI.login(email, password);
     setToken(token);
-    navigation.navigate("Cartera");
   }
+
+  useEffect(() => {
+    if (token) {
+      navigation.navigate("Cartera");
+    }
+  }, [token]);
 
   return (
     <View>

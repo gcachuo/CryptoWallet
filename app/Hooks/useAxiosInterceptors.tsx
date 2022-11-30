@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios, { AxiosError, AxiosResponse } from "axios";
 import Toast from "react-native-root-toast";
 import Constants from "expo-constants";
@@ -6,32 +6,43 @@ import useAccessToken from "./useAccessToken";
 import * as RootNavigation from "../RootNavigation";
 
 export default function useAxiosInterceptors() {
-  const accessToken = useAccessToken();
+  const token = useAccessToken();
+  const [accessToken, setAccessToken] = useState(token);
 
   useEffect(() => {
-    const requestInterceptor = axios.interceptors.request.use((request) => {
-      console.info("Start:", request.method?.toUpperCase(), request.url);
+    setAccessToken(token);
+  }, [token]);
 
-      if (request.url?.includes("https://")) {
-        request.baseURL = "";
-        return request;
-      }
+  useEffect(() => {
+    const requestInterceptor = axios.interceptors.request.use(
+      async (request) => {
+        // console.info("Start:", request.method?.toUpperCase(), request.url);
 
-      const baseUrl =
-        Constants.manifest?.extra?.BASE_URL[Constants.manifest?.extra?.ENV];
-      if (baseUrl) {
+        if (request.url?.includes("https://")) {
+          request.baseURL = "";
+          return request;
+        }
+
+        const baseUrl =
+          Constants.manifest?.extra?.BASE_URL[Constants.manifest?.extra?.ENV];
+
+        if (!baseUrl || !accessToken) {
+          RootNavigation.navigate("Login");
+          throw new axios.Cancel(
+            `Missing properties. [baseUrl: ${baseUrl}] [accessToken: ${accessToken}]`
+          );
+        }
+
         request.baseURL = baseUrl;
         request.headers = request.headers || {};
-        // console.log(accessToken);
-        if (accessToken) {
-          request.headers.Authorization = `Bearer ${accessToken}`;
-          return request;
-        } else {
-          RootNavigation.navigate("Login");
-        }
+        request.headers.Authorization =
+          !request.url?.includes("login") && `Bearer ${accessToken}`;
+
+        console.log(accessToken);
+
+        return request;
       }
-      return request;
-    });
+    );
 
     const responseInterceptor = axios.interceptors.response.use(
       async (
@@ -48,7 +59,7 @@ export default function useAxiosInterceptors() {
           response.status,
           response.config.method !== "get"
             ? response.data.message || response.data || response.data
-            : response.data
+            : "Completed."
         );
 
         return response;
@@ -57,19 +68,6 @@ export default function useAxiosInterceptors() {
         if (error instanceof AxiosError) {
           try {
             switch (error.response?.status) {
-              case 400:
-                console.warn(
-                  error.response?.status,
-                  error.config?.method?.toUpperCase(),
-                  error.config?.baseURL! + error.config?.url,
-                  error.response?.data.message,
-                  error.config?.data
-                );
-                Toast.show(error.response?.data.message, {
-                  duration: Toast.durations.LONG,
-                  position: Toast.positions.BOTTOM,
-                });
-                break;
               case 401:
                 console.log(
                   `${401} Unauthorized. [${error.config?.method?.toUpperCase()}] /${
@@ -117,6 +115,14 @@ export default function useAxiosInterceptors() {
                   }
                 );
                 break;
+              case 429:
+                console.warn(
+                  error.response?.status,
+                  error.config?.method?.toUpperCase(),
+                  error.config?.baseURL! + error.config?.url,
+                  error.response.headers["x-rate-limit"]
+                );
+                break;
               case 500:
                 console.log(error.response?.data);
                 Toast.show(
@@ -146,14 +152,6 @@ export default function useAxiosInterceptors() {
                   error.response?.data?.detail ||
                   error.response?.data ||
                   "";
-
-                // if (typeof errorMessage === 'object') {
-                //   errorMessage = JSON.stringify(errorMessage);
-                // }
-                // Toast.show(errorMessage, {
-                //   position: Toast.positions.CENTER,
-                //   duration: Toast.durations.LONG,
-                // });
 
                 console.warn(
                   error.response?.status,

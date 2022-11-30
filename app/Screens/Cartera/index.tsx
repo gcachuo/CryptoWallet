@@ -6,6 +6,7 @@ import { Button, Card, Paragraph, Title } from "react-native-paper";
 import UsersAPI, { IAmounts } from "../../API/Users";
 import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { DrawerNavigationProp } from "@react-navigation/drawer";
+import useAxiosInterceptors from "../../Hooks/useAxiosInterceptors";
 
 export default function Cartera() {
   const [amounts, setAmounts] = useState([] as IAmounts[]);
@@ -13,6 +14,7 @@ export default function Cartera() {
   const [refresh, setRefresh] = useState(false);
 
   const navigation = useNavigation() as DrawerNavigationProp<any>;
+  useAxiosInterceptors();
 
   useFocusEffect(
     useCallback(() => {
