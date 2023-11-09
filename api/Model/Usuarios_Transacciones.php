@@ -49,12 +49,12 @@ SELECT
   CONCAT(ut.id_moneda,'_',par_moneda) book
 FROM usuarios_transacciones ut
 INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
-WHERE id_usuario = ?
+WHERE id_usuario = :id_usuario
 GROUP BY ut.id_moneda;
 sql;
 
         $mysql = new MySQL();
-        return $mysql->fetch_all($mysql->prepare($sql, ['i', $user_id]));
+        return $mysql->prepare2($sql, [':id_usuario' => $user_id])->fetchAll();
     }
 
     function selectBuyPriceAvg(int $id_usuario)

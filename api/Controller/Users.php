@@ -109,7 +109,7 @@ class Users extends Controller
         }
 
         if (!password_verify($password, $hash)) {
-            JsonResponse::sendResponse('El usuario o la contraseña son incorrectos.');
+            throw new CoreException('El usuario o la contraseña son incorrectos.', 400);
         }
 
         $user = $Usuarios->selectUser($email);
@@ -205,7 +205,7 @@ class Users extends Controller
         try {
             $Bitso = new Bitso($user_id);
 
-            if(!$Bitso->isKeySet()){
+            if (!$Bitso->isKeySet()) {
                 return false;
             }
 
