@@ -211,20 +211,20 @@ FROM (
 		     cantidad_usuario_moneda AS moneda,
 		     costo_usuario_moneda AS mxn,
 		     ROUND((costo_usuario_moneda) / @total_anterior, 2) AS porcentaje,
-		     @invalid := IF((@running_total = 0 AND @total_actual = 0), 1, 0) AS invalid
+		     @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS invalid,
+		     @prev_moneda := cantidad_usuario_moneda AS prev_moneda
 	     FROM
-		     usuarios_transacciones t
+		     (SELECT * FROM usuarios_transacciones WHERE id_usuario = :id_usuario AND id_moneda = :id_moneda ORDER BY fecha_usuario_transaccion) t
 			     JOIN (SELECT @running_cost := 0) c
 			     JOIN (SELECT @running_total := 0) r
 			     JOIN (SELECT @last_price := 0) p
-	     WHERE
-			     id_usuario = :id_usuario
-	       AND id_moneda = :id_moneda
+			     JOIN (SELECT @invalid := 0) i
+			     JOIN (SELECT @prev_moneda := NULL) pm
 	     ORDER BY
 		     fecha_usuario_transaccion
      ) AS subquery
 WHERE
-		invalid <> 1;
+		invalid <> 1 and total_actual <> 0;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
