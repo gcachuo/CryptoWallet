@@ -224,7 +224,7 @@ FROM (
 		     fecha_usuario_transaccion
      ) AS subquery
 WHERE
-		invalid <> 1 and abs(moneda) <> abs(nextmoneda);
+		invalid <> 1 and (abs(moneda) <> abs(nextmoneda) or nextmoneda is null);
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
