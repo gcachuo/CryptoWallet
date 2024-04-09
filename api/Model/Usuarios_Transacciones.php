@@ -208,11 +208,11 @@ FROM (
 		     @running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
 		     @last_price := precio_real_usuario_moneda AS precio,
 		     @total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
-		     cantidad_usuario_moneda AS moneda,
 		     costo_usuario_moneda AS mxn,
 		     ROUND((costo_usuario_moneda) / @total_anterior, 2) AS porcentaje,
 		     @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS invalid,
-		     @prev_moneda := cantidad_usuario_moneda AS prev_moneda
+		     @prev_moneda := cantidad_usuario_moneda AS moneda,
+		     @next_moneda := lead(cantidad_usuario_moneda)  OVER (ORDER BY `fecha_usuario_transaccion`) nextmoneda
 	     FROM
 		     (SELECT * FROM usuarios_transacciones WHERE id_usuario = :id_usuario AND id_moneda = :id_moneda ORDER BY fecha_usuario_transaccion) t
 			     JOIN (SELECT @running_cost := 0) c
@@ -224,7 +224,7 @@ FROM (
 		     fecha_usuario_transaccion
      ) AS subquery
 WHERE
-		invalid <> 1 and total_actual <> 0;
+		invalid <> 1 and abs(moneda) <> abs(nextmoneda);
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
