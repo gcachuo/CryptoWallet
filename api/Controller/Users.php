@@ -266,6 +266,7 @@ class Users extends Controller
         $user = System::decode_token(USER_TOKEN);
         $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
+        $user_id=intval($user_id);
 
         $Usuarios_Transacciones = new Usuarios_Transacciones();
         $amounts = $Usuarios_Transacciones->selectAmounts($user_id);
