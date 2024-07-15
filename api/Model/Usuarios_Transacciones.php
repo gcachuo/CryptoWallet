@@ -49,12 +49,12 @@ SELECT
   CONCAT(ut.id_moneda,'_',par_moneda) book
 FROM usuarios_transacciones ut
 INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
-WHERE id_usuario = ?
+WHERE id_usuario = :id_usuario
 GROUP BY ut.id_moneda;
 sql;
 
         $mysql = new MySQL();
-        return $mysql->fetch_all($mysql->prepare($sql, ['i', $user_id]));
+        return $mysql->prepare2($sql, [':id_usuario' => $user_id])->fetchAll();
     }
 
     function selectBuyPriceAvg(int $id_usuario)
@@ -195,30 +195,36 @@ sql;
      * @return array|false
      * @throws CoreException
      */
-    function selectCalc(int $id_usuario, string $id_moneda)
+    function selectCalc(int $id_usuario, string $id_moneda): bool|array
     {
         $sql = <<<sql
-SELECT
-    fecha_usuario_transaccion fecha,
-	@running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8)      AS costo_actual,
-	ROUND(@running_total, 8)                                               AS cantidad_anterior,
-	@total_anterior := ROUND(@running_total * @last_price, 2)              AS total_anterior,
-	@running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
-	@last_price := precio_real_usuario_moneda                              AS precio,
-	@total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
-	cantidad_usuario_moneda                                                AS moneda,
-	costo_usuario_moneda                                                   AS mxn,
-	ROUND((costo_usuario_moneda) / @total_anterior, 2)               AS porcentaje
-FROM
-	usuarios_transacciones t
-		JOIN (SELECT @running_cost := 0) c
-		JOIN (SELECT @running_total := 0) r
-		JOIN (SELECT @last_price := 0) p
+SELECT *
+FROM (
+	     SELECT
+		     fecha_usuario_transaccion AS fecha,
+		     @running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8) AS costo_actual,
+		     ROUND(@running_total, 8) AS cantidad_anterior,
+		     @total_anterior := ROUND(@running_total * @last_price, 2) AS total_anterior,
+		     @running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
+		     @last_price := precio_real_usuario_moneda AS precio,
+		     @total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
+		     costo_usuario_moneda AS mxn,
+		     ROUND((costo_usuario_moneda) / @total_anterior, 2) AS porcentaje,
+		     @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS invalid,
+		     @prev_moneda := cantidad_usuario_moneda AS moneda,
+		     @next_moneda := lead(cantidad_usuario_moneda)  OVER (ORDER BY `fecha_usuario_transaccion`) nextmoneda
+	     FROM
+		     (SELECT * FROM usuarios_transacciones WHERE id_usuario = :id_usuario AND id_moneda = :id_moneda ORDER BY fecha_usuario_transaccion) t
+			     JOIN (SELECT @running_cost := 0) c
+			     JOIN (SELECT @running_total := 0) r
+			     JOIN (SELECT @last_price := 0) p
+			     JOIN (SELECT @invalid := 0) i
+			     JOIN (SELECT @prev_moneda := NULL) pm
+	     ORDER BY
+		     fecha_usuario_transaccion
+     ) AS subquery
 WHERE
-	  id_usuario = :id_usuario
-  AND id_moneda = :id_moneda
-ORDER BY
-	fecha_usuario_transaccion;
+		invalid <> 1 and (abs(moneda) <> abs(nextmoneda) or nextmoneda is null);
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [

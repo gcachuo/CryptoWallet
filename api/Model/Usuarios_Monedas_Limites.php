@@ -25,10 +25,10 @@ sql
     public function selectLimits($user_id)
     {
         $sql = <<<sql
-SELECT id_moneda,limite,cantidad FROM usuarios_monedas_limites WHERE id_usuario=?;
+SELECT id_moneda,limite,cantidad FROM usuarios_monedas_limites WHERE id_usuario=:id_usuario;
 sql;
         $mysql = new MySQL();
-        return $mysql->prepare($sql, ['i', $user_id]);
+        return $mysql->prepare2($sql, [':id_usuario'=> $user_id]);
     }
 
     /**

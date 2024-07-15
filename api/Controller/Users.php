@@ -109,7 +109,7 @@ class Users extends Controller
         }
 
         if (!password_verify($password, $hash)) {
-            JsonResponse::sendResponse('El usuario o la contraseña son incorrectos.');
+            throw new CoreException('El usuario o la contraseña son incorrectos.', 400);
         }
 
         $user = $Usuarios->selectUser($email);
@@ -205,7 +205,7 @@ class Users extends Controller
         try {
             $Bitso = new Bitso($user_id);
 
-            if(!$Bitso->isKeySet()){
+            if (!$Bitso->isKeySet()) {
                 return false;
             }
 
@@ -236,8 +236,7 @@ class Users extends Controller
 
     protected function fetchCoinLimits()
     {
-        System::check_value_empty($_POST, ['user_token']);
-        $user = System::decode_token($_POST['user_token']);
+        $user = System::decode_token(USER_TOKEN);
         $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
 
@@ -264,8 +263,7 @@ class Users extends Controller
      */
     protected function fetchAmounts()
     {
-        System::check_value_empty($_POST, ['user_token']);
-        $user = System::decode_token($_POST['user_token']);
+        $user = System::decode_token(USER_TOKEN);
         $user_id = $user['id'];
         $user_id = System::decrypt($user_id);
 
