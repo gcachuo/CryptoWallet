@@ -9,9 +9,9 @@ class Precios_Monedas
     function selectFallbackPrice(array $amount)
     {
         $sql = <<<sql
-select precio_moneda precio from precios_monedas where id_moneda=? order by fecha_precio_moneda desc 
+SELECT precio_moneda precio FROM precios_monedas WHERE id_moneda=:id_moneda ORDER BY fecha_precio_moneda DESC 
 sql;
         $mysql = new MySQL();
-        return $mysql->fetch_single($mysql->prepare($sql, ['s', $amount['idMoneda']]))['precio'] ?: 0;
+        return $mysql->prepare2($sql, [':id_moneda' => $amount['idMoneda']])->fetch()['precio'] ?: 0;
     }
 }

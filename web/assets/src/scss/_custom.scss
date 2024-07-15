@@ -159,7 +159,7 @@ ol, ul, dl {
 .product {
   div {
     &.banner {
-      height: (100vh / 4);
+      height: calc(100vh / 4);
       background-repeat: no-repeat;
       background-size: cover;
       background-position: center;

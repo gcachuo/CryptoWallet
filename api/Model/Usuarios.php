@@ -31,10 +31,10 @@ sql
     public function selectPassword($email)
     {
         $sql = <<<sql
-SELECT password_usuario password FROM usuarios WHERE correo_usuario=?
+SELECT password_usuario password FROM usuarios WHERE correo_usuario=:correo_usuario
 sql;
         $mysql = new MySQL();
-        return $mysql->fetch_single($mysql->prepare($sql, ['s', $email]))['password'];
+        return $mysql->prepare2($sql, [':correo_usuario' => $email])->fetch()['password'];
     }
 
     function selectUser($email)
@@ -42,19 +42,19 @@ sql;
         $sql = <<<sql
 SELECT id_usuario id, nombre_usuario name, correo_usuario correo, perfil_usuario perfil
 FROM usuarios
-WHERE correo_usuario=?
+WHERE correo_usuario=:correo_usuario
 sql;
         $mysql = new MySQL();
-        return $mysql->fetch_single($mysql->prepare($sql, ['s', $email]));
+        return $mysql->prepare2($sql, [':correo_usuario' => $email])->fetch();
     }
 
     public function updateLastLogin($user_id)
     {
         $sql = <<<sql
-UPDATE usuarios SET last_login_usuario=NOW() WHERE id_usuario=?
+UPDATE usuarios SET last_login_usuario=NOW() WHERE id_usuario=:id_usuario
 sql;
         $mysql = new MySQL();
-        $mysql->prepare($sql, ['i', $user_id]);
+        $mysql->prepare2($sql, [':id_usuario'=> $user_id]);
     }
 
     function selectClients($user_id)
@@ -65,9 +65,9 @@ SELECT
   nombre_usuario nombre,
   m.id_moneda                            idMoneda,
   nombre_moneda                          moneda,
-  sum(costo_usuario_moneda)              costo,
-  round(sum(cantidad_usuario_moneda), 8) cantidad,
-  concat(ut.id_moneda, '_', par_moneda)  book
+  SUM(costo_usuario_moneda)              costo,
+  ROUND(SUM(cantidad_usuario_moneda), 8) cantidad,
+  CONCAT(ut.id_moneda, '_', par_moneda)  book
 FROM usuarios u
        INNER JOIN usuarios_transacciones ut ON u.id_usuario = ut.id_usuario
        INNER JOIN monedas m ON ut.id_moneda = m.id_moneda
