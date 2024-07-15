@@ -170,16 +170,27 @@ sql;
         $this->setPrice();
 
         $sql = <<<sql
-SELECT 
-    fecha_usuario_transaccion date,
-    costo_usuario_moneda cost,
-    cantidad_usuario_moneda quantity,
-    precio_real_usuario_moneda price
-FROM usuarios_transacciones
-WHERE
-	  id_usuario = :id_usuario
-  AND id_moneda = :id_moneda
-ORDER BY fecha_usuario_transaccion;
+SELECT date, cost, quantity, price
+FROM (SELECT fecha_usuario_transaccion                                              AS                 date,
+             @last_price := precio_real_usuario_moneda                              AS                 price,
+             costo_usuario_moneda                                                   AS                 cost,
+             @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS                 invalid,
+             @prev_moneda := cantidad_usuario_moneda                                AS                 quantity,
+             @next_moneda := lead(cantidad_usuario_moneda) OVER (ORDER BY `fecha_usuario_transaccion`) nextmoneda
+      FROM (SELECT *
+            FROM usuarios_transacciones
+            WHERE id_usuario = :id_usuario
+              AND id_moneda = :id_moneda
+            ORDER BY fecha_usuario_transaccion) t
+               JOIN (SELECT @running_cost := 0) c
+               JOIN (SELECT @running_total := 0) r
+               JOIN (SELECT @last_price := 0) p
+               JOIN (SELECT @invalid := 0) i
+               JOIN (SELECT @prev_moneda := NULL) pm
+      ORDER BY fecha_usuario_transaccion) AS subquery
+WHERE invalid <> 1
+  and (abs(quantity) <> abs(nextmoneda) or nextmoneda is null)
+  and abs(cost) > 1;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
