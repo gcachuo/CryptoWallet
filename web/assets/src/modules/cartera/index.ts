@@ -35,7 +35,7 @@ export class Cartera {
 
     initDatatable() {
         Cartera.table = $("table").DataTable({
-            order: [[9, 'desc']],
+            order: [[7, 'desc']],
             stateSave: false,
 
             ajax: {
@@ -88,7 +88,7 @@ export class Cartera {
                 })
                 $("#txtTotalCosto").val(numeral(costo).format('$0,0.00'));
                 $("#txtTotalActual").val(numeral(actual).format('$0,0.00'));
-                $("#txtTotalGP").val(numeral(actual - costo).format('$0,0.00'));
+                $("#txtTotalGP").val(`${numeral(actual - costo).format('$0,0.00')} (${numeral((actual - costo)/costo).format('0,0.00%')})`);
             },
 
             rowCallback: function (row, data, index) {
@@ -133,33 +133,22 @@ export class Cartera {
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Compra',
+                    title: 'Rango',
                     data: 'estadisticas',
-                    render: ({buy: data, sell}, type, {promedio, precio}) => {
+                    render: ({sell, buy}, type, {promedio, precio}) => {
                         if (type === 'display') {
-                            let success = sell > precio && data > precio;
-                            const text = success ? 'success' : '';
-                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
+                            let successBuy = sell > precio && buy > precio;
+                            let successSell = precio > buy && precio > sell;
+                            const textBuy = successBuy ? 'success' : '';
+                            const textSell = successSell ? 'success' : '';
+                            return `<span><span class="text-${textBuy}">${numeral(buy).format('$0,0.00')}</span> - <span class="text-${textSell}">${numeral(sell).format('$0,0.00')}</span></span>`;
                         }
-                        return data;
+                        return buy;
                     }
                 },
                 {
                     responsivePriority: 4,
-                    title: 'U. Venta',
-                    data: 'estadisticas',
-                    render: ({sell: data, buy}, type, {promedio, precio}) => {
-                        if (type === 'display') {
-                            let success = precio > buy && precio > data;
-                            const text = success ? 'success' : '';
-                            return `<span class="text-${text}">${numeral(data).format('$0,0.00')}</span>`;
-                        }
-                        return data;
-                    }
-                },
-                {
-                    responsivePriority: 4,
-                    title: 'Costo Promedio',
+                    title: 'DCA',
                     data: 'promedio',
                     render: (data, type) => {
                         if (type === 'display') {
@@ -194,32 +183,18 @@ export class Cartera {
                     }
                 },
                 {
-                    responsivePriority: 3,
+                    responsivePriority: 1,
                     title: 'Utilidad',
                     data: null,
                     render: (data, type, {idMoneda, total: actual, costo, porcentaje, limite: {venta}}) => {
                         costo = venta ? venta : costo;
                         data = actual - costo;
                         if (type === 'display') {
-                            return `<button class="btn btn-sm btn-link text-${porcentaje >= 0 ? 'success' : 'danger'}" onclick="btnOpenCalc('${idMoneda}')">${numeral(data).format('$0,0.00')}</button>`;
+                            return `<button class="btn btn-sm btn-link text-${porcentaje >= 0 ? 'success' : 'danger'}" onclick="btnOpenCalc('${idMoneda}')"><span>${numeral(data/costo).format('0,0.00%')}</span></button><span class="text-${porcentaje >= 0 ? 'success' : 'danger'}"">(${numeral(data).format('$0,0.00')})</span>`;
                         }
-                        return data;
+                        return data/costo;
                     }
-                },
-                {
-                    responsivePriority: 3,
-                    title: '%',
-                    data: 'porcentaje',
-                    render: (data, type) => {
-                        if (type === 'display') {
-                            if (data !== null) {
-                                return `<span class="text-${data >= 0 ? 'success' : 'danger'}">` + numeral(data).format('0,0.00%') + '</span>';
-                            }
-                            return `<span class="text-muted">N/A</span>`;
-                        }
-                        return data;
-                    }
-                },
+                }
             ]),
         });
     }
