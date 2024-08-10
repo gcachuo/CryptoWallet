@@ -65,7 +65,7 @@ class Trades extends Controller
         $trades = $Usuarios_Transacciones->selectTrades($idUser, $coin);
 
         $buy = $sell = 0;
-        array_walk($trades, function (&$trade) use (&$buy, &$sell) {
+        array_walk($trades, function (&$trade) use (&$buy, &$sell, &$dca) {
             if (!$trade['price'] || $trade['price'] <= 0) {
                 $trade = null;
             } else {
@@ -78,6 +78,7 @@ class Trades extends Controller
                     $trade['type'] = 'sell';
                     $sell = $trade['price'];
                 }
+                $dca = $trade['dca'];
                 $trade['date'] = date('Y-m-d H:i', strtotime($trade['date']));
                 $trade['trade'] = $trade['price'];
                 $trade['cost'] = abs($trade['cost']);
@@ -87,7 +88,7 @@ class Trades extends Controller
 
         $trades = array_values(array_filter($trades));
 
-        return compact('trades', 'buy', 'sell');
+        return compact('trades', 'buy', 'sell','dca');
     }
 
     /**

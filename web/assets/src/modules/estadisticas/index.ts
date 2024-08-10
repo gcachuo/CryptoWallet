@@ -5,6 +5,9 @@ import {Defaults} from "../../defaults";
 import $ from 'jquery';
 import moment from 'moment';
 import numeral from 'numeral';
+import {LineSeries, XYChart} from "@amcharts/amcharts4/charts";
+import {Color} from "@amcharts/amcharts4/.internal/core/utils/Color";
+import {color, iRGB} from "@amcharts/amcharts4/core";
 
 export class Estadisticas {
     async getTradesChart(coin: string) {
@@ -80,6 +83,16 @@ export class Estadisticas {
                         }
                         return data;
                     }
+                },
+                {
+                    title: 'DCA',
+                    data: 'dca',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return numeral(data).format('$#,#.##');
+                        }
+                        return data;
+                    }
                 }
             ])
         });
@@ -105,6 +118,10 @@ export class Estadisticas {
         valueAxis2.title.text = "Buys";
         valueAxis2.syncWithAxis = valueAxis1;
 
+        const valueAxis3 = chart.yAxes.push(new am4charts.ValueAxis());
+        valueAxis3.title.text = "DCA";
+        valueAxis3.syncWithAxis = valueAxis1;
+
         // Set input format for the dates
         chart.dateFormatter.inputDateFormat = "yyyy-MM-dd H:mm";
         dateAxis.groupData = false;
@@ -117,45 +134,9 @@ export class Estadisticas {
         const minDate = moment(data[0].date);
         dateAxis.min = (new Date(minDate.year(), minDate.month(), minDate.date())).getTime();
 
-        // Create series
-        const series = chart.series.push(new am4charts.LineSeries());
-        series.dataFields.valueY = "sell";
-        series.dataFields.dateX = "date";
-        series.tooltipText = "{sell}"
-        series.strokeWidth = 2;
-        series.minBulletDistance = 15;
-        series.smoothing = "monotoneX";
-        series.stroke = am4core.color("#f44455");
-
-        // Drop-shaped tooltips
-        series.tooltipText = 'Sell: $' + `{sell.formatNumber('#,##0.00')}`;
-        series.tooltip.background.cornerRadius = 20;
-        series.tooltip.background.strokeOpacity = 0;
-        series.tooltip.pointerOrientation = "vertical";
-        series.tooltip.label.minWidth = 40;
-        series.tooltip.label.minHeight = 40;
-        series.tooltip.label.textAlign = "middle";
-        series.tooltip.label.textValign = "middle";
-
-        // Create series
-        const series2 = chart.series.push(new am4charts.LineSeries());
-        series2.dataFields.valueY = "buy";
-        series2.dataFields.dateX = "date";
-        series2.tooltipText = "{buy}"
-        series2.strokeWidth = 2;
-        series2.minBulletDistance = 15;
-        series2.smoothing = "monotoneX";
-        series2.stroke = am4core.color("#6cc788");
-
-        // Drop-shaped tooltips
-        series2.tooltipText = 'Buy: $' + `{buy.formatNumber('#,##0.00')}`;
-        series2.tooltip.background.cornerRadius = 20;
-        series2.tooltip.background.strokeOpacity = 0;
-        series2.tooltip.pointerOrientation = "vertical";
-        series2.tooltip.label.minWidth = 40;
-        series2.tooltip.label.minHeight = 40;
-        series2.tooltip.label.textAlign = "middle";
-        series2.tooltip.label.textValign = "middle";
+        const series = this.createSeries(chart,"sell",color("#f44455"));
+        const series2 = this.createSeries(chart,"buy",color("#6cc788"));
+        const series3 = this.createSeries(chart,"dca",color("#0820d2"));
 
         // Make bullets grow on hover
         const bullet = series.bullets.push(new am4charts.CircleBullet());
@@ -179,7 +160,7 @@ export class Estadisticas {
         chart.cursor = new am4charts.XYCursor();
         chart.cursor.behavior = "panXY";
         chart.cursor.xAxis = dateAxis;
-        chart.cursor.snapToSeries = [series, series2];
+        chart.cursor.snapToSeries = [series, series2, series3];
 
         // Create vertical scrollbar and place it before the value axis
         chart.scrollbarY = new am4core.Scrollbar();
@@ -190,5 +171,35 @@ export class Estadisticas {
         chart.scrollbarX = new am4charts.XYChartScrollbar();
         // chart.scrollbarX.series.push(series);
         chart.scrollbarX.parent = chart.bottomAxesContainer;
+
+        chart.events.on("ready", function () {
+            dateAxis.zoomToDates(
+                moment().subtract({days:60}).toDate(),
+                moment().add({days:1}).toDate()
+            );
+        });
+    }
+
+    private static createSeries(chart: XYChart, valueY:string, color:Color, seriesType: LineSeries = new am4charts.LineSeries()) {
+        // Create series
+        const series = chart.series.push(seriesType);
+        series.dataFields.valueY = valueY;
+        series.dataFields.dateX = "date";
+        series.tooltipText = `{${valueY}}`
+        series.strokeWidth = 2;
+        series.minBulletDistance = 15;
+        series.smoothing = "monotoneX";
+        series.stroke = am4core.color(color);
+
+        // Drop-shaped tooltips
+        series.tooltipText = `${valueY.toUpperCase()}: $` + `{${valueY}.formatNumber('#,##0.00')}`;
+        series.tooltip.background.cornerRadius = 20;
+        series.tooltip.background.strokeOpacity = 0;
+        series.tooltip.pointerOrientation = "vertical";
+        series.tooltip.label.minWidth = 40;
+        series.tooltip.label.minHeight = 40;
+        series.tooltip.label.textAlign = "middle";
+        series.tooltip.label.textValign = "middle";
+        return series;
     }
 }
