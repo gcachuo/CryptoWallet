@@ -170,32 +170,50 @@ sql;
         $this->setPrice();
 
         $sql = <<<sql
-SELECT date, cost, quantity, price
-FROM (SELECT fecha_usuario_transaccion                                              AS                 date,
-             @last_price := precio_real_usuario_moneda                              AS                 price,
-             costo_usuario_moneda                                                   AS                 cost,
-             @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS                 invalid,
-             @prev_moneda := cantidad_usuario_moneda                                AS                 quantity,
-             @next_moneda := lead(cantidad_usuario_moneda) OVER (ORDER BY `fecha_usuario_transaccion`) nextmoneda
-      FROM (SELECT *
-            FROM usuarios_transacciones
-            WHERE id_usuario = :id_usuario
-              AND id_moneda = :id_moneda
-            ORDER BY fecha_usuario_transaccion) t
-               JOIN (SELECT @running_cost := 0) c
-               JOIN (SELECT @running_total := 0) r
-               JOIN (SELECT @last_price := 0) p
-               JOIN (SELECT @invalid := 0) i
-               JOIN (SELECT @prev_moneda := NULL) pm
-      ORDER BY fecha_usuario_transaccion) AS subquery
-WHERE invalid <> 1
-  and (abs(quantity) <> abs(nextmoneda) or nextmoneda is null)
-  and abs(cost) > 1;
+SELECT
+    date,
+    cost,
+    prevmoneda,
+    quantity,
+    nextmoneda,
+    price,
+    round(accumulated_cost, 2) AS accumulated_cost,
+    round(accumulated_quantity, 8) AS accumulated_quantity,
+    coalesce(round(dca, 2),0) AS dca,
+    IF(quantity+prevmoneda=0 or quantity+nextmoneda=0, 1, 0) invalid
+FROM (
+         SELECT
+             fecha_usuario_transaccion AS date,
+             @last_price := precio_real_usuario_moneda AS price,
+             costo_usuario_moneda AS cost,
+             @running_cost := @running_cost + costo_usuario_moneda AS accumulated_cost,
+             @running_quantity := @running_quantity + cantidad_usuario_moneda AS accumulated_quantity,
+             @current_dca := @running_cost / @running_quantity AS dca,
+             @prev_moneda := cantidad_usuario_moneda AS quantity,
+             @prev_moneda := LAG(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS nextmoneda,
+             @next_moneda := LEAD(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS prevmoneda
+         FROM (
+                  SELECT *
+                  FROM usuarios_transacciones
+                  WHERE id_usuario = :id_usuario
+                    AND id_moneda = :id_moneda
+                  ORDER BY fecha_usuario_transaccion
+              ) t
+                  JOIN (SELECT @running_cost := 0) rc
+                  JOIN (SELECT @running_quantity := 0) rq
+                  JOIN (SELECT @last_price := 0) p
+                  JOIN (SELECT @invalid := 0) i
+                  JOIN (SELECT @prev_moneda := NULL) pm
+                  JOIN (SELECT @prev_dca := NULL) pd
+                  JOIN (SELECT @current_dca := 0) cd
+         ORDER BY fecha_usuario_transaccion
+     ) AS subquery
+WHERE date>date('2024-03-01') and IF(quantity+prevmoneda=0 or quantity+nextmoneda=0, 1, 0)=0 and abs(cost)>1;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
             ':id_usuario' => $id_usuario,
-            ':id_moneda' => $id_moneda,
+            ':id_moneda' => $id_moneda
         ]);
         return $query->fetchAll();
     }
@@ -211,31 +229,32 @@ sql;
         $sql = <<<sql
 SELECT *
 FROM (
-	     SELECT
-		     fecha_usuario_transaccion AS fecha,
-		     @running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8) AS costo_actual,
-		     ROUND(@running_total, 8) AS cantidad_anterior,
-		     @total_anterior := ROUND(@running_total * @last_price, 2) AS total_anterior,
-		     @running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
-		     @last_price := precio_real_usuario_moneda AS precio,
-		     @total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
-		     costo_usuario_moneda AS mxn,
-		     ROUND((costo_usuario_moneda) / @total_anterior, 2) AS porcentaje,
-		     @invalid := IF(abs(@prev_moneda) = abs(cantidad_usuario_moneda), 1, 0) AS invalid,
-		     @prev_moneda := cantidad_usuario_moneda AS moneda,
-		     @next_moneda := lead(cantidad_usuario_moneda)  OVER (ORDER BY `fecha_usuario_transaccion`) nextmoneda
-	     FROM
-		     (SELECT * FROM usuarios_transacciones WHERE id_usuario = :id_usuario AND id_moneda = :id_moneda ORDER BY fecha_usuario_transaccion) t
-			     JOIN (SELECT @running_cost := 0) c
-			     JOIN (SELECT @running_total := 0) r
-			     JOIN (SELECT @last_price := 0) p
-			     JOIN (SELECT @invalid := 0) i
-			     JOIN (SELECT @prev_moneda := NULL) pm
-	     ORDER BY
-		     fecha_usuario_transaccion
+         SELECT
+             id_moneda,
+             fecha_usuario_transaccion AS fecha,
+             @running_cost := ROUND(@running_cost + t.costo_usuario_moneda, 8) AS costo_actual,
+             ROUND(@running_total, 8) AS cantidad_anterior,
+             @total_anterior := ROUND(@running_total * @last_price, 2) AS total_anterior,
+             @running_total := ROUND(@running_total + t.cantidad_usuario_moneda, 8) AS total_cantidad,
+             @last_price := precio_real_usuario_moneda AS precio,
+             @total_actual := ROUND(precio_real_usuario_moneda * @running_total, 2) AS total_actual,
+             costo_usuario_moneda AS mxn,
+             ROUND((costo_usuario_moneda) / @total_anterior, 2) AS porcentaje,
+             @prev_moneda prevmoneda,
+             @prev_moneda := cantidad_usuario_moneda AS moneda,
+             @next_moneda := LEAD(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS nextmoneda
+         FROM
+             (SELECT * FROM usuarios_transacciones WHERE id_usuario = :id_usuario ORDER BY fecha_usuario_transaccion) t
+                 JOIN (SELECT @running_cost := 0) c
+                 JOIN (SELECT @running_total := 0) r
+                 JOIN (SELECT @last_price := 0) p
+                 JOIN (SELECT @invalid := 0) i
+                 JOIN (SELECT @prev_moneda := NULL) pm
+         WHERE fecha_usuario_transaccion > DATE('2024-03-01') AND id_moneda = :id_moneda
+         ORDER BY fecha_usuario_transaccion
      ) AS subquery
-WHERE
-		invalid <> 1 and (abs(moneda) <> abs(nextmoneda) or nextmoneda is null);
+         INNER JOIN monedas m ON subquery.id_moneda = m.id_moneda
+where IF(moneda+prevmoneda=0 or moneda+nextmoneda=0, 1, 0)=0;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
