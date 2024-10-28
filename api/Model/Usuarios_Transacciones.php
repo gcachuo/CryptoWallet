@@ -253,7 +253,7 @@ FROM (
                  JOIN (SELECT @last_price := 0) p
                  JOIN (SELECT @invalid := 0) i
                  JOIN (SELECT @prev_moneda := NULL) pm
-         WHERE fecha_usuario_transaccion > DATE('2024-03-01') AND id_moneda = :id_moneda
+         WHERE id_moneda = :id_moneda
          ORDER BY fecha_usuario_transaccion
      ) AS subquery
          INNER JOIN monedas m ON subquery.id_moneda = m.id_moneda
