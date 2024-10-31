@@ -179,7 +179,8 @@ SELECT
     price,
     round(accumulated_cost, 2) AS accumulated_cost,
     round(accumulated_quantity, 8) AS accumulated_quantity,
-    if(percentage>1,price,coalesce(round(dca, 2),0)) AS dca,
+    round(accumulated_quantity, 8)*price AS accumulated_value,
+    if(round(accumulated_cost, 2)<=0 or (coalesce(round(dca, 2),0)>price and percentage>0.90),price,coalesce(round(dca, 2),0)) AS dca,
     percentage,
     invalid
 FROM (
@@ -211,7 +212,7 @@ FROM (
                   JOIN (SELECT @current_dca := 0) cd
          ORDER BY fecha_usuario_transaccion
      ) AS subquery
-WHERE subquery.invalid=0 and abs(cost)>1;
+WHERE subquery.invalid=0 and abs(cost)>1 and round(accumulated_quantity, 8)>0;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
