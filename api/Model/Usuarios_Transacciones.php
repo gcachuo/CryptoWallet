@@ -179,7 +179,8 @@ SELECT
     price,
     round(accumulated_cost, 2) AS accumulated_cost,
     round(accumulated_quantity, 8) AS accumulated_quantity,
-    coalesce(round(dca, 2),0) AS dca,
+    round(accumulated_quantity, 8)*price AS accumulated_value,
+    if(round(accumulated_cost, 2)<=0 or (coalesce(round(dca, 2),0)>price and percentage>0.90),price,coalesce(round(dca, 2),0)) AS dca,
     percentage,
     invalid
 FROM (
@@ -194,7 +195,7 @@ FROM (
              @prev_moneda := LAG(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS nextmoneda,
              @next_moneda := LEAD(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS prevmoneda,
              @percentage:=abs((precio_real_usuario_moneda-@current_dca)/@current_dca) as percentage,
-             IF(cantidad_usuario_moneda+@prevmoneda=0 or cantidad_usuario_moneda+@nextmoneda=0 or @percentage>0.43, 1, 0) invalid
+             IF(cantidad_usuario_moneda+@prevmoneda=0 or cantidad_usuario_moneda+@nextmoneda=0, 1, 0) invalid
          FROM (
                   SELECT *
                   FROM usuarios_transacciones
@@ -211,7 +212,7 @@ FROM (
                   JOIN (SELECT @current_dca := 0) cd
          ORDER BY fecha_usuario_transaccion
      ) AS subquery
-WHERE subquery.invalid=0 and abs(cost)>1;
+WHERE subquery.invalid=0 and abs(cost)>1 and round(accumulated_quantity, 8)>0;
 sql;
         $mysql = new MySQL();
         $query = $mysql->prepare2($sql, [
@@ -253,7 +254,7 @@ FROM (
                  JOIN (SELECT @last_price := 0) p
                  JOIN (SELECT @invalid := 0) i
                  JOIN (SELECT @prev_moneda := NULL) pm
-         WHERE fecha_usuario_transaccion > DATE('2024-03-01') AND id_moneda = :id_moneda
+         WHERE id_moneda = :id_moneda
          ORDER BY fecha_usuario_transaccion
      ) AS subquery
          INNER JOIN monedas m ON subquery.id_moneda = m.id_moneda

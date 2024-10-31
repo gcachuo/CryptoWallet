@@ -85,6 +85,16 @@ export class Estadisticas {
                     }
                 },
                 {
+                    title: 'Valor',
+                    data: 'accumulated_value',
+                    render(data, type) {
+                        if (type == 'display') {
+                            return numeral(data).format('$#,#.##');
+                        }
+                        return data;
+                    }
+                },
+                {
                     title: 'DCA',
                     data: 'dca',
                     render(data, type) {
