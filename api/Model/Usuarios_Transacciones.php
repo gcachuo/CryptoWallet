@@ -179,7 +179,7 @@ SELECT
     price,
     round(accumulated_cost, 2) AS accumulated_cost,
     round(accumulated_quantity, 8) AS accumulated_quantity,
-    coalesce(round(dca, 2),0) AS dca,
+    if(percentage>1,price,coalesce(round(dca, 2),0)) AS dca,
     percentage,
     invalid
 FROM (
@@ -194,7 +194,7 @@ FROM (
              @prev_moneda := LAG(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS nextmoneda,
              @next_moneda := LEAD(cantidad_usuario_moneda) OVER (ORDER BY fecha_usuario_transaccion) AS prevmoneda,
              @percentage:=abs((precio_real_usuario_moneda-@current_dca)/@current_dca) as percentage,
-             IF(cantidad_usuario_moneda+@prevmoneda=0 or cantidad_usuario_moneda+@nextmoneda=0 or @percentage>0.43, 1, 0) invalid
+             IF(cantidad_usuario_moneda+@prevmoneda=0 or cantidad_usuario_moneda+@nextmoneda=0, 1, 0) invalid
          FROM (
                   SELECT *
                   FROM usuarios_transacciones
