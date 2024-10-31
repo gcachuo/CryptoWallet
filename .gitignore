@@ -1,3 +1,4 @@
 /.idea/
 error.log
 access.log
+/composer.phar
